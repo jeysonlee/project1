@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Parcela' : 'Nueva Parcela' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Nombre</ion-label>
+    <ion-input [(ngModel)]="nombre"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Ubicación</ion-label>
+    <ion-input [(ngModel)]="ubicacion"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Tamaño (hectáreas)</ion-label>
+    <ion-input type="number" [(ngModel)]="tamanio"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Tipo de Cultivo</ion-label>
+    <ion-input [(ngModel)]="tipo_cultivo"></ion-input>
+  </ion-item>
+
+  <ion-button expand="block" (click)="save()" class="ion-margin-top">
+    {{ isEdit ? 'Actualizar' : 'Guardar' }}
+  </ion-button>
+</ion-content>

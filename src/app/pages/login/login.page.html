@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding login-content">
+
+  <div class="login-container">
+    <ion-icon name="person-circle-outline" class="login-icon"></ion-icon>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <ion-item>
+        <ion-label position="floating">Usuario</ion-label>
+        <ion-input
+          type="text"
+          required
+          [(ngModel)]="username"
+          name="username"
+          #usernameInput="ngModel"
+        ></ion-input>
+      </ion-item>
+      <div
+        class="error"
+        *ngIf="usernameInput.invalid && usernameInput.touched"
+      >
+        El usuario es requerido
+      </div>
+
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input
+          type="password"
+          required
+          [(ngModel)]="password"
+          name="password"
+          #passwordInput="ngModel"
+        ></ion-input>
+      </ion-item>
+      <div
+        class="error"
+        *ngIf="passwordInput.invalid && passwordInput.touched"
+      >
+        La contraseña es requerida
+      </div>
+
+      <ion-button
+        type="submit"
+        expand="block"
+        [disabled]="loginForm.invalid"
+        class="login-button"
+      >
+        Ingresar
+      </ion-button>
+    </form>
+  </div>
+  
+</ion-content>
+<!-- <ion-content>
+  <div class="ion-padding login-content">
+    <h1>hola</h1>
+  </div>
+</ion-content> -->

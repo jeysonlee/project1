@@ -1,13 +1,7 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      CRUD SQLite
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
 
+<app-header></app-header>
 <ion-content [fullscreen]="true">
-  
+
   <!-- Formulario para añadir un elemento -->
   <ion-item>
     <ion-input label="Lenguaje de programacion: " [(ngModel)]="language" name="language"></ion-input>
@@ -34,7 +28,7 @@
           <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
         </ion-item-option>
       </ion-item-options>
-      
+
     </ion-item-sliding>
 
 

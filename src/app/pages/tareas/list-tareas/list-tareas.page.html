@@ -1,0 +1,77 @@
+<app-header></app-header>
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row class="ion-align-items-center">
+      <ion-col size="10">
+        <ion-searchbar
+          placeholder="Buscar tareas..."
+          [(ngModel)]="searchTerm"
+          (ionInput)="filterTareas()"
+        ></ion-searchbar>
+      </ion-col>
+        <ion-col size="2" class="ion-text-end">
+          <ion-button size="small" expand="block" color="primary" (click)="nuevaTarea()">
+            <ion-icon slot="icon-only" name="add-outline" size="large"></ion-icon>
+          </ion-button>
+        </ion-col>
+
+    </ion-row>
+  </ion-grid>
+
+
+
+  <ion-list>
+    <ion-card *ngFor="let tarea of filteredTareas">
+      <ion-card-header>
+        <ion-card-title>{{ tarea.tipo_nombre }}</ion-card-title>
+        <ion-badge color="success" slot="end">
+          {{ tarea.estado || 'Pendiente' }}
+        </ion-badge>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Parcela:</strong> {{ tarea.parcela_nombre }}</p>
+        <p><strong>Duración:</strong> {{ tarea.periodo_dias }} días</p>
+        <p>
+          <strong>Fecha inicio:</strong> {{ tarea.fecha_inicio | date:'dd/MM/yyyy' }}
+        </p>
+        <p>
+          <strong>Fecha fin:</strong> {{ tarea.fecha_fin | date:'dd/MM/yyyy' }}
+        </p>
+
+        <ion-item lines="none" class="ion-margin-top">
+          <ion-label>Costo mano de obra:</ion-label>
+          <ion-note slot="end" color="dark">{{
+            tarea.costo_mano_obra | currency:'S/ ':'symbol':'1.0-0'
+          }}</ion-note>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label>Costo insumos:</ion-label>
+          <ion-note slot="end" color="dark">{{
+            tarea.costo_insumos | currency:'S/ ':'symbol':'1.0-0'
+          }}</ion-note>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label><strong>Costo total:</strong></ion-label>
+          <ion-note slot="end" color="primary" class="ion-text-bold">{{
+            tarea.costo_total | currency:'S/ ':'symbol':'1.0-0'
+          }}</ion-note>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          color="primary"
+          class="ion-margin-top"
+          (click)="verDetalles(tarea)"
+        >
+          Ver detalles
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
+</ion-content>

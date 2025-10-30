@@ -1,0 +1,12 @@
+.insumo-img {
+  width: 150px;         /* ancho (ajústalo a gusto) */
+  height: 100px;        /* alto para formato rectangular */
+  border-radius: 8px;  /* esquinas redondeadas opcional */
+  overflow: hidden;    /* recorta imagen sobrante */
+}
+
+.insumo-img img {
+  object-fit: cover;   /* evita deformación */
+  width: 100%;
+  height: 100%;
+}

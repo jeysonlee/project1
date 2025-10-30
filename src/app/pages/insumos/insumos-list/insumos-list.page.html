@@ -1,0 +1,35 @@
+<app-header></app-header>
+
+<ion-content>
+  <!-- Subcabecera -->
+  <ion-toolbar color="light">
+    <ion-title size="small">Insumos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openInsumoForm()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-list>
+    <ion-item *ngFor="let insumo of insumos">
+      <ion-thumbnail slot="start" *ngIf="insumo.foto" class="insumo-img">
+        <img [src]="insumo.foto" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ insumo.nombre }}</h2>
+        <p> {{ insumo.descripcion }}</p>
+        <p>{{ insumo.categoria }}</p>
+        <p>{{ insumo.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
+
+        <p>{{ insumo.unidad_medida }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="primary" (click)="openInsumoForm(insumo)">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="danger" (click)="deleteInsumo(insumo.id)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

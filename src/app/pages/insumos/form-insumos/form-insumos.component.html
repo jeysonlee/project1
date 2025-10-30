@@ -1,0 +1,63 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Insumo' : 'Nuevo Insumo' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item lines="none">
+    <ion-avatar slot="start" *ngIf="foto">
+      <img [src]="foto" />
+    </ion-avatar>
+    <ion-buttons>
+      <ion-button (click)="takePhoto(false)">
+        <ion-icon name="camera-outline"></ion-icon> Cámara
+      </ion-button>
+      <ion-button (click)="takePhoto(true)">
+        <ion-icon name="image-outline"></ion-icon> Galería
+      </ion-button>
+    </ion-buttons>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Nombre</ion-label>
+    <ion-input [(ngModel)]="nombre"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Descripción</ion-label>
+    <ion-input [(ngModel)]="descripcion"></ion-input>
+  </ion-item>
+<ion-item>
+  <ion-label position="stacked">Categoría</ion-label>
+  <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría">
+    <ion-select-option value="herbicida">Herbicida</ion-select-option>
+    <ion-select-option value="insecticida">Insecticida</ion-select-option>
+    <ion-select-option value="follar">Follar</ion-select-option>
+    <ion-select-option value="herramienta">Herramienta</ion-select-option>
+    <ion-select-option value="otro">Otro</ion-select-option>
+  </ion-select>
+</ion-item>
+  <ion-item>
+    <ion-label position="stacked">Costo Unitario</ion-label>
+    <ion-input type="number" [(ngModel)]="costo_unitario"></ion-input>
+  </ion-item>
+<ion-item>
+  <ion-label position="stacked">Unidad de Medida</ion-label>
+  <ion-select [(ngModel)]="unidad_medida" interface="popover" placeholder="Seleccione unidad">
+    <ion-select-option value="litro">Litro</ion-select-option>
+    <ion-select-option value="kilo">Kilo</ion-select-option>
+    <ion-select-option value="unidad">Unidad</ion-select-option>
+  </ion-select>
+</ion-item>
+
+
+
+  <ion-button expand="block" (click)="save()" class="ion-margin-top">
+    {{ isEdit ? 'Actualizar' : 'Guardar' }}
+  </ion-button>
+</ion-content>

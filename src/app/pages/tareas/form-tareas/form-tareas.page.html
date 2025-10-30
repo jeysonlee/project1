@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Nueva Tarea</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="guardarTarea()">Guardar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Parcela</ion-label>
+      <ion-input [(ngModel)]="form.parcela_id"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Tipo de Tarea</ion-label>
+      <ion-input [(ngModel)]="form.tipo_tarea_id"></ion-input>
+    </ion-item>
+      <ion-grid>
+        <ion-row>
+          <!-- Fecha Inicio -->
+          <ion-col size="6">
+            <ion-item (click)="abrirPopover($event, 'inicio')">
+              <ion-label position="stacked">Fecha Inicio</ion-label>
+              <ion-input [value]="form.fecha_inicio | date:'dd/MM/yyyy'" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+
+          <!-- Fecha Fin -->
+          <ion-col size="6">
+            <ion-item (click)="abrirPopover($event, 'fin')">
+              <ion-label position="stacked">Fecha Fin</ion-label>
+              <ion-input [value]="form.fecha_fin | date:'dd/MM/yyyy'" readonly></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+</ion-list>
+</ion-card>
+<!-- Popover flotante -->
+  <ion-popover [isOpen]="popoverOpen" [event]="popoverEvent" (didDismiss)="popoverOpen=false">
+    <ng-template>
+      <ion-datetime
+        [(ngModel)]="tempFecha"
+        displayFormat="DD/MM/YYYY"
+        (ionChange)="confirmarFecha()">
+      </ion-datetime>
+    </ng-template>
+  </ion-popover>
+
+
+  <!-- Obreros -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Obreros</ion-card-title>
+      <ion-button fill="clear" (click)="agregarObrero()">Agregar</ion-button>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let o of obreros">
+        {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency }}
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <!-- Herramientas -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Herramientas</ion-card-title>
+      <ion-button fill="clear" (click)="agregarHerramienta()">Agregar</ion-button>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let h of herramientas">
+        {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency }}
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <!-- Insumos -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Insumos</ion-card-title>
+      <ion-button fill="clear" (click)="agregarInsumo()">Agregar</ion-button>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let i of insumos">
+        {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency }}
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <!-- Totales -->
+  <ion-card>
+    <ion-card-content>
+      <p>Obreros: {{ totalObreros | currency }}</p>
+      <p>Herramientas: {{ totalHerramientas | currency }}</p>
+      <p>Insumos: {{ totalInsumos | currency }}</p>
+      <h2>Total: {{ totalGeneral | currency }}</h2>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

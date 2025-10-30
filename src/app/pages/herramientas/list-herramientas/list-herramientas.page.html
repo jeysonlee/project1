@@ -1,0 +1,34 @@
+<app-header></app-header>
+<ion-content>
+  <!-- Subcabecera -->
+  <ion-toolbar color="light">
+    <ion-title size="small">Herramientas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openHerramientaForm()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-list>
+    <ion-item *ngFor="let herramienta of herramientas">
+      <ion-thumbnail slot="start" *ngIf="herramienta.foto" class="insumo-img">
+        <img [src]="herramienta.foto" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ herramienta.nombre }}</h2>
+        <p> {{ herramienta.descripcion }}</p>
+        <p>{{ herramienta.categoria }}</p>
+        <p>{{ herramienta.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
+
+        <p>{{ herramienta.unidad_medida }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="primary" (click)="openHerramientaForm(herramienta)">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="danger" (click)="deleteHerramienta(herramienta.id)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

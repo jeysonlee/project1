@@ -1,0 +1,20 @@
+.scroll-tabs {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  justify-content: flex-start; /* 🔹 clave para que no intente centrar */
+  scroll-behavior: smooth; /* desplazamiento suave */
+  -webkit-overflow-scrolling: touch; /* scroll fluido en iOS */
+
+  padding: 0 8px; /* opcional: margen a los lados */
+
+  /* Ocultar barra de scroll */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.scroll-tabs ion-tab-button {
+  flex: 0 0 auto; /* 🔹 evita que se estiren o se achiquen */
+}

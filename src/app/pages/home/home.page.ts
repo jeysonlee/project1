@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { SqliteService } from '../services/sqlite.service';
+import { SqliteService } from '../../services/sqlite.service';
+import { HeaderComponent } from 'src/app/componenents/header/header.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+
+   // Importing HeaderComponent to use it in this page
 })
 export class HomePage {
-
   public language: string;
   public languages: string[];
 
@@ -47,7 +49,7 @@ export class HomePage {
       console.error("Error al leer");
     })
   }
-  
+
   update(language: string){
     // Actualizamos el elemento (language) por el nuevo elemento (this.language)
     this.sqlite.update(this.language.toUpperCase(), language).then( (changes) => {

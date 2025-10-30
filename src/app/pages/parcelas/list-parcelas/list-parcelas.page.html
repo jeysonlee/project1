@@ -1,0 +1,29 @@
+<app-header></app-header>
+
+<ion-content>
+  <ion-toolbar color="light">
+    <ion-title size="small">Listado de Parcelas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openParcelaForm()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-list>
+    <ion-item *ngFor="let parcela of parcelas">
+      <ion-label>
+        <h2>{{ parcela.nombre }}</h2>
+        <p>Ubicación: {{ parcela.ubicacion }}</p>
+        <p>Tamaño: {{ parcela.tamano }} ha</p>
+        <p>Tipo de cultivo: {{ parcela.tipo_cultivo }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="primary" (click)="openParcelaForm(parcela)">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" color="danger" (click)="deleteParcela(parcela.id)">
+        <ion-icon name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Editar Usuario' : 'Nuevo Usuario' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item>
+    <ion-label position="stacked">Usuario</ion-label>
+    <ion-input [(ngModel)]="username"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Contraseña</ion-label>
+    <ion-input type="password" [(ngModel)]="password"
+      [placeholder]="isEdit ? 'Dejar en blanco para no cambiar' : ''">
+    </ion-input>
+  </ion-item>
+
+<ion-item>
+  <ion-label position="stacked">Rol</ion-label>
+  <ion-select [(ngModel)]="role_id" placeholder="Seleccione un rol">
+    <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
+      {{ rol.nombre }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
+
+  <ion-button expand="block" (click)="save()" class="ion-margin-top">
+    {{ isEdit ? 'Actualizar' : 'Guardar' }}
+  </ion-button>
+</ion-content>
