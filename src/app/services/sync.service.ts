@@ -5,7 +5,8 @@ import { CrudGenericService } from './crud-generic.service';
 @Injectable({ providedIn: 'root' })
 export class SyncService {
   private baseUrl = 'http://localhost:8080';
-
+  isSynchronized = false;
+  synchronizing = false;
   constructor(
     private http: HttpClient,
     private crud: CrudGenericService

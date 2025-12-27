@@ -1,0 +1,17 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cosechas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let c of cosechas">
+      <ion-label>
+        <h2>{{ c.fecha_cosecha }}</h2>
+        <p>Kg Bruto: {{ c.kg_bruto }} | Kg Seco: {{ c.kg_seco }}</p>
+      </ion-label>
+      <ion-button fill="clear" (click)="editar(c.id)">Editar</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -143,4 +143,18 @@ export class CrudGenericService {
     });
     return res.values || [];
   }
+
+async executeQuery(statement: string, params: any[] = []) {
+  const dbName = await this.sqlite.getDbName();
+
+  const res: any = await CapacitorSQLite.query({
+    database: dbName,
+    statement,
+    values: params
+  });
+
+  return res.values || [];
+}
+
+
 }

@@ -2,28 +2,29 @@
 
 <ion-content>
 
+  <!-- BUSCADOR Y BOTÓN NUEVO -->
   <ion-grid>
     <ion-row class="ion-align-items-center">
       <ion-col size="10">
         <ion-searchbar
           placeholder="Buscar tareas..."
           [(ngModel)]="searchTerm"
-          (ionInput)="filterTareas()"
-        ></ion-searchbar>
+          (ionInput)="filterTareas()">
+        </ion-searchbar>
       </ion-col>
-        <ion-col size="2" class="ion-text-end">
-          <ion-button size="small" expand="block" color="primary" (click)="nuevaTarea()">
-            <ion-icon slot="icon-only" name="add-outline" size="large"></ion-icon>
-          </ion-button>
-        </ion-col>
 
+      <ion-col size="2" class="ion-text-end">
+        <ion-button expand="block" size="small" (click)="nuevaTarea()">
+          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
     </ion-row>
   </ion-grid>
 
-
-
+  <!-- LISTA DE TAREAS -->
   <ion-list>
     <ion-card *ngFor="let tarea of filteredTareas">
+
       <ion-card-header>
         <ion-card-title>{{ tarea.tipo_nombre }}</ion-card-title>
         <ion-badge color="success" slot="end">
@@ -32,45 +33,88 @@
       </ion-card-header>
 
       <ion-card-content>
+
+        <!-- DATOS GENERALES -->
         <p><strong>Parcela:</strong> {{ tarea.parcela_nombre }}</p>
         <p><strong>Duración:</strong> {{ tarea.periodo_dias }} días</p>
-        <p>
-          <strong>Fecha inicio:</strong> {{ tarea.fecha_inicio | date:'dd/MM/yyyy' }}
-        </p>
-        <p>
-          <strong>Fecha fin:</strong> {{ tarea.fecha_fin | date:'dd/MM/yyyy' }}
-        </p>
+        <p><strong>Inicio:</strong> {{ tarea.fecha_inicio | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Fin:</strong> {{ tarea.fecha_fin | date:'dd/MM/yyyy' }}</p>
 
-        <ion-item lines="none" class="ion-margin-top">
-          <ion-label>Costo mano de obra:</ion-label>
-          <ion-note slot="end" color="dark">{{
-            tarea.costo_mano_obra | currency:'S/ ':'symbol':'1.0-0'
-          }}</ion-note>
+        <!-- COSTOS -->
+        <ion-item lines="none">
+          <ion-label>Mano de obra</ion-label>
+          <ion-note slot="end">
+            {{ tarea.costo_mano_obra | currency:'S/ ':'symbol':'1.0-0' }}
+          </ion-note>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label>Costo insumos:</ion-label>
-          <ion-note slot="end" color="dark">{{
-            tarea.costo_insumos | currency:'S/ ':'symbol':'1.0-0'
-          }}</ion-note>
+          <ion-label>Insumos</ion-label>
+          <ion-note slot="end">
+            {{ tarea.costo_insumos | currency:'S/ ':'symbol':'1.0-0' }}
+          </ion-note>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>Herramientas</ion-label>
+          <ion-note slot="end">
+            {{ tarea.costo_herramientas | currency:'S/ ':'symbol':'1.0-0' }}
+          </ion-note>
         </ion-item>
 
         <ion-item lines="none">
-          <ion-label><strong>Costo total:</strong></ion-label>
-          <ion-note slot="end" color="primary" class="ion-text-bold">{{
-            tarea.costo_total | currency:'S/ ':'symbol':'1.0-0'
-          }}</ion-note>
+          <ion-label><strong>Total</strong></ion-label>
+          <ion-note slot="end" color="primary">
+            {{ tarea.costo_total | currency:'S/ ':'symbol':'1.0-0' }}
+          </ion-note>
         </ion-item>
 
+        <!-- BOTÓN DETALLE -->
         <ion-button
           expand="block"
-          color="primary"
+          fill="outline"
           class="ion-margin-top"
-          (click)="verDetalles(tarea)"
-        >
-          Ver detalles
+          (click)="toggleDetalles(tarea)">
+          {{ tarea.expanded ? 'Ocultar detalles' : 'Ver detalles' }}
         </ion-button>
+
+        <!-- DETALLES EXPANDIDOS -->
+        <div *ngIf="tarea.expanded">
+
+          <!-- OBREROS -->
+          <ion-list-header>Mano de obra</ion-list-header>
+          <ion-item *ngFor="let o of tarea.obreros">
+            <ion-label>
+              {{ o.nombre }} {{ o.apellido }}
+            </ion-label>
+            <ion-note slot="end">
+              {{ o.precio_dia | currency:'S/ ':'symbol':'1.0-0' }}
+            </ion-note>
+          </ion-item>
+
+          <!-- INSUMOS -->
+          <ion-list-header>Insumos</ion-list-header>
+          <ion-item *ngFor="let i of tarea.insumos">
+            <ion-label>
+              {{ i.nombre }} ({{ i.cantidad }})
+            </ion-label>
+            <ion-note slot="end">
+              {{ i.total | currency:'S/ ':'symbol':'1.0-0' }}
+            </ion-note>
+          </ion-item>
+
+          <!-- HERRAMIENTAS -->
+          <ion-list-header>Herramientas</ion-list-header>
+          <ion-item *ngFor="let h of tarea.herramientas">
+            <ion-label>{{ h.nombre }}</ion-label>
+            <ion-note slot="end">
+              Cant: {{ h.cantidad }}
+            </ion-note>
+          </ion-item>
+
+        </div>
+
       </ion-card-content>
+
     </ion-card>
   </ion-list>
 

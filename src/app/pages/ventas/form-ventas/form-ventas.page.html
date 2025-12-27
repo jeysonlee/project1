@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Venta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="stacked">Estado Humedad</ion-label>
+    <ion-select [(ngModel)]="venta.estado_humedad" (ionChange)="recalcular()">
+      <ion-select-option value="FRESCO">Fresco</ion-select-option>
+      <ion-select-option value="SEMIFRESCO">Semifresco</ion-select-option>
+      <ion-select-option value="SECO">Seco</ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <ion-item *ngIf="venta.estado_humedad !== 'SECO'">
+    <ion-label position="stacked">% Descuento Humedad</ion-label>
+    <ion-input type="number" [(ngModel)]="venta.desc_humedad" (ionInput)="recalcular()"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-label position="stacked">Precio por Kg</ion-label>
+    <ion-input type="number" [(ngModel)]="venta.precio_kg" (ionInput)="recalcular()"></ion-input>
+  </ion-item>
+
+  <ion-list>
+    <ion-item *ngFor="let c of cosechas">
+      <ion-label>{{ c.fecha_cosecha }} - {{ c.kg_bruto }} kg</ion-label>
+      <ion-button (click)="agregarDetalle(c)">Agregar</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-item *ngFor="let d of detalles">
+      <ion-label>
+        <p>Kg Bruto: {{ d.kg_bruto }}</p>
+        <p>Kg Seco: {{ d.kg_seco | number:'1.2-2' }}</p>
+        <p>Subtotal: S/ {{ d.subtotal | number:'1.2-2' }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)="guardar()">Guardar Venta</ion-button>
+</ion-content>

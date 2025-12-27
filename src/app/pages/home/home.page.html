@@ -1,38 +1,74 @@
-
 <app-header></app-header>
+
 <ion-content [fullscreen]="true">
 
-  <!-- Formulario para añadir un elemento -->
-  <ion-item>
-    <ion-input label="Lenguaje de programacion: " [(ngModel)]="language" name="language"></ion-input>
-    <ion-button (click)="create()">
-      <ion-icon name="add-outline"></ion-icon>
-    </ion-button>
-  </ion-item>
+  <ion-grid>
 
-  <!-- Lista de todos los elementos -->
-  <ion-list>
-    <ion-item-sliding *ngFor="let language of languages">
+        <!-- SALUDO -->
+    <ion-row class="ion-justify-content-center ion-text-center">
+      <ion-col size="12">
 
-      <!-- elemento -->
-      <ion-item>
-        <ion-label>{{language}}</ion-label>
-      </ion-item>
+        <!-- Ícono de perfil -->
+        <ion-icon 
+          name="person-circle-outline"
+          style="font-size: 80px; color: #3880ff;">
+        </ion-icon>
 
-      <!-- opciones -->
-      <ion-item-options>
-        <ion-item-option color="warning" (click)="update(language)">
-          <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="delete(language)">
-          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
+        <!-- Texto de bienvenida -->
+        <h2 style="margin-top: 10px;"> Hola, bienvenido</h2>
 
-    </ion-item-sliding>
+        <!-- Nombre del usuario -->
+        <h2 style="font-weight: bold;">{{ usuario }}</h2>
+
+      </ion-col>
+    </ion-row>
 
 
-  </ion-list>
+    <!-- BOTONES GRANDES -->
+    <ion-row>
+      <ion-col size="6">
+        <ion-button expand="block" class="big-square-btn" (click)="accion1()">
+          <ion-icon name="people" class="big-icon"></ion-icon>
+          <span>Obreros</span>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-button expand="block" class="big-square-btn" (click)="accion2()">
+          <ion-icon name="leaf" class="big-icon"></ion-icon>
+          <span>Parcelas</span>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-button expand="block" class="big-square-btn" (click)="accion3()">
+          <ion-icon name="clipboard" class="big-icon"></ion-icon>
+          <span>Tareas</span>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="6">
+        <ion-button expand="block" class="big-square-btn" (click)="accion4()">
+          <ion-icon name="analytics" class="big-icon"></ion-icon>
+          <span>Reportes</span>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
+  <!-- REPORTES -->
+  <div class="reportes-container">
+    <h3>Producción semanal</h3>
+    <canvas id="grafico1"></canvas>
+  </div>
+
+  <div class="reportes-container">
+    <h3>Tareas completadas</h3>
+    <canvas id="grafico2"></canvas>
+  </div>
+
+
 
 
 </ion-content>

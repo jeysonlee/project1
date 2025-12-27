@@ -1,0 +1,40 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cosecha</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Fecha</ion-label>
+      <ion-input type="date" [(ngModel)]="form.fecha_cosecha"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Baldes</ion-label>
+      <ion-input type="number" [(ngModel)]="form.cant_baldes"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Kg Bruto</ion-label>
+      <ion-input type="number" [(ngModel)]="form.kg_bruto"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Kg Seco</ion-label>
+      <ion-input type="number" [(ngModel)]="form.kg_seco"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Estado</ion-label>
+      <ion-select [(ngModel)]="form.estado">
+        <ion-select-option value="FRESCO">Fresco</ion-select-option>
+        <ion-select-option value="SEMIFRESCO">Semifresco</ion-select-option>
+        <ion-select-option value="SECO">Seco</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="block" (click)="guardar()">Guardar</ion-button>
+</ion-content>

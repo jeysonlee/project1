@@ -1,78 +1,89 @@
-import { Component } from '@angular/core';
-import { SqliteService } from '../../services/sqlite.service';
-import { HeaderComponent } from 'src/app/componenents/header/header.component';
+import { Component, OnDestroy } from '@angular/core';
+import Chart from 'chart.js/auto';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
-
-   // Importing HeaderComponent to use it in this page
+  styleUrls: ['home.page.scss']
 })
-export class HomePage {
-  public language: string;
-  public languages: string[];
+export class HomePage implements OnDestroy {
 
-  constructor(
-    private sqlite: SqliteService
-  ) {
-    this.language = '';
-    this.languages = [];
+  usuario = 'Juan Pérez';
+
+  grafico1: Chart | null = null;
+  grafico2: Chart | null = null;
+
+  constructor() {}
+
+  // 🔥 IONIC — se ejecuta CADA VEZ que entras a la vista
+  ionViewDidEnter() {
+    this.renderCharts();
   }
 
-  // Al entrar, leemos la base de datos
-  ionViewWillEnter(){
-    this.read();
+  renderCharts() {
+    this.cargarGrafico1();
+    this.cargarGrafico2();
   }
 
-  create(){
-    // Creamos un elemento en la base de datos
-    this.sqlite.create(this.language.toUpperCase()).then( (changes) =>{
-      console.log(changes);
-      console.log("Creado");
-      this.language = '';
-      this.read(); // Volvemos a leer
-    }).catch(err => {
-      console.error(err);
-      console.error("Error al crear");
-    })
+  // 🔥 Destruir gráficos cuando la página se elimina
+  ngOnDestroy() {
+    this.destroyCharts();
   }
 
-  read(){
-    // Leemos los datos de la base de datos
-    this.sqlite.read().then( (languages: string[]) => {
-      this.languages = languages;
-      console.log("Leido");
-      console.log(this.languages);
-    }).catch(err => {
-      console.error(err);
-      console.error("Error al leer");
-    })
+  destroyCharts() {
+    if (this.grafico1) {
+      this.grafico1.destroy();
+      this.grafico1 = null;
+    }
+    if (this.grafico2) {
+      this.grafico2.destroy();
+      this.grafico2 = null;
+    }
   }
 
-  update(language: string){
-    // Actualizamos el elemento (language) por el nuevo elemento (this.language)
-    this.sqlite.update(this.language.toUpperCase(), language).then( (changes) => {
-      console.log(changes);
-      console.log("Actualizado");
-      this.language = '';
-      this.read(); // Volvemos a leer
-    }).catch(err => {
-      console.error(err);
-      console.error("Error al actualizar");
-    })
+  cargarGrafico1() {
+    // Evitar duplicados
+    if (this.grafico1) this.grafico1.destroy();
+
+    const canvas = document.getElementById('grafico1') as HTMLCanvasElement;
+
+    this.grafico1 = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
+        datasets: [{
+          label: 'Kg producidos',
+          data: [20, 25, 30, 28, 35],
+          backgroundColor: '#4CAF50'
+        }]
+      }
+    });
   }
 
-  delete(language: string){
-    // Borramos el elemento
-    this.sqlite.delete(language).then( (changes) => {
-      console.log(changes);
-      console.log("Borrado");
-      this.read(); // Volvemos a leer
-    }).catch(err => {
-      console.error(err);
-      console.error("Error al borrar");
-    })
+  cargarGrafico2() {
+    if (this.grafico2) this.grafico2.destroy();
+
+    const canvas = document.getElementById('grafico2') as HTMLCanvasElement;
+
+    this.grafico2 = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+        datasets: [{
+          label: 'Tareas completadas',
+          data: [10, 15, 12, 18],
+          borderColor: '#2196F3',
+          borderWidth: 2
+        }]
+      }
+    });
   }
+
+  // Botones
+  accion1() {}
+  accion2() {}
+  accion3() {}
+  accion4() {}
 
 }

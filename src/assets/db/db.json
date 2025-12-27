@@ -107,6 +107,8 @@
         { "column": "tarea_id", "value": "TEXT NOT NULL" },
         { "column": "insumo_id", "value": "TEXT NOT NULL" },
         { "column": "cantidad", "value": "NUMERIC" },
+        { "column": "costo_unitario", "value": "NUMERIC" },
+        { "column": "costo_total", "value": "NUMERIC" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "deleted_at", "value": "TEXT" },
@@ -121,6 +123,8 @@
         { "column": "tarea_id", "value": "TEXT NOT NULL" },
         { "column": "herramienta_id", "value": "TEXT NOT NULL" },
         { "column": "cantidad", "value": "NUMERIC" },
+        { "column": "costo_unitario", "value": "NUMERIC" },
+        { "column": "costo_total", "value": "NUMERIC" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "deleted_at", "value": "TEXT" },
@@ -134,7 +138,9 @@
         { "column": "id", "value": "TEXT PRIMARY KEY" },
         { "column": "tarea_id", "value": "TEXT NOT NULL" },
         { "column": "obrero_id", "value": "TEXT NOT NULL" },
-        { "column": "precio", "value": "NUMERIC" },
+        { "column": "precio_dia", "value": "NUMERIC" },
+        { "column": "dias_trabajo", "value": "NUMERIC" },
+        { "column": "costo_total", "value": "NUMERIC" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "deleted_at", "value": "TEXT" },
@@ -199,14 +205,17 @@
       "name": "ventas",
       "schema": [
         { "column": "id", "value": "TEXT PRIMARY KEY" },
-        { "column": "parcela_id", "value": "TEXT NOT NULL" },
         { "column": "fecha_venta", "value": "DATE" },
+        { "column": "nr_venta", "value": "TEXT NOT NULL" },
+        { "column": "estado_humedad", "value": "TEXT NOT NULL" },
+        { "column": "kg_bruto", "value": "NUMERIC" },
+        { "column": "kg_seco", "value": "NUMERIC" },
+        { "column": "kg_bruto_aproximados", "value": "NUMERIC" },
+        { "column": "cantidad_vendida_kg", "value": "NUMERIC" },
+        { "column": "desc_humedad", "value": "NUMERIC" },
+        { "column": "precio_kg", "value": "NUMERIC" },
+        { "column": "total_venta", "value": "NUMERIC" },
         { "column": "lugar_venta", "value": "TEXT" },
-        { "column": "tipo_venta", "value": "TEXT" },
-        { "column": "unidad_medida", "value": "TEXT" },
-        { "column": "cantidad", "value": "NUMERIC" },
-        { "column": "precio_unitario", "value": "NUMERIC" },
-        { "column": "total", "value": "NUMERIC" },
         { "column": "comprador", "value": "TEXT" },
         { "column": "vendedor", "value": "TEXT" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
@@ -214,9 +223,6 @@
         { "column": "deleted_at", "value": "TEXT" },
         { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
         { "column": "synced_at", "value": "TEXT" }
-      ],
-      "indexes": [
-        { "name": "idx_ventas_parcela", "value": "parcela_id" }
       ]
     },
     {
@@ -224,10 +230,12 @@
       "schema": [
         { "column": "id", "value": "TEXT PRIMARY KEY" },
         { "column": "parcela_id", "value": "TEXT NOT NULL" },
+        { "column": "tarea_id", "value": "TEXT NOT NULL" },
         { "column": "fecha_cosecha", "value": "DATE" },
-        { "column": "unidad_medida", "value": "TEXT" },
-        { "column": "cantidad", "value": "NUMERIC" },
-        { "column": "presentacion", "value": "TEXT" },
+        { "column": "cant_baldes", "value": "NUMERIC" },
+        { "column": "kg_bruto", "value": "NUMERIC" },
+        { "column": "kg_seco", "value": "NUMERIC" },
+        { "column": "estado", "value": "TEXT" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "deleted_at", "value": "TEXT" },
@@ -237,6 +245,31 @@
       "indexes": [
         { "name": "idx_cosechas_parcela", "value": "parcela_id" }
       ]
+    },
+    {
+      "name": "venta_cosecha_detalle",
+      "schema": [
+        { "column": "id", "value": "TEXT PRIMARY KEY" },
+        { "column": "venta_id", "value": "TEXT NOT NULL" },
+        { "column": "cosecha_id", "value": "TEXT NOT NULL" },
+        { "column": "parcela_id", "value": "TEXT NOT NULL" },
+        { "column": "kg_bruto", "value": "NUMERIC" },
+        { "column": "kg_seco", "value": "NUMERIC" },
+        { "column": "cantidad_vendida_kg", "value": "NUMERIC" },
+        { "column": "porcentaje_total_venta", "value": "NUMERIC" },
+        { "column": "subtotal", "value": "NUMERIC" },
+        { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "deleted_at", "value": "TEXT" },
+        { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
+        { "column": "synced_at", "value": "TEXT" }
+      ],
+      "indexes": [
+        { "name": "idx_detalle_venta", "value": "venta_id" },
+        { "name": "idx_detalle_cosecha", "value": "cosecha_id" },
+        { "name": "idx_detalle_parcela", "value": "parcela_id" }
+      ]
     }
+
   ]
 }

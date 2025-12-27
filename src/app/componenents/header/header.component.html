@@ -6,6 +6,12 @@
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button *ngIf="!sync.isSynchronized" [disabled]="sync.synchronizing" (click)="synchronize()">
+        <ion-icon  name="warning" color="warning"></ion-icon>      
+      </ion-button>
+      <ion-button *ngIf="sync.isSynchronized" disabled (click)="openProfile()">
+        <ion-icon name="cloud-done" color="success"></ion-icon>      
+      </ion-button>
       <ion-button (click)="openProfile()">
         <ion-icon name="person-circle"></ion-icon>
       </ion-button>
@@ -16,6 +22,14 @@
         <ion-icon name="log-out"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>AGROGEST</ion-title>
+    <!-- CONTENEDOR PERSONALIZADO -->
+    <div class="header-titles">
+      <ion-title>AGROGEST</ion-title>
+
+      <div *ngIf="sync.synchronizing"  class="subtitle">
+        <ion-spinner name="crescent"></ion-spinner>
+        <span>Sincronizando datos...</span>
+      </div>
+    </div>
   </ion-toolbar>
 </ion-header>

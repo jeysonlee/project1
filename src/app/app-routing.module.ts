@@ -26,6 +26,22 @@ const routes: Routes = [
     component: RedirectPage,
     canActivate: [RedirectGuard]
   },
+  {
+    path: 'form-cosechas',
+    loadChildren: () => import('./pages/cosechas/form-cosechas/form-cosechas.module').then( m => m.FormCosechasPageModule)
+  },
+  {
+    path: 'list-cosechas',
+    loadChildren: () => import('./pages/cosechas/list-cosechas/list-cosechas.module').then( m => m.ListCosechasPageModule)
+  },
+  {
+    path: 'form-ventas',
+    loadChildren: () => import('./pages/ventas/form-ventas/form-ventas.module').then( m => m.FormVentasPageModule)
+  },
+  {
+    path: 'list-ventas',
+    loadChildren: () => import('./pages/ventas/list-ventas/list-ventas.module').then( m => m.ListVentasPageModule)
+  },
 
 ];
 

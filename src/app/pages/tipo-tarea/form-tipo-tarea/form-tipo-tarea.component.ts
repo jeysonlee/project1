@@ -8,7 +8,7 @@ import { TiposTareaService } from 'src/app/services/tipos-tarea.service';
   styleUrls: ['./form-tipo-tarea.component.scss'],
 })
 export class FormTipoTareaComponent  implements OnInit {
-  @Input() insumo: any;
+  @Input() tipoTarea: any;
 
     descripcion: string = '';
   isEdit = false;
@@ -18,16 +18,16 @@ export class FormTipoTareaComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.insumo) {
+    if (this.tipoTarea) {
       this.isEdit = true;
-      this.descripcion = this.insumo.descripcion || '';
+      this.descripcion = this.tipoTarea.descripcion || '';
     }
   }
   async save() {
     if (!this.descripcion.trim()) return;
 
     if (this.isEdit) {
-      await this.tiposTareaService.update(this.insumo.id, this.descripcion);
+      await this.tiposTareaService.update(this.tipoTarea.id, this.descripcion);
     } else {
       await this.tiposTareaService.create(this.descripcion);
     }

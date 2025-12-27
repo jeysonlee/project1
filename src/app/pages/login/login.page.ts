@@ -13,7 +13,7 @@ export class LoginPage {
   username = '';
   password = '';
 
-  @ViewChild('loginForm') loginForm!: NgForm;
+ @ViewChild('loginForm', { static: false }) loginForm!: NgForm;
 
   constructor(
     private users: UsersService,
@@ -21,17 +21,22 @@ export class LoginPage {
     private alertCtrl: AlertController // 🔹 inyectamos AlertController
   ) {}
 
-  async onLogin() {
-    const user = await this.users.login(this.username, this.password);
-    if (user) {
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      this.loginForm.resetForm();
-      this.router.navigateByUrl('/tabs/home');
-    } else {
-      await this.showAlert('Error', 'Usuario o contraseña incorrectos'); // 🔹 alerta Ionic
-      this.loginForm.resetForm();
-    }
+
+
+async onLogin() {
+  const user = await this.users.login(this.username, this.password);
+
+  if (user) {
+    this.loginForm.resetForm(); // ✅ reset antes de navegar
+
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    this.router.navigateByUrl('/tabs/home');
+  } else {
+    await this.showAlert('Error', 'Usuario o contraseña incorrectos');
+    this.loginForm.resetForm();
   }
+}
+
 
   // 🔹 Función para mostrar la alerta
   async showAlert(header: string, message: string) {

@@ -9,7 +9,7 @@ import { HerramientasService } from 'src/app/services/herramientas.service';
   styleUrls: ['./form-herramientas.component.scss'],
 })
 export class FormHerramientasComponent  implements OnInit {
-  @Input() insumo: any;
+  @Input() herramienta: any;
   nombre = '';
   descripcion: string = '';
   categoria: string = '';
@@ -24,14 +24,14 @@ export class FormHerramientasComponent  implements OnInit {
   ) { }
 
   ngOnInit() {
-    if (this.insumo) {
+    if (this.herramienta) {
       this.isEdit = true;
-      this.nombre = this.insumo.nombre;
-      this.descripcion = this.insumo.descripcion || '';
-      this.categoria = this.insumo.categoria || '';
-      this.costo_unitario = this.insumo.costo_unitario ?? 0;
-      this.unidad_medida = this.insumo.unidad_medida || '';
-      this.foto = this.insumo.foto || null;
+      this.nombre = this.herramienta.nombre;
+      this.descripcion = this.herramienta.descripcion || '';
+      this.categoria = this.herramienta.categoria || '';
+      this.costo_unitario = this.herramienta.costo_unitario ?? 0;
+      this.unidad_medida = this.herramienta.unidad_medida || '';
+      this.foto = this.herramienta.foto || null;
     }
   }
   async takePhoto(fromGallery = false) {
@@ -47,7 +47,7 @@ export class FormHerramientasComponent  implements OnInit {
 
     if (this.isEdit) {
       await this.herramientasService.update(
-        this.insumo.id,
+        this.herramienta.id,
         this.nombre,
         this.descripcion,
         this.categoria,

@@ -16,25 +16,4 @@ export class TabsPage implements OnInit {
 
   ngOnInit() {}
 
-  async logout() {
-    const alert = await this.alertCtrl.create({
-      header: 'Confirmar',
-      message: '¿Seguro que quieres cerrar sesión?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Sí, salir',
-          handler: () => {
-            this.userService.logout();
-            location.reload(); // Recarga la app/página
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  }
 }

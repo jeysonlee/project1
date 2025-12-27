@@ -8,96 +8,243 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-card>
-  <ion-list>
-    <ion-item>
-      <ion-label position="stacked">Parcela</ion-label>
-      <ion-input [(ngModel)]="form.parcela_id"></ion-input>
-    </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Tipo de Tarea</ion-label>
-      <ion-input [(ngModel)]="form.tipo_tarea_id"></ion-input>
-    </ion-item>
+  <!-- DATOS GENERALES -->
+  <ion-card>
+    <ion-list>
+
+      <ion-item>
+        <ion-label position="stacked">Parcela</ion-label>
+        <ion-select [(ngModel)]="form.parcela_id" interface="popover">
+          <ion-select-option *ngFor="let p of parcelas" [value]="p.id">
+            {{ p.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo de Tarea</ion-label>
+        <ion-select [(ngModel)]="form.tipo_tarea_id" interface="popover"
+          (ionChange)="onTipoTareaChange()">
+          <ion-select-option *ngFor="let t of tipoTareas" [value]="t.id">
+            {{ t.descripcion }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
       <ion-grid>
         <ion-row>
-          <!-- Fecha Inicio -->
           <ion-col size="6">
-            <ion-item (click)="abrirPopover($event, 'inicio')">
+            <ion-item (click)="abrirPopover($event,'inicio')">
               <ion-label position="stacked">Fecha Inicio</ion-label>
-              <ion-input [value]="form.fecha_inicio | date:'dd/MM/yyyy'" readonly></ion-input>
+              <ion-input [value]="form.fecha_inicio | date:'dd/MM/yyyy'" readonly />
             </ion-item>
           </ion-col>
 
-          <!-- Fecha Fin -->
           <ion-col size="6">
-            <ion-item (click)="abrirPopover($event, 'fin')">
+            <ion-item (click)="abrirPopover($event,'fin')">
               <ion-label position="stacked">Fecha Fin</ion-label>
-              <ion-input [value]="form.fecha_fin | date:'dd/MM/yyyy'" readonly></ion-input>
+              <ion-input [value]="form.fecha_fin | date:'dd/MM/yyyy'" readonly />
             </ion-item>
           </ion-col>
         </ion-row>
       </ion-grid>
-</ion-list>
-</ion-card>
-<!-- Popover flotante -->
-  <ion-popover [isOpen]="popoverOpen" [event]="popoverEvent" (didDismiss)="popoverOpen=false">
+
+    </ion-list>
+  </ion-card>
+
+  <!-- POPOVER FECHA -->
+  <ion-popover [isOpen]="popoverOpen" [event]="popoverEvent"
+    (didDismiss)="popoverOpen=false">
     <ng-template>
-      <ion-datetime
-        [(ngModel)]="tempFecha"
-        displayFormat="DD/MM/YYYY"
+      <ion-datetime [(ngModel)]="tempFecha"
+        presentation="date"
         (ionChange)="confirmarFecha()">
       </ion-datetime>
     </ng-template>
   </ion-popover>
 
-
-  <!-- Obreros -->
-  <ion-card>
+  <!-- SECCIÓN COSECHA -->
+  <ion-card *ngIf="mostrarCosecha()">
     <ion-card-header>
-      <ion-card-title>Obreros</ion-card-title>
-      <ion-button fill="clear" (click)="agregarObrero()">Agregar</ion-button>
+      <ion-card-title>Sección Cosecha</ion-card-title>
     </ion-card-header>
-    <ion-list>
-      <ion-item *ngFor="let o of obreros">
-        {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency }}
-      </ion-item>
-    </ion-list>
-  </ion-card>
 
-  <!-- Herramientas -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Herramientas</ion-card-title>
-      <ion-button fill="clear" (click)="agregarHerramienta()">Agregar</ion-button>
-    </ion-card-header>
-    <ion-list>
-      <ion-item *ngFor="let h of herramientas">
-        {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency }}
-      </ion-item>
-    </ion-list>
-  </ion-card>
-
-  <!-- Insumos -->
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Insumos</ion-card-title>
-      <ion-button fill="clear" (click)="agregarInsumo()">Agregar</ion-button>
-    </ion-card-header>
-    <ion-list>
-      <ion-item *ngFor="let i of insumos">
-        {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency }}
-      </ion-item>
-    </ion-list>
-  </ion-card>
-
-  <!-- Totales -->
-  <ion-card>
     <ion-card-content>
-      <p>Obreros: {{ totalObreros | currency }}</p>
-      <p>Herramientas: {{ totalHerramientas | currency }}</p>
-      <p>Insumos: {{ totalInsumos | currency }}</p>
-      <h2>Total: {{ totalGeneral | currency }}</h2>
+      <ion-item>
+        <ion-label position="stacked">Baldes</ion-label>
+        <ion-input type="number" [(ngModel)]="form.cant_baldes"
+          (ionInput)="onBaldesChange()" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Kg Fresco</ion-label>
+        <ion-input type="number" [(ngModel)]="form.cant_kg_fresco"
+          (ionInput)="onKgFrescoChange()" />
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Kg Seco</ion-label>
+        <ion-input [value]="form.cant_kg_secado" readonly />
+      </ion-item>
     </ion-card-content>
   </ion-card>
+
+  <!-- ACORDEONES -->
+   <ion-card>
+    <ion-accordion-group>
+
+      <!-- OBREROS -->
+      <ion-accordion value="obreros">
+        <ion-item slot="header">
+          <ion-label>Obreros</ion-label>
+        </ion-item>
+
+        <div slot="content" class="ion-padding">
+
+          <ion-item>
+            <ion-label position="stacked">Obrero</ion-label>
+            <ion-select [(ngModel)]="formObrero.obrero_id" (ionChange)="onSelectObrero()" interface="popover">
+              <ion-select-option *ngFor="let o of obrerosCatalogo" [value]="o.id">
+                {{ o.nombre }} {{ o.apellido }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Días</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formObrero.dias_trabajados"
+              (ionInput)="calcularTotalObrero()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Costo día</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formObrero.costo_dia"
+              (ionInput)="calcularTotalObrero()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Total</ion-label>
+            <ion-input [value]="formObrero.costo_total" readonly />
+          </ion-item>
+
+          <ion-button expand="block" (click)="agregarObrero()">Agregar</ion-button>
+
+          <ion-list>
+            <ion-item *ngFor="let o of obreros">
+              {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency:'S/ ' }}
+            </ion-item>
+          </ion-list>
+
+        </div>
+      </ion-accordion>
+
+      <!-- INSUMOS -->
+      <ion-accordion value="insumos">
+        <ion-item slot="header">
+          <ion-label>Insumos</ion-label>
+        </ion-item>
+
+        <div slot="content" class="ion-padding">
+
+          <ion-item>
+            <ion-label position="stacked">Insumo</ion-label>
+            <ion-select [(ngModel)]="formInsumo.insumo_id" (ionChange)="onSelectInsumo()" interface="popover">
+              <ion-select-option *ngFor="let i of insumosCatalogo" [value]="i.id">
+                {{ i.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Cantidad</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formInsumo.cantidad"
+              (ionInput)="calcularTotalInsumo()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Costo unitario</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formInsumo.costo_unitario"
+              (ionInput)="calcularTotalInsumo()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Total</ion-label>
+            <ion-input [value]="formInsumo.costo_total" readonly />
+          </ion-item>
+
+          <ion-button expand="block" (click)="agregarInsumo()">Agregar</ion-button>
+
+          <ion-list>
+            <ion-item *ngFor="let i of insumos">
+              {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency:'S/ ' }}
+            </ion-item>
+          </ion-list>
+
+        </div>
+      </ion-accordion>
+
+      <!-- HERRAMIENTAS -->
+      <ion-accordion value="herramientas">
+        <ion-item slot="header">
+          <ion-label>Herramientas</ion-label>
+        </ion-item>
+
+        <div slot="content" class="ion-padding">
+
+          <ion-item>
+            <ion-label position="stacked">Herramienta</ion-label>
+            <ion-select [(ngModel)]="formHerramienta.herramienta_id" (ionChange)="onSelectHerramienta()" interface="popover">
+              <ion-select-option *ngFor="let h of herramientasCatalogo" [value]="h.id">
+                {{ h.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Cantidad</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formHerramienta.cantidad"
+              (ionInput)="calcularTotalHerramienta()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Costo unitario</ion-label>
+            <ion-input type="number"
+              [(ngModel)]="formHerramienta.costo_unitario"
+              (ionInput)="calcularTotalHerramienta()" />
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Total</ion-label>
+            <ion-input [value]="formHerramienta.costo_total" readonly />
+          </ion-item>
+
+          <ion-button expand="block" (click)="agregarHerramienta()">Agregar</ion-button>
+
+          <ion-list>
+            <ion-item *ngFor="let h of herramientas">
+              {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency:'S/ ' }}
+            </ion-item>
+          </ion-list>
+
+        </div>
+      </ion-accordion>
+
+    </ion-accordion-group>
+  </ion-card>
+  <!-- TOTALES -->
+  <ion-card>
+    <ion-card-content>
+      <p>Obreros: {{ totalObreros | currency:'S/ ' }}</p>
+      <p>Herramientas: {{ totalHerramientas | currency:'S/ ' }}</p>
+      <p>Insumos: {{ totalInsumos | currency:'S/ ' }}</p>
+      <h2>Total: {{ totalGeneral | currency:'S/ ' }}</h2>
+    </ion-card-content>
+  </ion-card>
+
 </ion-content>
