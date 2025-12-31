@@ -1,0 +1,36 @@
+creamos un proyecto en angular 16.2.12
+	*ng g new 
+instalar capacitor
+para la conexion
+	npm install @capacitor/core@5.2.2 @capacitor/cli@5.2.2
+	npx cap --version
+
+agregar andoriod
+	npm install @capacitor/android@5.2.2 --instalar esa version de capacitor que es la compatible 
+	npx cap add android --------------------generar el archivo para android
+	ng build
+	ionic build                    -------- para generear el archivo para una app en android 
+
+para  abrir en androdstudio
+	npx cap open android
+
+
+	npx cap sync android -------------------sincronyzar con android
+
+parte 2
+npm install -g @ionic/cli
+ionic start miCrud blank --type=angular ya viene con capacitor integrado
+cd miCrud
+ npm install --save @capacitor-community/sqlite
+npm install cordova-sqlite-storage
+npm install --save jeep-sqlite
+npm install --save sql.js
+ npm install --save @capacitor/device
+npm install --save @capacitor/preferences
+
+
+
+para clonar 
+git clone https://github.com/DiscoDurodeRoer/crud-ionic-sqlite.git
+npm install
+coppiar y pegar el src/app
