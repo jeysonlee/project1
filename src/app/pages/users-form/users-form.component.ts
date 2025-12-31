@@ -13,7 +13,12 @@ export class UsersFormComponent implements OnInit {
 
   username = '';
   password: string= '';
-  role_id: string = '';
+  rol_id: string = '';
+  rol_nombre = '';
+  nombre = '';
+  apellido = '';
+  email = '';
+  telefono = '';
   isEdit = false;
   roles: any[] = [];
 
@@ -27,7 +32,12 @@ export class UsersFormComponent implements OnInit {
     if (this.user) {
       this.isEdit = true;
       this.username = this.user.username;
-      this.role_id = this.user.rol_id;
+      this.rol_id = this.user.rol_id;
+      this.rol_nombre = this.user.rol_nombre;
+      this.nombre = this.user.nombre;
+      this.apellido = this.user.apellido;
+      this.email = this.user.email;
+      this.telefono = this.user.telefono;
     }
     this.roles = await this.roleService.read(); // Cargar roles disponibles
   }
@@ -39,14 +49,24 @@ async save() {
       id: this.user.id,
       username: this.username,
       password: this.password.trim() ? this.password : null,
-      rol_id: this.role_id
+      rol_id: this.rol_id,
+      rol_nombre: this.rol_nombre,
+      nombre: this.nombre,
+      apellido: this.apellido,
+      email: this.email,
+      telefono: this.telefono
     });
   } else {
     await this.usersService.create({
       id: uuidv4(),
       username: this.username,
       password: this.password,
-      role_id: this.role_id
+      rol_id: this.rol_id,
+      rol_nombre: this.rol_nombre,
+      nombre: this.nombre,
+      apellido: this.apellido,
+      email: this.email,
+      telefono: this.telefono
     });
   }
 

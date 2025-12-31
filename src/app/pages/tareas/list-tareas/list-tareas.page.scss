@@ -11,3 +11,33 @@ ion-card-title {
 ion-note {
   font-weight: bold;
 }
+
+.detalle-card {
+  background-color: var(--ion-color-light);
+  margin: 8px 0;
+
+  ion-card-content {
+    padding: 12px;
+  }
+
+  ion-badge {
+    margin-left: 8px;
+    font-size: 0.7rem;
+  }
+
+  p {
+    margin: 4px 0 8px 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  small {
+    font-size: 0.75rem;
+  }
+}
+
+ion-list-header {
+  margin-top: 16px;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}

@@ -18,7 +18,18 @@ export class UsersService {
   }
 
   // ✅ Crear usuario
-  async create(user: { id: string; username: string; password: string; role_id: string }) {
+  async create(user: {
+    id: string;
+    username: string;
+    password: string;
+    rol_id: string;
+    rol_nombre: string;
+    nombre: string;
+    apellido: string;
+    email: string;
+    telefono: string;
+
+  }) {
     const dbName = await this.sqlite.getDbName();
     const hash = bcrypt.hashSync(user.password, 8);
     const now = new Date().toISOString();
@@ -30,7 +41,7 @@ export class UsersService {
           INSERT INTO usuarios (id, username, password, rol_id, created_at, is_synced)
           VALUES (?, ?, ?, ?, ?, 0)
         `,
-        values: [user.id, user.username, hash, user.role_id, now]
+        values: [user.id, user.username, hash, user.rol_id, now]
       }]
     });
     await this.saveIfWeb();
@@ -71,7 +82,17 @@ export class UsersService {
   }
 
   // ✅ Actualizar usuario (soft update con updated_at)
-  async update(user: { id: string; username: string; password?: string | null; rol_id: string }) {
+  async update(user: {
+    id: string;
+    username: string;
+    password?: string | null;
+    rol_id: string;
+    rol_nombre: string;
+    nombre: string;
+    apellido: string;
+    email: string;
+    telefono: string
+  }) {
     const dbName = await this.sqlite.getDbName();
     let statement = '';
     let values: any[] = [];

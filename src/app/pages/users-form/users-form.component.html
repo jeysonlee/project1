@@ -24,12 +24,28 @@
 
 <ion-item>
   <ion-label position="stacked">Rol</ion-label>
-  <ion-select [(ngModel)]="role_id" placeholder="Seleccione un rol">
+  <ion-select [(ngModel)]="rol_id" placeholder="Seleccione un rol">
     <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
       {{ rol.nombre }}
     </ion-select-option>
   </ion-select>
 </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Nombre</ion-label>
+    <ion-input [(ngModel)]="nombre"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Apellido</ion-label>
+    <ion-input [(ngModel)]="apellido"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Email</ion-label>
+    <ion-input type="email" [(ngModel)]="email"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Teléfono</ion-label>
+    <ion-input [(ngModel)]="telefono"></ion-input>
+  </ion-item>
 
 
   <ion-button expand="block" (click)="save()" class="ion-margin-top">

@@ -52,7 +52,30 @@ const routes: Routes = [
           path: 'form-tareas',
           loadChildren: () => import('../pages/tareas/form-tareas/form-tareas.module').then( m => m.FormTareasPageModule)
         },
-
+        {
+          path: 'ventas',
+          loadChildren: () => import('../pages/ventas/list-ventas/list-ventas.module').then( m => m.ListVentasPageModule)
+        },
+        {
+          path: 'form-ventas',
+          loadChildren: () => import('../pages/ventas/form-ventas/form-ventas.module').then( m => m.FormVentasPageModule)
+        },
+        {
+          path: 'form-ventas/:id',
+          loadChildren: () => import('../pages/ventas/form-ventas/form-ventas.module').then( m => m.FormVentasPageModule)
+        },
+        {
+          path: 'cosechas',
+          loadChildren: () => import('../pages/cosechas/list-cosechas/list-cosechas.module').then( m => m.ListCosechasPageModule)
+        },
+        {
+          path: 'form-cosechas',
+          loadChildren: () => import('../pages/cosechas/form-cosechas/form-cosechas.module').then( m => m.FormCosechasPageModule)
+        },
+        {
+          path: 'form-cosechas/:id',
+          loadChildren: () => import('../pages/cosechas/form-cosechas/form-cosechas.module').then( m => m.FormCosechasPageModule)
+        },
 
 
 

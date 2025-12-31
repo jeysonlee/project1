@@ -1,17 +1,96 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Cosechas</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header></app-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let c of cosechas">
-      <ion-label>
-        <h2>{{ c.fecha_cosecha }}</h2>
-        <p>Kg Bruto: {{ c.kg_bruto }} | Kg Seco: {{ c.kg_seco }}</p>
-      </ion-label>
-      <ion-button fill="clear" (click)="editar(c.id)">Editar</ion-button>
-    </ion-item>
+  <ion-toolbar color="light">
+    <ion-title size="small">Cosechas</ion-title>
+
+  </ion-toolbar>
+
+  <ion-list lines="none">
+    <ion-card *ngFor="let c of cosechas">
+      <ion-card-header>
+        <ion-card-title>
+          Cosecha: {{ c.fecha_cosecha | date:'dd/MM/yyyy' }}
+        </ion-card-title>
+
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="6">
+              <strong>Baldes:
+                {{ c.cant_baldes}}
+              </strong><br />
+            </ion-col>
+            <ion-col size="6">
+              <ion-badge
+                [color]="getEstadoColor(c.estado)"
+              >
+                {{ c.estado }}
+              </ion-badge>
+            </ion-col>
+
+          </ion-row>
+          <ion-row>
+
+            <ion-col size="6">
+              <strong>Kg Bruto:</strong><br />
+              {{ c.kg_bruto }} kg
+            </ion-col>
+            <ion-col size="6">
+              <strong>Disponible:</strong><br />
+              {{ c.kg_bruto_disponible }} kg
+            </ion-col>
+          </ion-row>
+
+          <ion-row>
+            <ion-col size="6">
+              <strong>Kg Seco:</strong><br />
+              {{ c.kg_seco }} kg
+            </ion-col>
+            <ion-col size="6">
+              <strong>Disponible:</strong><br />
+              {{ c.kg_seco_disponible }} kg
+            </ion-col>
+          </ion-row>
+
+          <ion-row class="ion-margin-top">
+
+          </ion-row>
+        </ion-grid>
+
+        <ion-row class="ion-margin-top">
+
+          <!-- Editar: solo cuando está COSECHADO -->
+          <ion-col [size]="c.estado === 'COSECHADO' ? 6 : 12">
+            <ion-button
+              expand="block"
+              fill="solid"
+              color="secondary"
+              (click)="editar( c.id )"
+            >
+              <ion-icon slot="start" name="create-outline"></ion-icon>
+              Editar
+            </ion-button>
+          </ion-col>
+
+          <!-- Eliminar: tamaño dinámico -->
+          <ion-col [size]="c.estado === 'COSECHADO' ? 6 : 12" *ngIf="c.estado=== 'COSECHADO'">
+            <ion-button
+              expand="block"
+              fill="solid"
+              color="danger"
+              (click)="eliminar(c.id)"
+            >
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Eliminar
+            </ion-button>
+          </ion-col>
+
+        </ion-row>
+
+      </ion-card-content>
+    </ion-card>
   </ion-list>
 </ion-content>

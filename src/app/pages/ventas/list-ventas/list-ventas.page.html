@@ -1,16 +1,131 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Ventas</ion-title>
-  </ion-toolbar>
-</ion-header>
 
+<app-header></app-header>
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let v of ventas">
-      <ion-label>
-        <h2>{{ v.fecha_venta }}</h2>
-        <p>Total: S/ {{ v.total_venta }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+
+  <!-- BUSCADOR Y BOTÓN NUEVO -->
+  <ion-grid>
+    <ion-row class="ion-align-items-center">
+      <ion-col size="10">
+        <ion-searchbar
+          placeholder="Buscar Ventas"
+        ></ion-searchbar>
+      </ion-col>
+
+      <ion-col size="2" class="ion-text-end">
+        <ion-button expand="block" size="small" (click)="nuevo()">
+          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+<ion-card *ngFor="let v of ventas">
+
+  <!-- HEADER -->
+  <ion-card-header>
+    <ion-card-title>
+      Venta N° {{ v.nr_venta }}
+    </ion-card-title>
+    <ion-card-subtitle>
+      {{ v.fecha_venta | date:'dd/MM/yyyy HH:mm' }}
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <!-- RESUMEN -->
+  <ion-card-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="6">
+          <strong>Kg vendidos</strong><br />
+          {{ v.cantidad_vendida_kg }} kg
+        </ion-col>
+        <ion-col size="6">
+          <strong>Estado humedad</strong><br />
+          {{ v.estado_humedad }}
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col size="6">
+          <strong>Precio/Kg</strong><br />
+          S/ {{ v.precio_kg }}
+        </ion-col>
+        <ion-col size="6">
+          <strong>Total</strong><br />
+          <strong>S/ {{ v.total_venta }}</strong>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- BOTONES -->
+    <ion-row class="ion-margin-top">
+      <ion-col size="4">
+        <ion-button
+          expand="block"
+          fill="solid"
+          (click)="verDetalle(v.id)"
+        >
+          <ion-icon
+
+            slot="start"
+            [name]="ventaExpandidaId === v.id ? 'chevron-up-outline' : 'chevron-down-outline'"
+          ></ion-icon>
+          Detalle
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="4">
+        <ion-button
+        expand="block"
+        color="secondary"
+        (click)="editarVenta(v.id)"
+        >
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          Editar
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="4">
+        <ion-button
+          expand="block"
+          color="danger"
+          (click)="confirmarEliminar(v)"
+        >
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Eliminar
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <!-- ACORDEÓN -->
+    <div *ngIf="ventaExpandidaId === v.id && detallesCache[v.id]">
+
+      <ion-list class="ion-margin-top" lines="full">
+        <ion-item-divider color="light">
+          <ion-label>
+            Detalle por Cosecha
+          </ion-label>
+        </ion-item-divider>
+
+        <ion-item
+          *ngFor="let d of detallesCache[v.id].detalles"
+        >
+          <ion-label>
+            <h3>Cosecha: {{ d.cosecha_id }}</h3>
+            <p>Kg Bruto: {{ d.kg_bruto }}</p>
+            <p>Kg Seco: {{ d.kg_seco }}</p>
+            <p>Vendido: {{ d.cantidad_vendida_kg }} kg</p>
+            <p>Participación: {{ d.porcentaje_total_venta }} %</p>
+          </ion-label>
+
+          <ion-note slot="end">
+            <strong>S/ {{ d.subtotal }}</strong>
+          </ion-note>
+        </ion-item>
+      </ion-list>
+
+    </div>
+  </ion-card-content>
+
+</ion-card>
 </ion-content>

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CrudGenericService } from './crud-generic.service';
+import { CosechasService } from './cosechas.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({ providedIn: 'root' })
@@ -7,7 +8,13 @@ export class VentasService {
   private table = 'ventas';
   private detalleTable = 'venta_cosecha_detalle';
 
-  constructor(private crud: CrudGenericService) {}
+  constructor(
+    private crud: CrudGenericService,
+    private cosechasService: CosechasService
+  ) {}
+  private round4(value: number): number {
+    return Math.round(value * 10000) / 10000;
+  }
 
   // =============================
   // CREAR VENTA CON DETALLES
@@ -19,6 +26,7 @@ export class VentasService {
       estado_humedad: string;
       kg_bruto: number;
       kg_seco: number;
+      kg_seco_aproximados: number;
       kg_bruto_aproximados: number;
       cantidad_vendida_kg: number;
       desc_humedad: number;
@@ -32,7 +40,9 @@ export class VentasService {
       cosecha_id: string;
       parcela_id: string;
       kg_bruto: number;
+      kg_bruto_disponible: number;
       kg_seco: number;
+      kg_seco_disponible: number;
       cantidad_vendida_kg: number;
       porcentaje_total_venta: number;
       subtotal: number;
@@ -42,20 +52,46 @@ export class VentasService {
     const ventaResult = await this.crud.create(this.table, venta);
     const ventaId = ventaResult.id;
 
-    // 2️⃣ Crear detalles
-    for (const d of detalles) {
-      await this.crud.create(this.detalleTable, {
-        id: uuidv4(),
-        venta_id: ventaId,
-        cosecha_id: d.cosecha_id,
-        parcela_id: d.parcela_id,
-        kg_bruto: d.kg_bruto,
-        kg_seco: d.kg_seco,
-        cantidad_vendida_kg: d.cantidad_vendida_kg,
-        porcentaje_total_venta: d.porcentaje_total_venta,
-        subtotal: d.subtotal
-      });
-    }
+    // 2️⃣ Crear detalles y actualizar cantidades disponibles en cosechas
+  for (const d of detalles) {
+
+  // 1️⃣ Guardar detalle de venta
+  await this.crud.create(this.detalleTable, {
+    id: uuidv4(),
+    venta_id: ventaId,
+    cosecha_id: d.cosecha_id,
+    parcela_id: d.parcela_id,
+    kg_bruto: d.kg_bruto,
+    kg_seco: d.kg_seco,
+    cantidad_vendida_kg: d.cantidad_vendida_kg,
+    porcentaje_total_venta: d.porcentaje_total_venta,
+    subtotal: d.subtotal
+  });
+
+  // 2️⃣ Obtener cosecha actual
+  const cosecha: any = await this.cosechasService.getById(d.cosecha_id);
+  if (!cosecha) continue;
+
+  // 3️⃣ Descuento directo
+  let nuevoBruto =
+    cosecha.kg_bruto_disponible - d.kg_bruto;
+
+  let nuevoSeco =
+    cosecha.kg_seco_disponible - d.kg_seco;
+
+  // 4️⃣ Protección y redondeo
+  nuevoBruto = this.round4(Math.max(0, nuevoBruto));
+  nuevoSeco  = this.round4(Math.max(0, nuevoSeco));
+
+  // 5️⃣ Actualizar cosecha (SIN estado)
+  await this.cosechasService.actualizarDisponibles(
+    d.cosecha_id,
+    nuevoBruto,
+    nuevoSeco
+  );
+}
+
+
 
     return ventaId;
   }
@@ -143,11 +179,77 @@ export class VentasService {
   // ELIMINAR VENTA + DETALLES
   // =============================
   async delete(id: string) {
+
+    // 1️⃣ Obtener detalles de la venta
+    const detalles: any[] = await this.crud.query(
+      `SELECT * FROM ${this.detalleTable} WHERE venta_id = ?`,
+      [id]
+    );
+
+    // 2️⃣ Revertir impacto en cada cosecha
+    for (const d of detalles) {
+
+      const cosecha: any = await this.cosechasService.getById(d.cosecha_id);
+      if (!cosecha) continue;
+
+      const nuevoBruto =
+        cosecha.kg_bruto_disponible + Number(d.kg_bruto);
+
+      const nuevoSeco =
+        cosecha.kg_seco_disponible + Number(d.kg_seco);
+
+      await this.cosechasService.actualizarDisponibles(
+        d.cosecha_id,
+        nuevoBruto,
+        nuevoSeco
+      );
+    }
+
+    // 3️⃣ Eliminar detalles
     await this.crud.query(
       `DELETE FROM ${this.detalleTable} WHERE venta_id = ?`,
       [id]
     );
 
+    // 4️⃣ Eliminar venta
     return this.crud.delete(this.table, id);
   }
+  async getWithDetails(ventaId: string) {
+  // 1️⃣ Obtener venta
+  const venta: any = await this.crud.getById(this.table, ventaId);
+  if (!venta) return null;
+
+  // 2️⃣ Obtener detalles de cosechas
+  const detalles: any[] = await this.crud.query(
+    `
+    SELECT
+      d.id,
+      d.cosecha_id,
+      d.parcela_id,
+      d.kg_bruto,
+      d.kg_seco,
+      d.cantidad_vendida_kg,
+      d.porcentaje_total_venta,
+      d.subtotal
+    FROM ${this.detalleTable} d
+    WHERE d.venta_id = ?
+      AND d.deleted_at IS NULL
+    `,
+    [ventaId]
+  );
+
+  return {
+    ...venta,
+    detalles: detalles.map(d => ({
+      ...d,
+      kg_bruto: Number(d.kg_bruto),
+      kg_seco: Number(d.kg_seco),
+      cantidad_vendida_kg: Number(d.cantidad_vendida_kg),
+      porcentaje_total_venta: Number(d.porcentaje_total_venta),
+      subtotal: Number(d.subtotal),
+    })),
+  };
+}
+
+
 }

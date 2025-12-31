@@ -72,26 +72,50 @@
 
     <ion-card-content>
       <ion-item>
+        <ion-label>Editar merma (%)</ion-label>
+        <ion-toggle [(ngModel)]="permitirEditarMerma"></ion-toggle>
+      </ion-item>
+      <ion-item *ngIf="permitirEditarMerma">
+        <ion-label position="stacked">Merma (%)</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="form.pctj_merma"
+          [readonly]="!permitirEditarMerma"
+          (ionInput)="onMermaChange()">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
         <ion-label position="stacked">Baldes</ion-label>
-        <ion-input type="number" [(ngModel)]="form.cant_baldes"
-          (ionInput)="onBaldesChange()" />
+        <ion-input
+          type="number"
+          [(ngModel)]="form.cant_baldes"
+          (ionInput)="onBaldesChange()">
+        </ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Kg Fresco</ion-label>
-        <ion-input type="number" [(ngModel)]="form.cant_kg_fresco"
-          (ionInput)="onKgFrescoChange()" />
+        <ion-input
+          type="number"
+          [(ngModel)]="form.cant_kg_fresco"
+          (ionInput)="onKgFrescoChange()">
+        </ion-input>
       </ion-item>
 
       <ion-item>
         <ion-label position="stacked">Kg Seco</ion-label>
-        <ion-input [value]="form.cant_kg_secado" readonly />
+        <ion-input
+          [value]="form.cant_kg_secado"
+          readonly>
+        </ion-input>
       </ion-item>
+
     </ion-card-content>
   </ion-card>
 
   <!-- ACORDEONES -->
-   <ion-card>
+   <ion-card >
     <ion-accordion-group>
 
       <!-- OBREROS -->
@@ -132,11 +156,17 @@
 
           <ion-button expand="block" (click)="agregarObrero()">Agregar</ion-button>
 
-          <ion-list>
-            <ion-item *ngFor="let o of obreros">
-              {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency:'S/ ' }}
-            </ion-item>
-          </ion-list>
+        <ion-item *ngFor="let o of obreros; let i = index">
+          {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency:'S/ ' }}
+          <ion-button
+            slot="end"
+            color="danger"
+            fill="clear"
+            (click)="eliminarObrero(i)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+
 
         </div>
       </ion-accordion>
@@ -179,11 +209,18 @@
 
           <ion-button expand="block" (click)="agregarInsumo()">Agregar</ion-button>
 
-          <ion-list>
-            <ion-item *ngFor="let i of insumos">
-              {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency:'S/ ' }}
-            </ion-item>
-          </ion-list>
+
+          <ion-item *ngFor="let i of insumos">
+            {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency:'S/ ' }}
+            <ion-button
+            slot="end"
+            color="danger"
+            fill="clear"
+            (click)="eliminarInsumo(i)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+          </ion-item>
+
 
         </div>
       </ion-accordion>
@@ -226,11 +263,17 @@
 
           <ion-button expand="block" (click)="agregarHerramienta()">Agregar</ion-button>
 
-          <ion-list>
-            <ion-item *ngFor="let h of herramientas">
-              {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency:'S/ ' }}
-            </ion-item>
-          </ion-list>
+          <ion-item *ngFor="let h of herramientas">
+            {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency:'S/ ' }}
+            <ion-button
+            slot="end"
+            color="danger"
+            fill="clear"
+            (click)="eliminarHerramienta(h)">
+            <ion-icon name="trash"></ion-icon>
+          </ion-button>
+          </ion-item>
+
 
         </div>
       </ion-accordion>

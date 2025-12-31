@@ -7,6 +7,14 @@
 <ion-content>
   <ion-list>
     <ion-item>
+      <ion-label position="stacked">Parcela</ion-label>
+      <ion-select [(ngModel)]="form.parcela_id" interface="popover">
+        <ion-select-option *ngFor="let p of parcelas" [value]="p.id">
+          {{ p.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
       <ion-label position="stacked">Fecha</ion-label>
       <ion-input type="date" [(ngModel)]="form.fecha_cosecha"></ion-input>
     </ion-item>
@@ -27,14 +35,30 @@
     </ion-item>
 
     <ion-item>
-      <ion-label position="stacked">Estado</ion-label>
+      <ion-label>Estado</ion-label>
       <ion-select [(ngModel)]="form.estado">
-        <ion-select-option value="FRESCO">Fresco</ion-select-option>
-        <ion-select-option value="SEMIFRESCO">Semifresco</ion-select-option>
-        <ion-select-option value="SECO">Seco</ion-select-option>
+        <ion-select-option value="COSECHADO">COSECHADO</ion-select-option>
+        <ion-select-option value="PARCIAL">PARCIAL</ion-select-option>
+        <ion-select-option value="VENDIDO">VENDIDO</ion-select-option>
       </ion-select>
     </ion-item>
-  </ion-list>
 
-  <ion-button expand="block" (click)="guardar()">Guardar</ion-button>
+  </ion-list>
+  <ion-row>
+    <ion-col size="6">
+      <ion-button
+      color="medium"
+      expand="block"
+      (click)="cancelar()">
+      Cancelar
+    </ion-button>
+    </ion-col >
+
+    <ion-col size="6">
+      <ion-button expand="block" (click)="guardar()">Guardar</ion-button>
+    </ion-col>
+
+  </ion-row>
+
+
 </ion-content>

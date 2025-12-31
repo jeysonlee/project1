@@ -68,48 +68,161 @@
           </ion-note>
         </ion-item>
 
-        <!-- BOTÓN DETALLE -->
-        <ion-button
-          expand="block"
-          fill="outline"
-          class="ion-margin-top"
-          (click)="toggleDetalles(tarea)">
-          {{ tarea.expanded ? 'Ocultar detalles' : 'Ver detalles' }}
-        </ion-button>
+        <ion-grid class="ion-margin-top">
+          <ion-row>
+            <ion-col size="6">
+              <ion-button
+                expand="block"
+                fill="solid"
+                (click)="toggleDetalles(tarea)">
+                  <ion-icon
+                    slot="start"
+                    [name]="tarea.expanded ? 'chevron-up-outline' : 'chevron-down-outline'">
+                  </ion-icon>
+                  Detalles
+              </ion-button>
+            </ion-col>
+
+            <ion-col size="6">
+              <ion-button
+                icon="trash"
+                expand="block"
+                fill="solid"
+                color="danger"
+                (click)="eliminarTarea(tarea.id)">
+                 <ion-icon slot="start" name="trash-outline"></ion-icon>
+                Eliminar
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+
 
         <!-- DETALLES EXPANDIDOS -->
         <div *ngIf="tarea.expanded">
 
           <!-- OBREROS -->
-          <ion-list-header>Mano de obra</ion-list-header>
-          <ion-item *ngFor="let o of tarea.obreros">
-            <ion-label>
-              {{ o.nombre }} {{ o.apellido }}
-            </ion-label>
-            <ion-note slot="end">
-              {{ o.precio_dia | currency:'S/ ':'symbol':'1.0-0' }}
-            </ion-note>
-          </ion-item>
+          <ion-list-header>
+            <ion-label>Mano de obra</ion-label>
+          </ion-list-header>
+          <ion-card *ngFor="let o of tarea.obreros" class="detalle-card">
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <strong>{{ o.nombre }} {{ o.apellido }}</strong>
+                    <ion-badge color="medium" *ngIf="o.especialidad">{{ o.especialidad }}</ion-badge>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Precio/día:</small>
+                    </ion-text>
+                    <p>{{ o.precio_dia | currency:'S/ ':'symbol':'1.2-2' }}</p>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Días trabajados:</small>
+                    </ion-text>
+                    <p>{{ o.dias_trabajo }}</p>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-item lines="none">
+                      <ion-label><strong>Costo total:</strong></ion-label>
+                      <ion-note slot="end" color="primary">
+                        <strong>{{ o.costo_total | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                      </ion-note>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
 
           <!-- INSUMOS -->
-          <ion-list-header>Insumos</ion-list-header>
-          <ion-item *ngFor="let i of tarea.insumos">
-            <ion-label>
-              {{ i.nombre }} ({{ i.cantidad }})
-            </ion-label>
-            <ion-note slot="end">
-              {{ i.total | currency:'S/ ':'symbol':'1.0-0' }}
-            </ion-note>
-          </ion-item>
+          <ion-list-header>
+            <ion-label>Insumos</ion-label>
+          </ion-list-header>
+          <ion-card *ngFor="let i of tarea.insumos" class="detalle-card">
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <strong>{{ i.nombre }}</strong>
+                    <ion-badge color="medium" *ngIf="i.categoria">{{ i.categoria }}</ion-badge>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Cantidad:</small>
+                    </ion-text>
+                    <p>{{ i.cantidad }} {{ i.unidad_medida || 'und' }}</p>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Costo unitario:</small>
+                    </ion-text>
+                    <p>{{ i.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-item lines="none">
+                      <ion-label><strong>Costo total:</strong></ion-label>
+                      <ion-note slot="end" color="primary">
+                        <strong>{{ i.costo_total | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                      </ion-note>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
 
           <!-- HERRAMIENTAS -->
-          <ion-list-header>Herramientas</ion-list-header>
-          <ion-item *ngFor="let h of tarea.herramientas">
-            <ion-label>{{ h.nombre }}</ion-label>
-            <ion-note slot="end">
-              Cant: {{ h.cantidad }}
-            </ion-note>
-          </ion-item>
+          <ion-list-header>
+            <ion-label>Herramientas</ion-label>
+          </ion-list-header>
+          <ion-card *ngFor="let h of tarea.herramientas" class="detalle-card">
+            <ion-card-content>
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="12">
+                    <strong>{{ h.nombre }}</strong>
+                    <ion-badge color="medium" *ngIf="h.categoria">{{ h.categoria }}</ion-badge>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Cantidad:</small>
+                    </ion-text>
+                    <p>{{ h.cantidad }} {{ h.unidad_medida || 'und' }}</p>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-text color="medium">
+                      <small>Costo unitario:</small>
+                    </ion-text>
+                    <p>{{ h.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="12">
+                    <ion-item lines="none">
+                      <ion-label><strong>Costo total:</strong></ion-label>
+                      <ion-note slot="end" color="primary">
+                        <strong>{{ h.costo_total | currency:'S/ ':'symbol':'1.2-2' }}</strong>
+                      </ion-note>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card-content>
+          </ion-card>
 
         </div>
 

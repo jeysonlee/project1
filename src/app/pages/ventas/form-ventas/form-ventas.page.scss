@@ -1,0 +1,41 @@
+.tabla-detalles {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.tabla-detalles th,
+.tabla-detalles td {
+  padding: 4px 6px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tabla-detalles th {
+  font-weight: 600;
+  color: #555;
+  border-bottom: 1px solid #ddd;
+}
+
+.tabla-detalles tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.tabla-detalles tbody tr:last-child {
+  border-bottom: none;
+}
+
+// Ocultar los botones de incrementar/decrementar en inputs numéricos
+ion-input[type="number"] {
+  --padding-end: 8px;
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}

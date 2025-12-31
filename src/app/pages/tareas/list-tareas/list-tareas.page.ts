@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TareasService } from 'src/app/services/tareas.service';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-list-tareas',
@@ -15,7 +16,8 @@ export class ListTareasPage implements OnInit {
 
   constructor(
     private tareasService: TareasService,
-    private router: Router
+    private router: Router,
+    private alertCtrl: AlertController
   ) {}
 
   async ngOnInit() {
@@ -57,4 +59,43 @@ export class ListTareasPage implements OnInit {
   nuevaTarea() {
     this.router.navigate(['/tabs/form-tareas']);
   }
+  async eliminarTarea(tareaId: string) {
+    //si la tarea tiene como tipo de taras "Cosecha" no se puede eliminar
+    const tarea = await this.tareasService.getById(tareaId); // Verificar que la tarea existe
+    if (tarea.tipo_tarea_nombre === 'COSECHA') {
+      const alert = await this.alertCtrl.create({
+        header: 'No se puede eliminar',
+        message: 'Las tareas de tipo "Cosecha" no pueden ser eliminadas.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar eliminación',
+      message: '¿Está seguro que desea eliminar esta tarea?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              await this.tareasService.delete(tareaId);
+              console.log('Tarea eliminada:', tareaId);
+              this.loadingTareas(); // Recargar lista
+            } catch (error) {
+              console.error('Error al eliminar la tarea:', error);
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 }

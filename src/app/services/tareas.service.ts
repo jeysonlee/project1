@@ -15,38 +15,28 @@ async createWithDetails(
   obreros: any[] = []
 ) {
   try {
-    /* ===============================
-     * 1️⃣ LOG DEL PAYLOAD RECIBIDO
-     * =============================== */
-    console.group('📦 createWithDetails - payload recibido');
 
-    console.log('TAREA:', JSON.stringify(tarea, null, 2));
-    console.log('INSUMOS:', JSON.stringify(insumos, null, 2));
-    console.log('HERRAMIENTAS:', JSON.stringify(herramientas, null, 2));
-    console.log('OBREROS:', JSON.stringify(obreros, null, 2));
-
-    console.groupEnd();
 
     /* ===============================
      * 2️⃣ VALIDACIONES PREVIAS
      * =============================== */
     for (const [i, ins] of insumos.entries()) {
       if (!ins.insumo_id) {
-        console.error('INSUMO INVÁLIDO EN POSICIÓN', i, ins);
+       // console.error('INSUMO INVÁLIDO EN POSICIÓN', i, ins);
         throw new Error(`Insumo inválido en posición ${i}`);
       }
     }
 
     for (const [i, herr] of herramientas.entries()) {
       if (!herr.herramienta_id) {
-        console.error('HERRAMIENTA INVÁLIDA EN POSICIÓN', i, herr);
+       // console.error('HERRAMIENTA INVÁLIDA EN POSICIÓN', i, herr);
         throw new Error(`Herramienta inválida en posición ${i}`);
       }
     }
 
     for (const [i, ob] of obreros.entries()) {
       if (!ob.obrero_id) {
-        console.error('OBRERO INVÁLIDO EN POSICIÓN', i, ob);
+        //console.error('OBRERO INVÁLIDO EN POSICIÓN', i, ob);
         throw new Error(`Obrero inválido en posición ${i}`);
       }
     }
@@ -76,7 +66,7 @@ async createWithDetails(
         costo_total: total,
       };
 
-      console.log('➡️ INSERT tarea_insumo:', payload);
+      //console.log('➡️ INSERT tarea_insumo:', payload);
 
       await this.crud.create('tarea_insumo', payload);
     }
@@ -149,33 +139,39 @@ async createWithDetails(
   //metodo que optiene la tarea con todos sus detalles
   async getAllWithDetails() {
   const tareas = await this.crud.executeQuery(`
-    SELECT 
+    SELECT
       t.*,
       p.nombre AS parcela_nombre,
       tt.descripcion AS tipo_tarea_nombre
     FROM tareas t
     JOIN parcelas p ON p.id = t.parcela_id
     JOIN tipos_tarea tt ON tt.id = t.tipo_tarea_id
+    WHERE t.deleted_at IS NULL
     ORDER BY t.fecha_inicio DESC
   `);
 
   for (const tarea of tareas) {
     tarea.insumos = await this.getInsumosByTarea(tarea.id);
+    //console.log('Insumos de tarea', tarea.id, tarea.insumos);
     tarea.herramientas = await this.getHerramientasByTarea(tarea.id);
     tarea.obreros = await this.getObrerosByTarea(tarea.id);
   }
-
+console.log('Tareas con detalles:', tareas);
   return tareas;
 }
 private async getInsumosByTarea(tareaId: number) {
   return this.crud.executeQuery(`
-    SELECT 
+    SELECT
       ti.id,
-      i.id AS insumo_id,
-      i.nombre,
+      ti.tarea_id,
+      ti.insumo_id,
       ti.cantidad,
-      i.costo_unitario,
-      (ti.cantidad * i.costo_unitario) AS total
+      ti.costo_unitario,
+      ti.costo_total,
+      i.nombre,
+      i.descripcion,
+      i.categoria,
+      i.unidad_medida
     FROM tarea_insumo ti
     JOIN insumos i ON i.id = ti.insumo_id
     WHERE ti.tarea_id = ?
@@ -183,11 +179,17 @@ private async getInsumosByTarea(tareaId: number) {
 }
 private async getHerramientasByTarea(tareaId: number) {
   return this.crud.executeQuery(`
-    SELECT 
+    SELECT
       th.id,
-      h.id AS herramienta_id,
+      th.tarea_id,
+      th.herramienta_id,
+      th.cantidad,
+      th.costo_unitario,
+      th.costo_total,
       h.nombre,
-      th.cantidad
+      h.descripcion,
+      h.categoria,
+      h.unidad_medida
     FROM tarea_herramienta th
     JOIN herramientas h ON h.id = th.herramienta_id
     WHERE th.tarea_id = ?
@@ -195,12 +197,18 @@ private async getHerramientasByTarea(tareaId: number) {
 }
 private async getObrerosByTarea(tareaId: number) {
   return this.crud.executeQuery(`
-    SELECT 
+    SELECT
       tobr.id,
-      o.id AS obrero_id,
+      tobr.tarea_id,
+      tobr.obrero_id,
+      tobr.precio_dia,
+      tobr.dias_trabajo,
+      tobr.costo_total,
       o.nombre,
       o.apellido,
-      tobr.precio_dia
+      o.dni,
+      o.telefono,
+      o.especialidad
     FROM tarea_obrero tobr
     JOIN obreros o ON o.id = tobr.obrero_id
     WHERE tobr.tarea_id = ?
