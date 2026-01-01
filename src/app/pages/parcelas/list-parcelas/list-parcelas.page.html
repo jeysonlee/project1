@@ -15,7 +15,7 @@
       <ion-label>
         <h2>{{ parcela.nombre }}</h2>
         <p>Ubicación: {{ parcela.ubicacion }}</p>
-        <p>Tamaño: {{ parcela.tamano }} ha</p>
+        <p>Tamaño: {{ parcela.tamanio }} ha</p>
         <p>Tipo de cultivo: {{ parcela.tipo_cultivo }}</p>
       </ion-label>
       <ion-button fill="clear" color="primary" (click)="openParcelaForm(parcela)">
@@ -24,6 +24,10 @@
       <ion-button fill="clear" color="danger" (click)="deleteParcela(parcela.id)">
         <ion-icon name="trash-outline"></ion-icon>
       </ion-button>
+      <ion-button fill="outline" color="secondary" (click)="verDetalle(parcela)">
+        <ion-icon slot="start" name="analytics-outline"></ion-icon>
+      </ion-button>
+
     </ion-item>
   </ion-list>
 </ion-content>

@@ -26,7 +26,7 @@ export class UsersPage implements OnInit {
 
   async loadUsers() {
     this.usuarios = await this.usersService.readAll();
-    console.log('Usuarios cargados:', this.usuarios);
+    //console.log('Usuarios cargados:', this.usuarios);
   }
 
   async openUserForm(user?: any) {

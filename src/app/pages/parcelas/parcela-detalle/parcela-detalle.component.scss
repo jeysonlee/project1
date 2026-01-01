@@ -1,0 +1,36 @@
+.kpi-header {
+  font-weight: 600;
+  border-bottom: 1px solid var(--ion-color-light);
+  padding-bottom: 6px;
+}
+
+.kpi-row {
+  padding: 6px 0;
+  border-bottom: 1px dashed var(--ion-color-light);
+}
+
+ion-chip {
+  font-size: 0.75rem;
+}
+
+.kpi-card {
+  text-align: center;
+
+  &.positivo {
+    background: linear-gradient(135deg, #2dd36f20, #2dd36f10);
+  }
+
+  &.negativo {
+    background: linear-gradient(135deg, #eb445a20, #eb445a10);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 0;
+  }
+
+  p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}

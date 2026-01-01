@@ -31,7 +31,12 @@ export class SeedService {
         id: uuidv4(),
         username: 'admin',
         password: '1234',
-        role_id: adminRoleId,
+        rol_id: adminRoleId,
+        rol_nombre: 'Administrador',
+        nombre: 'Jeyson',
+        apellido: 'Del Aguila',
+        email: 'admin@example.com',
+        telefono: '1234567890',
       });
 
       console.log('Seed: roles y usuario admin creados exitosamente');

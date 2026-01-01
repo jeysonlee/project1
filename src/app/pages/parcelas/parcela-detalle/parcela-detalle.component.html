@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Detalle de Parcela</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+<ion-item>
+  <ion-label>Inicio</ion-label>
+  <ion-select placeholder="Año" [(ngModel)]="anioInicio">
+    <ion-select-option *ngFor="let a of anios" [value]="a">
+      {{ a }}
+    </ion-select-option>
+  </ion-select>
+
+  <ion-select placeholder="Mes" [(ngModel)]="mesInicio">
+    <ion-select-option *ngFor="let m of meses" [value]="m.value">
+      {{ m.label }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
+<ion-item>
+  <ion-label>Fin</ion-label>
+  <ion-select placeholder="Año" [(ngModel)]="anioFin">
+    <ion-select-option *ngFor="let a of anios" [value]="a">
+      {{ a }}
+    </ion-select-option>
+  </ion-select>
+
+  <ion-select placeholder="Mes" [(ngModel)]="mesFin">
+    <ion-select-option *ngFor="let m of meses" [value]="m.value">
+      {{ m.label }}
+    </ion-select-option>
+  </ion-select>
+</ion-item>
+
+<ion-button expand="block" (click)="cargarDetalle()">
+  Aplicar filtro
+</ion-button>
+
+<ion-button expand="block" fill="outline" color="medium" (click)="limpiarFechas()">
+  Limpiar filtro
+</ion-button>
+
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{ detalle?.parcela_nombre }}</ion-card-title>
+      <ion-card-subtitle>Tamaño: {{ detalle?.parcela_tamanio }} ha</ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p><strong>Ingresos:</strong> S/. {{ detalle?.ingresos }}</p>
+      <p><strong>Egresos:</strong> S/. {{ detalle?.egresos }}</p>
+      <p><strong>Productividad:</strong> S/. {{ detalle?.productividad }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Indicadores económicos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas id="graficoProductividad"></canvas>
+    </ion-card-content>
+  </ion-card>
+  <ion-card class="kpi-card"
+          [ngClass]="detalle?.productividad >= 0 ? 'positivo' : 'negativo'">
+  <ion-card-content>
+    <h2>Productividad</h2>
+    <h1>S/. {{ detalle?.productividad | number:'1.2-2' }}</h1>
+    <p>
+      {{ detalle?.productividad >= 0
+        ? 'La parcela es rentable'
+        : 'La parcela presenta pérdidas' }}
+    </p>
+  </ion-card-content>
+</ion-card>
+<!-- =========================
+     KPI: Tareas realizadas
+     ========================= -->
+<ion-card *ngIf="detalle?.tareas?.length">
+  <ion-card-header>
+    <ion-card-title>Tareas realizadas</ion-card-title>
+    <ion-card-subtitle>
+      Cantidad e inversión por tipo de tarea
+    </ion-card-subtitle>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-grid>
+      <ion-row class="kpi-header">
+        <ion-col size="5">Tipo</ion-col>
+        <ion-col size="3" class="ion-text-center">Cantidad</ion-col>
+        <ion-col size="4" class="ion-text-right">Inversión (S/.)</ion-col>
+      </ion-row>
+
+      <ion-row
+        *ngFor="let t of detalle.tareas"
+        class="kpi-row"
+      >
+        <ion-col size="5">
+          <ion-chip color="primary" outline>
+            {{ t.tipo }}
+          </ion-chip>
+        </ion-col>
+
+        <ion-col size="3" class="ion-text-center">
+          {{ t.cantidad }}
+        </ion-col>
+
+        <ion-col size="4" class="ion-text-right">
+          S/. {{ t.inversion | number:'1.2-2' }}
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card-content>
+</ion-card>
+
+<ion-card *ngIf="detalle?.tareas?.length">
+  <ion-card-header>
+    <ion-card-title>Inversión por tipo de tarea</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <canvas id="graficoTareas"></canvas>
+  </ion-card-content>
+</ion-card>
+
+
+</ion-content>

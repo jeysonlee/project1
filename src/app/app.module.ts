@@ -14,6 +14,7 @@ import { FormTipoTareaComponent } from './pages/tipo-tarea/form-tipo-tarea/form-
 import { FormParcelaComponent } from './pages/parcelas/form-parcela/form-parcela.component';
 import { FormHerramientasComponent } from './pages/herramientas/form-herramientas/form-herramientas.component';
 import { HeaderComponent } from './componenents/header/header.component';
+import { ParcelaDetalleComponent } from './pages/parcelas/parcela-detalle/parcela-detalle.component';
 
 jeepSqlite(window)
 
@@ -26,7 +27,9 @@ jeepSqlite(window)
     FormTipoTareaComponent,
     FormParcelaComponent,
     FormHerramientasComponent,
+    ParcelaDetalleComponent,
    // HeaderComponent
+
   ],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],

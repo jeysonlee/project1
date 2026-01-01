@@ -315,7 +315,7 @@ async ngOnInit() {
       'COSECHADO'
     );
   }
-    this.router.navigate(['/tabs/list-tareas']);
+    this.router.navigate(['/tabs/tareas']);
   }
 
 }

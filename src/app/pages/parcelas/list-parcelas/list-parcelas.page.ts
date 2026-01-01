@@ -5,6 +5,7 @@ import { ParcelasService } from 'src/app/services/parcelas.service';
 import { UsersService } from 'src/app/services/users.service';
 import { Router } from '@angular/router';
 import { FormParcelaComponent } from '../form-parcela/form-parcela.component';
+import { ParcelaDetalleComponent } from '../parcela-detalle/parcela-detalle.component';
 
 @Component({
   selector: 'app-list-parcelas',
@@ -28,6 +29,7 @@ export class ListParcelasPage implements OnInit {
 
   async loadParcelas() {
     this.parcelas = await this.parcelasService.readAll();
+    console.log("Parcelas cargadas:", this.parcelas);
   }
 
   async openParcelaForm(parcela?: any) {
@@ -76,5 +78,15 @@ export class ListParcelasPage implements OnInit {
     });
     await alert.present();
   }
+  async verDetalle(parcela: any) {
+  const modal = await this.modalCtrl.create({
+    component: ParcelaDetalleComponent,
+    componentProps: {
+      parcelaId: parcela.id
+    }
+  });
+  await modal.present();
+}
+
 
 }

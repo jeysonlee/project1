@@ -268,7 +268,7 @@ async guardar() {
     );
   }
 
-  this.router.navigate(['/tabs/list-ventas']);
+  this.router.navigate(['/tabs/ventas']);
 }
 
 /* TEMPORAL PARA CAMBIOS EN EL RECLACULAR */
