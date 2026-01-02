@@ -34,14 +34,42 @@ export class FormHerramientasComponent  implements OnInit {
       this.foto = this.herramienta.foto || null;
     }
   }
-  async takePhoto(fromGallery = false) {
+  async ionViewWillEnter() {
+    if (this.herramienta) {
+      this.isEdit = true;
+      this.nombre = this.herramienta.nombre;
+      this.descripcion = this.herramienta.descripcion || '';
+      this.categoria = this.herramienta.categoria || '';
+      this.costo_unitario = this.herramienta.costo_unitario ?? 0;
+      this.unidad_medida = this.herramienta.unidad_medida || '';
+      this.foto = this.herramienta.foto || null;
+    }
+  }
+async takePhoto(fromGallery = false): Promise<void> {
+  try {
+    if (fromGallery) {
+      await Camera.requestPermissions({ permissions: ['photos'] });
+    }
+
     const image = await Camera.getPhoto({
       quality: 80,
-      resultType: CameraResultType.DataUrl,
+      resultType: CameraResultType.Uri,
       source: fromGallery ? CameraSource.Photos : CameraSource.Camera
     });
-    this.foto = image.dataUrl!;
+
+    this.foto = image.webPath!;
+
+  } catch (err: any) {
+    if (err?.message === 'User cancelled photos app') {
+      return; // ⬅️ evita que la promesa siga rechazada
+    }
+
+    console.error('Camera error:', err);
+    return;
   }
+}
+
+
   async save() {
     if (!this.nombre.trim()) return;
 

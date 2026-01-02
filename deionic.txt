@@ -9,15 +9,17 @@ agregar andoriod
 	npm install @capacitor/android@5.2.2 --instalar esa version de capacitor que es la compatible 
 	npx cap add android --------------------generar el archivo para android
 	ng build
-	ionic build                    -------- para generear el archivo para una app en android 
+	ionic build                    -------- para generear el archivo para una app en android  cual quiera de las 2
 
 para  abrir en androdstudio
+export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/current/bin/studio.sh---cuando no encuentra android studio
+
 	npx cap open android
 
 
 	npx cap sync android -------------------sincronyzar con android
 
-parte 2
+parte 2-- esto es para arrancar el proyecto en otra maquina
 npm install -g @ionic/cli
 ionic start miCrud blank --type=angular ya viene con capacitor integrado
 cd miCrud

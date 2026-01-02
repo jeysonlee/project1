@@ -70,6 +70,29 @@ export class FormVentasPage implements OnInit {
       await this.cargarVenta(this.ventaId);
     }
   }
+  async ionViewwillEnter() {
+        this.cosechas = await this.cosechasService.readAll();
+
+    // Usuario actual
+    this.usuarioActual = await this.usersService.getCurrentUser();
+    this.esAdmin = this.usuarioActual.rol === 'Administrador';
+
+    if (this.esAdmin) {
+      this.usuarios = await this.usersService.readAll();
+    } else {
+      // USER: asignar automáticamente
+      this.venta.usuario_id = this.usuarioActual.id;
+      this.venta.usuario_nombre =
+        `${this.usuarioActual.nombre} ${this.usuarioActual.apellido}`;
+    }
+
+    this.ventaId = this.route.snapshot.paramMap.get('id');
+
+    if (this.ventaId) {
+      this.esEdicion = true;
+      await this.cargarVenta(this.ventaId);
+    }
+  }
 
   onUsuarioSeleccionado(event: any) {
     const usuario = this.usuarios.find(u => u.id === event.detail.value);

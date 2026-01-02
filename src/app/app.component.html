@@ -1,4 +1,15 @@
 <ion-app>
+  <ion-app>
+  <!-- Pantalla de carga -->
+  <div *ngIf="!load" class="splash-loading">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Inicializando aplicación...</p>
+  </div>
+
+  <!-- App normal -->
+  <ion-router-outlet *ngIf="load"></ion-router-outlet>
+</ion-app>
+
   <ion-router-outlet *ngIf="load"></ion-router-outlet>
   <!-- Solo en web -->
   <jeep-sqlite *ngIf="isWeb"></jeep-sqlite>

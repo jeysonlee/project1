@@ -30,7 +30,10 @@ export class FormCosechasPage implements OnInit {
 
 
   async ngOnInit() {
-    this.parcelas = await this.parcelasService.readAll();
+
+  }
+  async ionViewWillEnter() {
+        this.parcelas = await this.parcelasService.readAll();
     this.id = this.route.snapshot.paramMap.get('id');
     if (this.id) {
       const data = await this.cosechasService.getById(this.id);

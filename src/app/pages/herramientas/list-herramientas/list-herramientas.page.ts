@@ -24,6 +24,9 @@ export class ListHerramientasPage implements OnInit {
   async ngOnInit() {
     await this.loadHerramientas();
   }
+  async ionViewWillEnter() {
+    await this.loadHerramientas();
+  }
   async loadHerramientas() {
     this.herramientas = await this.HerramientaService.readAll();
   }

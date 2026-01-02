@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Device } from '@capacitor/device';
-import { Platform } from '@ionic/angular';
+import { Platform, AlertController} from '@ionic/angular';
 import { SqliteService } from './services/sqlite.service';
 import { SeedService } from './services/seed.service';
-
+import { Router } from '@angular/router';
+import { App } from '@capacitor/app';
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -17,8 +18,11 @@ export class AppComponent {
   constructor(
     private platform: Platform,
     private sqlite: SqliteService,
-    private seedService: SeedService  // inyecta el SeedService
+    private seedService: SeedService,  // inyecta el SeedService
+    private router: Router,
+    private alertCtrl: AlertController
   ) {
+    this.initializeBackButton();
     this.isWeb = false;
     this.load = false;
     this.initApp();
@@ -43,6 +47,38 @@ export class AppComponent {
           await this.seedService.seedIfNeeded();
         }
       });
+    });
+  }
+    initializeBackButton() {
+    this.platform.backButton.subscribeWithPriority(10, async () => {
+
+      const currentUrl = this.router.url;
+
+      // Si NO está en inicio → volver a inicio
+      if (currentUrl !== '/tabs/home') {
+        this.router.navigateByUrl('/tabs/home');
+        return;
+      }
+
+      // Si está en inicio → confirmar salida
+      const alert = await this.alertCtrl.create({
+        header: 'Salir',
+        message: '¿Desea salir de la aplicación?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+          },
+          {
+            text: 'Sí',
+            handler: () => {
+              App.exitApp();
+            }
+          }
+        ]
+      });
+
+      await alert.present();
     });
   }
 }

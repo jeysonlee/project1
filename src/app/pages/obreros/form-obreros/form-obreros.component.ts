@@ -40,14 +40,29 @@ export class FormObrerosComponent implements OnInit {
     }
   }
 
-  async takePhoto(fromGallery = false) {
+async takePhoto(fromGallery = false): Promise<void> {
+  try {
+    if (fromGallery) {
+      await Camera.requestPermissions({ permissions: ['photos'] });
+    }
+
     const image = await Camera.getPhoto({
       quality: 80,
-      resultType: CameraResultType.DataUrl,
+      resultType: CameraResultType.Uri,
       source: fromGallery ? CameraSource.Photos : CameraSource.Camera
     });
-    this.foto = image.dataUrl!;
+
+    this.foto = image.webPath!;
+
+  } catch (err: any) {
+    if (err?.message === 'User cancelled photos app') {
+      return; // ⬅️ evita que la promesa siga rechazada
+    }
+
+    console.error('Camera error:', err);
+    return;
   }
+}
 
   async save() {
     if (!this.nombre.trim()) return;

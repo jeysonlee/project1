@@ -20,7 +20,10 @@ export class ListTareasPage implements OnInit {
     private alertCtrl: AlertController
   ) {}
 
-  async ngOnInit() {
+  ngOnInit(){
+
+  }
+  async ionViewWillEnter() {
     await this.loadingTareas();
   }
 
