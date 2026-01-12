@@ -75,6 +75,7 @@ export class FormTareasPage implements OnInit {
   tempFecha: any;
   tipoFecha: 'inicio' | 'fin';
 
+  usuarioIdParcela: string = null;
   private actualizando = false;
 
   constructor(
@@ -103,6 +104,19 @@ async ngOnInit() {
     return Math.round(value * 10000) / 10000;
   }
 
+  onParcelaChange() {
+    // Obtener el usuario_id de la parcela seleccionada
+    const parcelaSeleccionada = this.parcelas.find(p => p.id === this.form.parcela_id);
+
+    if (parcelaSeleccionada) {
+      this.usuarioIdParcela = parcelaSeleccionada.usuario_id;
+      console.log("Usuario ID de la parcela:", this.usuarioIdParcela);
+    } else {
+      this.usuarioIdParcela = null;
+      console.log("No se encontró la parcela seleccionada");
+    }
+  }
+
   onTipoTareaChange() {
     this.tipoTareaSeleccionada =
       this.tipoTareas.find(t => t.id === this.form.tipo_tarea_id);
@@ -117,16 +131,12 @@ async ngOnInit() {
   onBaldesChange() {
     if (this.actualizando) return;
     this.actualizando = true;
-
     const baldes = Number(this.form.cant_baldes) || 0;
     const merma = Number(this.form.pctj_merma) || 0;
-
     const kgFresco = baldes * this.KG_POR_BALDE;
     const kgSeco = kgFresco * (1 - merma / 100);
-
     this.form.cant_kg_fresco = this.round4(kgFresco);
     this.form.cant_kg_secado = this.round4(kgSeco);
-
     this.actualizando = false;
   }
 
@@ -134,29 +144,22 @@ async ngOnInit() {
   onKgFrescoChange() {
     if (this.actualizando) return;
     this.actualizando = true;
-
     const kgFresco = Number(this.form.cant_kg_fresco) || 0;
     const merma = Number(this.form.pctj_merma) || 0;
-
     const baldes = kgFresco / this.KG_POR_BALDE;
     const kgSeco = kgFresco * (1 - merma / 100);
-
     this.form.cant_baldes = this.round4(baldes);
     this.form.cant_kg_secado = this.round4(kgSeco);
-
     this.actualizando = false;
   }
 
   onMermaChange() {
     if (this.actualizando) return;
     this.actualizando = true;
-
     const kgFresco = Number(this.form.cant_kg_fresco) || 0;
     const merma = Number(this.form.pctj_merma) || 0;
-
     const kgSeco = kgFresco * (1 - merma / 100);
     this.form.cant_kg_secado = this.round4(kgSeco);
-
     this.actualizando = false;
   }
 
@@ -175,7 +178,6 @@ async ngOnInit() {
   onSelectObrero() {
     this.obreroSeleccionado =
       this.obrerosCatalogo.find(o => o.id === this.formObrero.obrero_id);
-
     //console.log("obrero seleccionado", this.obreroSeleccionado);
     this.formObrero.costo_dia = this.obreroSeleccionado
       ? Number(this.obreroSeleccionado.costo_diario ?? this.obreroSeleccionado.precio_base ?? 0)
@@ -301,7 +303,9 @@ async ngOnInit() {
       tarea,
       this.insumos,
       this.herramientas,
-      this.obreros
+      this.obreros,
+      this.usuarioIdParcela,
+
     );
     if (this.tipoTareaSeleccionada?.descripcion === 'COSECHA') {
     await this.cosechasService.create(

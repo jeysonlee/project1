@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CrudGenericService } from './crud-generic.service';
 import { CosechasService } from './cosechas.service';
+import { UsersService } from './users.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({ providedIn: 'root' })
@@ -10,7 +11,8 @@ export class VentasService {
 
   constructor(
     private crud: CrudGenericService,
-    private cosechasService: CosechasService
+    private cosechasService: CosechasService,
+    private auth: UsersService
   ) {}
   private round4(value: number): number {
     return Math.round(value * 10000) / 10000;
@@ -100,10 +102,36 @@ export class VentasService {
   // OBTENER TODAS LAS VENTAS
   // =============================
   async readAll() {
-    const rows: any[] = await this.crud.readAll(
-      this.table,
-      'ORDER BY fecha_venta DESC'
-    );
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    let query = '';
+    let params: any[] = [];
+
+    if (user.rol === 'Administrador') {
+      // Admin ve todas las ventas
+      query = `
+        SELECT DISTINCT v.*
+        FROM ${this.table} v
+        WHERE v.deleted_at IS NULL
+        ORDER BY v.fecha_venta DESC
+      `;
+    } else {
+      // Usuario normal solo ve ventas de sus parcelas
+      query = `
+        SELECT DISTINCT v.*
+        FROM ${this.table} v
+        JOIN ${this.detalleTable} vcd ON vcd.venta_id = v.id
+        JOIN parcelas p ON p.id = vcd.parcela_id
+        WHERE v.deleted_at IS NULL
+          AND p.usuario_id = ?
+          AND p.deleted_at IS NULL
+        ORDER BY v.fecha_venta DESC
+      `;
+      params = [user.id];
+    }
+
+    const rows: any[] = await this.crud.query(query, params);
 
     return rows.map(r => ({
       ...r,

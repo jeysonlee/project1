@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { defineCustomElements as jeepSqlite } from 'jeep-sqlite/loader'
 import { UsersFormComponent } from './pages/users-form/users-form.component';
-import { FormsModule } from '@angular/forms';
 import { FormObrerosComponent } from './pages/obreros/form-obreros/form-obreros.component';
 import { FormInsumosComponent } from './pages/insumos/form-insumos/form-insumos.component';
 import { FormTipoTareaComponent } from './pages/tipo-tarea/form-tipo-tarea/form-tipo-tarea.component';
@@ -15,6 +14,8 @@ import { FormParcelaComponent } from './pages/parcelas/form-parcela/form-parcela
 import { FormHerramientasComponent } from './pages/herramientas/form-herramientas/form-herramientas.component';
 import { HeaderComponent } from './componenents/header/header.component';
 import { ParcelaDetalleComponent } from './pages/parcelas/parcela-detalle/parcela-detalle.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormMovimientoComponent } from './pages/insumos/form-movimiento/form-movimiento.component';
 
 jeepSqlite(window)
 
@@ -28,10 +29,16 @@ jeepSqlite(window)
     FormParcelaComponent,
     FormHerramientasComponent,
     ParcelaDetalleComponent,
-   // HeaderComponent
-
+    FormMovimientoComponent,
   ],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, FormsModule],
+  imports: [
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule
+  ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
   schemas: [

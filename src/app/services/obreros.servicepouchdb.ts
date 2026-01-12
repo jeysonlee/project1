@@ -44,8 +44,8 @@ async create(
     precio_base,
     foto: foto ?? null,
     deleted_at: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    created_at: new Date().toLocaleString(),
+    updated_at: new Date().toLocaleString()
   });
 }
 
@@ -94,7 +94,7 @@ async update(
     especialidad,
     precio_base,
     foto: foto ?? null,
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toLocaleString()
   });
 }
 
@@ -104,8 +104,8 @@ async delete(id: string) {
 
   return this.db.put({
     ...doc,
-    deleted_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    deleted_at: new Date().toLocaleString(),
+    updated_at: new Date().toLocaleString()
   });
 }
 

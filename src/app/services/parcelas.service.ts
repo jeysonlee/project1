@@ -14,18 +14,15 @@ export class ParcelasService {
   // Crear parcela asignando usuario_id del logueado
   async create(
     nombre: string,
-    alias: string,
+    usuario_id: string,
     ubicacion: string,
     tamanio: number,
     tipo_cultivo: string
   ) {
-    const usuario = this.auth.getCurrentUser();
-    if (!usuario) throw new Error('Usuario no autenticado');
 
     return this.crud.create(this.table, {
-      usuario_id: usuario.id,
+      usuario_id,
       nombre,
-      alias,
       ubicacion,
       tamanio,
       tipo_cultivo
@@ -53,18 +50,16 @@ export class ParcelasService {
     return this.crud.getById(this.table, id);
   }
 
-  async update(id:string, nombre: string, alias: string, ubicacion: string, tamanio: number, tipo_cultivo: string) {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
+  async update(
+    id:string,
+    usuario_id: string,
+    nombre: string,
+    ubicacion: string,
+    tamanio: number,
+    tipo_cultivo: string
+  ) {
 
-    // Restringir edición si no es admin
-    if (user.rol !== 'administrador') {
-      const parcela = await this.getById(id);
-      if (parcela.usuario_id !== user.id) {
-        throw new Error('No tienes permisos para editar esta parcela.');
-      }
-    }
-    return this.crud.update(this.table, id, { nombre, alias, ubicacion,tamanio, tipo_cultivo });
+    return this.crud.update(this.table, id, { usuario_id, nombre, ubicacion,tamanio, tipo_cultivo });
   }
 
   async delete(id:string) {
@@ -72,7 +67,7 @@ export class ParcelasService {
     if (!user) throw new Error('Usuario no autenticado');
 
     // Restringir borrado si no es admin
-    if (user.rol !== 'administrador') {
+    if (user.rol !== 'Administrador') {
       const parcela = await this.getById(id);
       if (parcela.usuario_id !== user.id) {
         throw new Error('No tienes permisos para eliminar esta parcela.');
@@ -80,47 +75,6 @@ export class ParcelasService {
     }
     return this.crud.delete(this.table, id);
   }
-
-/*   async getDetalleProductividad(parcelaId: string) {
-  const sql = `
-    SELECT
-      p.id AS parcela_id,
-      p.nombre AS parcela_nombre,
-      p.tamanio,
-
-      COALESCE(SUM(vcd.subtotal), 0) AS ingresos,
-
-      COALESCE((
-        SELECT SUM(t.costo_total)
-        FROM tareas t
-        WHERE t.parcela_id = p.id
-          AND t.deleted_at IS NULL
-      ), 0) AS egresos,
-
-      COALESCE(SUM(vcd.subtotal), 0)
-      -
-      COALESCE((
-        SELECT SUM(t.costo_total)
-        FROM tareas t
-        WHERE t.parcela_id = p.id
-          AND t.deleted_at IS NULL
-      ), 0) AS productividad
-
-    FROM parcelas p
-    LEFT JOIN cosechas c
-      ON c.parcela_id = p.id
-      AND c.deleted_at IS NULL
-    LEFT JOIN venta_cosecha_detalle vcd
-      ON vcd.cosecha_id = c.id
-      AND vcd.deleted_at IS NULL
-    WHERE p.id = ?
-      AND p.deleted_at IS NULL
-    GROUP BY p.id
-  `;
-
-  const res = await this.crud.query(sql, [parcelaId]);
-  return res.length ? res[0] : null;
-} */
 
 async getDetalleProductividad(
   parcelaId: string,
@@ -213,6 +167,86 @@ async getDetalleProductividad(
     }))
   };
 }
+
+  /**
+   * Obtiene lista de parcelas con ingresos, inversión y productividad
+   * - Administrador: todas las parcelas
+   * - Usuario regular: solo sus parcelas (usuario_id)
+   * - Rango de fechas opcional
+   */
+  async getListaProductividad(
+    fechaInicio: string | null = null,
+    fechaFin: string | null = null
+  ) {
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    // Obtener parcelas según rol
+    let parcelas: any[];
+    if (user.rol === 'Administrador') {
+      parcelas = await this.crud.query(
+        `SELECT id, nombre, tamanio, usuario_id FROM parcelas
+         WHERE deleted_at IS NULL
+         ORDER BY nombre`,
+        []
+      );
+    } else {
+      parcelas = await this.crud.query(
+        `SELECT id, nombre, tamanio, usuario_id FROM parcelas
+         WHERE usuario_id = ? AND deleted_at IS NULL
+         ORDER BY nombre`,
+        [user.id]
+      );
+    }
+
+    // Para cada parcela, calcular ingresos e inversión
+    const resultado = [];
+    for (const parcela of parcelas) {
+      // Calcular ingresos
+      const ingresosRes = await this.crud.query(
+        `
+        SELECT COALESCE(SUM(vcd.subtotal), 0) AS ingresos
+        FROM venta_cosecha_detalle vcd
+        JOIN ventas v ON v.id = vcd.venta_id
+        WHERE vcd.parcela_id = ?
+          AND vcd.deleted_at IS NULL
+          AND v.deleted_at IS NULL
+          AND ( ? IS NULL OR v.fecha_venta >= ? )
+          AND ( ? IS NULL OR v.fecha_venta <= ? )
+        `,
+        [parcela.id, fechaInicio, fechaInicio, fechaFin, fechaFin]
+      );
+
+      const ingresos = Number(ingresosRes[0]?.ingresos ?? 0);
+
+      // Calcular inversión
+      const inversionRes = await this.crud.query(
+        `
+        SELECT COALESCE(SUM(costo_total), 0) AS inversion
+        FROM tareas
+        WHERE parcela_id = ?
+          AND deleted_at IS NULL
+          AND ( ? IS NULL OR fecha_inicio >= ? )
+          AND ( ? IS NULL OR fecha_inicio <= ? )
+        `,
+        [parcela.id, fechaInicio, fechaInicio, fechaFin, fechaFin]
+      );
+
+      const inversion = Number(inversionRes[0]?.inversion ?? 0);
+
+      resultado.push({
+        parcela_id: parcela.id,
+        parcela_nombre: parcela.nombre,
+        parcela_tamanio: parcela.tamanio,
+        usuario_id: parcela.usuario_id,
+        ingresos,
+        inversion,
+        productividad: ingresos - inversion
+      });
+    }
+
+    return resultado;
+  }
 
 
 

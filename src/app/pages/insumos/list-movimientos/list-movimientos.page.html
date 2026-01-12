@@ -1,0 +1,96 @@
+
+<ion-header [translucent]="true">
+  <app-header></app-header>
+  <ion-toolbar>
+    <ion-title>Movimientos de Insumos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="verMiStock()">
+        <ion-icon slot="icon-only" name="pie-chart-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Filtros -->
+  <ion-toolbar>
+    <ion-grid>
+      <ion-row>
+        <ion-col size="5">
+          <ion-item>
+            <ion-label position="stacked">Desde</ion-label>
+            <ion-input type="date" [(ngModel)]="fechaInicio"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="5">
+          <ion-item>
+            <ion-label position="stacked">Hasta</ion-label>
+            <ion-input type="date" [(ngModel)]="fechaFin"></ion-input>
+          </ion-item>
+        </ion-col>
+        <ion-col size="2" class="ion-align-self-end">
+          <ion-button expand="block" (click)="filtrarPorFechas()" size="small">
+            <ion-icon name="search-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" (click)="limpiarFiltros()" size="small" fill="clear">
+            Limpiar Filtros
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- Lista de Movimientos -->
+  <ion-list *ngIf="movimientos.length > 0">
+    <ion-item *ngFor="let movimiento of movimientos">
+      <ion-icon
+        slot="start"
+        [name]="getTipoIcon(movimiento.tipo_movimiento)"
+        [color]="getTipoColor(movimiento.tipo_movimiento)"
+        size="large">
+      </ion-icon>
+
+      <ion-label>
+        <h2>{{ movimiento.insumo_nombre }}</h2>
+        <h3>
+          <ion-badge [color]="getTipoColor(movimiento.tipo_movimiento)">
+            {{ movimiento.tipo_movimiento }}
+          </ion-badge>
+          <span style="margin-left: 8px;">{{ movimiento.cantidad }} {{ movimiento.unidad_medida }}</span>
+        </h3>
+        <p>{{ movimiento.motivo }}</p>
+        <p style="font-size: 12px; color: gray;">
+          {{ formatearFecha(movimiento.fecha_movimiento) }}
+        </p>
+      </ion-label>
+
+      <ion-note slot="end" *ngIf="movimiento.costo_total > 0">
+        <strong>${{ formatearNumero(movimiento.costo_total) }}</strong>
+        <br>
+        <small>${{ formatearNumero(movimiento.costo_unitario) }}/{{ movimiento.unidad_medida }}</small>
+      </ion-note>
+    </ion-item>
+  </ion-list>
+
+  <!-- Mensaje cuando no hay movimientos -->
+  <div *ngIf="movimientos.length === 0" class="empty-state">
+    <ion-icon name="file-tray-outline" size="large" color="medium"></ion-icon>
+    <p>No hay movimientos registrados</p>
+    <ion-button (click)="irARegistrar()" color="primary">
+      Registrar Primer Movimiento
+    </ion-button>
+  </div>
+
+  <!-- Botón flotante -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="irARegistrar()" color="primary">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>

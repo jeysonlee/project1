@@ -164,6 +164,7 @@
         { "column": "categoria", "value": "TEXT" },
         { "column": "costo_unitario", "value": "NUMERIC" },
         { "column": "unidad_medida", "value": "TEXT" },
+        { "column": "stock", "value": "NUMERIC" },
         { "column": "foto", "value": "TEXT" },
         { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
         { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
@@ -173,9 +174,55 @@
       ]
     },
     {
+      "name": "insumo_stock",
+      "schema": [
+        { "column": "id", "value": "TEXT PRIMARY KEY" },
+        { "column": "insumo_id", "value": "TEXT NOT NULL" },
+        { "column": "usuario_id", "value": "TEXT NOT NULL" },
+        { "column": "cantidad_stock", "value": "NUMERIC DEFAULT 0" },
+        { "column": "umbral_minimo", "value": "NUMERIC DEFAULT 0" },
+        { "column": "activo", "value": "INTEGER DEFAULT 1" },
+        { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "deleted_at", "value": "TEXT" },
+        { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
+        { "column": "synced_at", "value": "TEXT" }
+      ],
+      "indexes": [
+        { "name": "idx_insumo_stock_insumo", "value": "insumo_id" },
+        { "name": "idx_insumo_stock_usuario", "value": "usuario_id" },
+        { "name": "idx_insumo_stock_unique", "value": "insumo_id, usuario_id", "mode": "UNIQUE" }
+      ]
+    },
+    {
+      "name": "insumo_movimientos",
+      "schema": [
+        { "column": "id", "value": "TEXT PRIMARY KEY" },
+        { "column": "insumo_id", "value": "TEXT NOT NULL" },
+        { "column": "usuario_id", "value": "TEXT NOT NULL" },
+        { "column": "tipo_movimiento", "value": "TEXT NOT NULL" },
+        { "column": "cantidad", "value": "NUMERIC NOT NULL" },
+        { "column": "costo_unitario", "value": "NUMERIC" },
+        { "column": "costo_total", "value": "NUMERIC" },
+        { "column": "motivo", "value": "TEXT" },
+        { "column": "tarea_id", "value": "TEXT" },
+        { "column": "fecha_movimiento", "value": "DATE DEFAULT (date('now'))" },
+        { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "deleted_at", "value": "TEXT" },
+        { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
+        { "column": "synced_at", "value": "TEXT" }
+      ],
+      "indexes": [
+        { "name": "idx_insumo_movimiento_insumo", "value": "insumo_id" },
+        { "name": "idx_insumo_movimiento_usuario", "value": "usuario_id" }
+      ]
+    },
+    {
       "name": "herramientas",
       "schema": [
         { "column": "id", "value": "TEXT PRIMARY KEY" },
+        {"column": "usuario_id", "value": "TEXT" },
         { "column": "nombre", "value": "TEXT" },
         { "column": "descripcion", "value": "TEXT" },
         { "column": "categoria", "value": "TEXT" },
@@ -193,6 +240,7 @@
       "name": "obreros",
       "schema": [
         { "column": "id", "value": "TEXT PRIMARY KEY" },
+        {"column": "usuario_id", "value": "TEXT NOT NULL" },
         { "column": "nombre", "value": "TEXT" },
         { "column": "apellido", "value": "TEXT" },
         { "column": "dni", "value": "TEXT NOT NULL UNIQUE" },

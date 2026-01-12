@@ -6,7 +6,7 @@
 
 <ion-content class="ion-padding login-content">
 
-  <div class="login-container">
+  <div class="login-container" >
     <ion-icon name="person-circle-outline" class="login-icon"></ion-icon>
     <form (ngSubmit)="onLogin()" #loginForm="ngForm">
       <ion-item>
@@ -51,10 +51,35 @@
       >
         Ingresar
       </ion-button>
+
     </form>
+    <br>
+      <div *ngIf="!isSynced">
+
+    <ion-icon name="cloud-offline-outline" class="login-icon"></ion-icon>
+
+    <ion-text color="medium">
+      <p style="text-align: center;">
+        Necesita sincronizar los datos para recibir datos actuales.
+      </p>
+    </ion-text>
+
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="syncData()"
+      [disabled]="isSyncing"
+    >
+      {{ isSyncing ? 'Sincronizando...' : 'Sincronizar datos' }}
+    </ion-button>
+
   </div>
-  
-</ion-content>
+
+
+  </div>
+
+
+
 <!-- <ion-content>
   <div class="ion-padding login-content">
     <h1>hola</h1>

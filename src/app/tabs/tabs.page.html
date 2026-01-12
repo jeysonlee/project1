@@ -1,6 +1,4 @@
-<ion-content>
-  <ion-router-outlet></ion-router-outlet>
-</ion-content>
+
 
 <ion-tabs>
   <ion-tab-bar slot="bottom" class="scroll-tabs" color="primary">
@@ -13,8 +11,11 @@
       <ion-icon name="newspaper"></ion-icon>
       <ion-label>Tareas</ion-label>
     </ion-tab-button>
-
-    <ion-tab-button tab="users">
+    <ion-tab-button tab="movimientos">
+      <ion-icon name="construct"></ion-icon>
+      <ion-label>Movimientos</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="users" *ngIf="isAdmin">
       <ion-icon name="person"></ion-icon>
       <ion-label>Usuarios</ion-label>
     </ion-tab-button>
@@ -37,7 +38,7 @@
       <ion-label>Insumos</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="tipo-tareas">
+    <ion-tab-button tab="tipo-tareas" *ngIf="isAdmin">
       <ion-icon name="receipt"></ion-icon>
       <ion-label>Tipos Tareas</ion-label>
     </ion-tab-button>
@@ -52,18 +53,7 @@
       <ion-label>Herramientas</ion-label>
     </ion-tab-button>
 
-    <ion-tab-button tab="extra2">
-      <ion-icon name="star"></ion-icon>
-      <ion-label>Extra 2</ion-label>
-    </ion-tab-button>
-        <ion-tab-button tab="extra2">
-      <ion-icon name="star"></ion-icon>
-      <ion-label>Extra 2</ion-label>
-    </ion-tab-button>
-        <ion-tab-button tab="extra2">
-      <ion-icon name="star"></ion-icon>
-      <ion-label>Extra 2</ion-label>
-    </ion-tab-button>
+
 
   </ion-tab-bar>
 </ion-tabs>

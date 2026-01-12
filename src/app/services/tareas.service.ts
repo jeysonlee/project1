@@ -1,18 +1,25 @@
 import { Injectable } from '@angular/core';
 import { CrudGenericService } from './crud-generic.service';
+import { UsersService } from './users.service';
+import { InsumoStockService } from './insumo-stock.service';
 
 @Injectable({ providedIn: 'root' })
 export class TareasService {
   private table = 'tareas';
 
-  constructor(private crud: CrudGenericService) {}
+  constructor(
+    private crud: CrudGenericService,
+    private auth: UsersService,
+    private stockService: InsumoStockService
+  ) {}
 
 // Crear tarea con detalles (con validación y logging)
 async createWithDetails(
   tarea: any,
   insumos: any[] = [],
   herramientas: any[] = [],
-  obreros: any[] = []
+  obreros: any[] = [],
+  ususarioId: string,
 ) {
   try {
 
@@ -46,9 +53,8 @@ async createWithDetails(
      * =============================== */
     const result = await this.crud.create(this.table, tarea);
     const tareaId = result.id;
-
     /* ===============================
-     * 4️⃣ GUARDAR INSUMOS
+     * 4️⃣ GUARDAR INSUMOS Y DESCONTAR STOCK
      * =============================== */
     for (const ins of insumos) {
       const cantidad = Number(ins.cantidad);
@@ -69,6 +75,24 @@ async createWithDetails(
       //console.log('➡️ INSERT tarea_insumo:', payload);
 
       await this.crud.create('tarea_insumo', payload);
+
+      // Descontar stock y registrar movimiento de salida
+      try {
+         await this.stockService.registrarSalida(
+          ususarioId,
+          ins.insumo_id,
+          cantidad,
+          `Uso en tarea - ${tarea.descripcion || 'Tarea agrícola'}`,
+          tareaId
+        );
+        //console.log(`✅ Stock descontado: ${cantidad} unidades del insumo ${ins.insumo_id}`);
+      } catch (stockError: any) {
+        // Si falla el descuento de stock, lanzar error con detalles
+        console.error('❌ Error al descontar stock:', stockError);
+        throw new Error(
+          `Error al descontar stock del insumo: ${stockError.message || 'Stock insuficiente o no disponible'}`
+        );
+      }
     }
 
     /* ===============================
@@ -121,7 +145,24 @@ async createWithDetails(
 
 
   async readAll() {
-    return this.crud.readAll(this.table, 'ORDER BY fecha_inicio DESC');
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    if (user.rol === 'Administrador') {
+      // Admin ve todas las tareas
+      return this.crud.readAll(this.table, 'ORDER BY fecha_inicio DESC');
+    } else {
+      // Usuario normal solo ve tareas de sus parcelas
+      return this.crud.query(`
+        SELECT t.*
+        FROM ${this.table} t
+        JOIN parcelas p ON p.id = t.parcela_id
+        WHERE t.deleted_at IS NULL
+          AND p.usuario_id = ?
+          AND p.deleted_at IS NULL
+        ORDER BY t.fecha_inicio DESC
+      `, [user.id]);
+    }
   }
 
   async getById(id: string) {
@@ -138,17 +179,44 @@ async createWithDetails(
 
   //metodo que optiene la tarea con todos sus detalles
   async getAllWithDetails() {
-  const tareas = await this.crud.executeQuery(`
-    SELECT
-      t.*,
-      p.nombre AS parcela_nombre,
-      tt.descripcion AS tipo_tarea_nombre
-    FROM tareas t
-    JOIN parcelas p ON p.id = t.parcela_id
-    JOIN tipos_tarea tt ON tt.id = t.tipo_tarea_id
-    WHERE t.deleted_at IS NULL
-    ORDER BY t.fecha_inicio DESC
-  `);
+  const user = this.auth.getCurrentUser();
+  if (!user) throw new Error('Usuario no autenticado');
+
+  let query = '';
+  let params: any[] = [];
+
+  if (user.rol === 'Administrador') {
+    // Admin ve todas las tareas
+    query = `
+      SELECT
+        t.*,
+        p.nombre AS parcela_nombre,
+        tt.descripcion AS tipo_tarea_nombre
+      FROM tareas t
+      JOIN parcelas p ON p.id = t.parcela_id
+      JOIN tipos_tarea tt ON tt.id = t.tipo_tarea_id
+      WHERE t.deleted_at IS NULL
+      ORDER BY t.fecha_inicio DESC
+    `;
+  } else {
+    // Usuario normal solo ve tareas de sus parcelas
+    query = `
+      SELECT
+        t.*,
+        p.nombre AS parcela_nombre,
+        tt.descripcion AS tipo_tarea_nombre
+      FROM tareas t
+      JOIN parcelas p ON p.id = t.parcela_id
+      JOIN tipos_tarea tt ON tt.id = t.tipo_tarea_id
+      WHERE t.deleted_at IS NULL
+        AND p.usuario_id = ?
+        AND p.deleted_at IS NULL
+      ORDER BY t.fecha_inicio DESC
+    `;
+    params = [user.id];
+  }
+
+  const tareas = await this.crud.executeQuery(query, params);
 
   for (const tarea of tareas) {
     tarea.insumos = await this.getInsumosByTarea(tarea.id);
@@ -213,6 +281,72 @@ private async getObrerosByTarea(tareaId: number) {
     JOIN obreros o ON o.id = tobr.obrero_id
     WHERE tobr.tarea_id = ?
   `, [tareaId]);
+}
+
+/**
+ * Obtener movimientos de stock asociados a una tarea
+ * Útil para auditoría y trazabilidad de insumos usados
+ */
+async getMovimientosStockByTarea(tareaId: string) {
+  const user = this.auth.getCurrentUser();
+  if (!user) throw new Error('Usuario no autenticado');
+
+  return this.crud.query(
+    `SELECT
+      m.id,
+      m.insumo_id,
+      m.tipo_movimiento,
+      m.cantidad,
+      m.motivo,
+      m.fecha_movimiento,
+      m.created_at,
+      i.nombre as insumo_nombre,
+      i.unidad_medida,
+      i.categoria
+     FROM insumo_movimientos m
+     INNER JOIN insumos i ON i.id = m.insumo_id
+     WHERE m.tarea_id = ?
+       AND m.usuario_id = ?
+       AND m.deleted_at IS NULL
+     ORDER BY m.created_at DESC`,
+    [tareaId, user.id]
+  );
+}
+
+/**
+ * Verificar disponibilidad de stock antes de crear tarea
+ * Retorna array de insumos con stock insuficiente
+ */
+async verificarStockDisponible(insumos: any[]): Promise<any[]> {
+  const user = this.auth.getCurrentUser();
+  if (!user) throw new Error('Usuario no autenticado');
+
+  const insuficientes: any[] = [];
+
+  for (const ins of insumos) {
+    const stock = await this.stockService.getStockByInsumo(ins.insumo_id);
+    const cantidadSolicitada = Number(ins.cantidad);
+
+    if (!stock) {
+      insuficientes.push({
+        insumo_id: ins.insumo_id,
+        nombre: ins.nombre || 'Desconocido',
+        stock_actual: 0,
+        cantidad_solicitada: cantidadSolicitada,
+        faltante: cantidadSolicitada
+      });
+    } else if (Number(stock.cantidad_stock) < cantidadSolicitada) {
+      insuficientes.push({
+        insumo_id: ins.insumo_id,
+        nombre: ins.nombre || 'Desconocido',
+        stock_actual: stock.cantidad_stock,
+        cantidad_solicitada: cantidadSolicitada,
+        faltante: cantidadSolicitada - stock.cantidad_stock
+      });
+    }
+  }
+
+  return insuficientes;
 }
 
 }

@@ -22,13 +22,13 @@ export class ListHerramientasPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.loadHerramientas();
   }
   async ionViewWillEnter() {
     await this.loadHerramientas();
   }
   async loadHerramientas() {
     this.herramientas = await this.HerramientaService.readAll();
+    console.log('Herramientas cargadas:', this.herramientas);
   }
   async openHerramientaForm(herramienta?: any) {
     const modal = await this.modalCtrl.create({

@@ -21,7 +21,7 @@ export class FormVentasPage implements OnInit {
   usuarios: any[] = [];
 
   venta: any = {
-    fecha_venta: new Date().toISOString(),
+    fecha_venta: new Date().toLocaleDateString(),
     usuario_id: '',
     usuario_nombre: '',
     nr_venta: '',

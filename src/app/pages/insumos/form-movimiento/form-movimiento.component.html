@@ -1,0 +1,136 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Registrar Movimiento</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="form-container">
+
+    <form [formGroup]="form">
+      <ion-list>
+        <!-- Tipo de Movimiento -->
+        <ion-item>
+          <ion-label>Tipo de Movimiento</ion-label>
+          <ion-select formControlName="tipoMovimiento" (ionChange)="onTipoMovimientoChange()">
+            <ion-select-option value="ENTRADA">Entrada (Compra)</ion-select-option>
+            <ion-select-option value="SALIDA">Salida (Uso)</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Si es administrador, mostrar selector de usuario -->
+        <ion-item *ngIf="esAdministrador">
+          <ion-label>Usuario</ion-label>
+          <ion-select formControlName="usuarioId" placeholder="Seleccione usuario">
+            <ion-select-option *ngFor="let usuario of usuarios" [value]="usuario.id">
+              {{ usuario.nombre }} {{ usuario.apellido }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Insumo -->
+        <ion-item>
+          <ion-label>Insumo</ion-label>
+          <ion-select
+            formControlName="insumoId"
+            (ionChange)="onInsumoChange()"
+            placeholder="Seleccione insumo">
+            <ion-select-option *ngFor="let insumo of insumos" [value]="insumo.id">
+              {{ insumo.nombre }} ({{ insumo.unidad_medida }})
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-note color="danger" *ngIf="form.get('insumoId')?.invalid && form.get('insumoId')?.touched">
+          Debe seleccionar un insumo
+        </ion-note>
+
+        <!-- Cantidad -->
+        <ion-item>
+          <ion-label position="stacked">Cantidad *</ion-label>
+          <ion-input
+            type="number"
+            formControlName="cantidad"
+            placeholder="0">
+          </ion-input>
+        </ion-item>
+        <ion-note color="danger" *ngIf="form.get('cantidad')?.invalid && form.get('cantidad')?.touched">
+          La cantidad debe ser mayor a 0
+        </ion-note>
+
+        <!-- Costo Unitario (solo para entradas) -->
+        <ion-item *ngIf="form.get('tipoMovimiento')?.value === 'ENTRADA'">
+          <ion-label position="stacked">Costo Unitario *</ion-label>
+          <ion-input
+            type="number"
+            formControlName="costoUnitario"
+            placeholder="0.00">
+          </ion-input>
+        </ion-item>
+        <ion-note
+          color="danger"
+          *ngIf="form.get('costoUnitario')?.invalid && form.get('costoUnitario')?.touched && form.get('tipoMovimiento')?.value === 'ENTRADA'">
+          El costo debe ser mayor o igual a 0
+        </ion-note>
+
+        <!-- Umbral Mínimo (solo para primera entrada) -->
+        <ion-item *ngIf="form.get('tipoMovimiento')?.value === 'ENTRADA' && mostrarUmbral">
+          <ion-label position="stacked">
+            Umbral Mínimo (Alerta)
+            <p style="font-size: 12px; color: gray;">Primera vez con este insumo</p>
+          </ion-label>
+          <ion-input
+            type="number"
+            formControlName="umbralMinimo"
+            placeholder="0">
+          </ion-input>
+        </ion-item>
+
+        <!-- Motivo -->
+        <ion-item>
+          <ion-label position="stacked">Motivo *</ion-label>
+          <ion-input
+            type="text"
+            formControlName="motivo"
+            placeholder="Ej: Compra a proveedor">
+          </ion-input>
+        </ion-item>
+        <ion-note color="danger" *ngIf="form.get('motivo')?.invalid && form.get('motivo')?.touched">
+          El motivo es requerido
+        </ion-note>
+
+        <!-- Información del Costo Total (solo para entradas) -->
+        <ion-item *ngIf="form.get('tipoMovimiento')?.value === 'ENTRADA' && costoTotal > 0">
+          <ion-label>
+            <h3>Costo Total</h3>
+            <p style="font-size: 18px; font-weight: bold; color: #4CAF50;">
+              ${{ costoTotal.toFixed(2) }}
+            </p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+
+      <!-- Botones -->
+      <div class="button-container">
+        <ion-button
+          expand="block"
+          (click)="registrarMovimiento()"
+          color="primary"
+          [disabled]="form.invalid">
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          Registrar Movimiento
+        </ion-button>
+
+        <ion-button expand="block" (click)="cerrarModal()" color="medium" fill="outline">
+          <ion-icon slot="start" name="close-outline"></ion-icon>
+          Cancelar
+        </ion-button>
+      </div>
+    </form>
+
+  </div>
+</ion-content>

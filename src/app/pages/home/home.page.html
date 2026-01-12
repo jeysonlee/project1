@@ -3,13 +3,16 @@
 <ion-content [fullscreen]="true">
 
   <ion-grid>
+<ion-button expand="block" (click)="probarFirebase()">
+  Probar conexión Firebase
+</ion-button>
 
         <!-- SALUDO -->
     <ion-row class="ion-justify-content-center ion-text-center">
       <ion-col size="12">
 
         <!-- Ícono de perfil -->
-        <ion-icon 
+        <ion-icon
           name="person-circle-outline"
           style="font-size: 80px; color: #3880ff;">
         </ion-icon>
@@ -50,7 +53,7 @@
       <ion-col size="6">
         <ion-button expand="block" class="big-square-btn" (click)="accion4()">
           <ion-icon name="analytics" class="big-icon"></ion-icon>
-          <span>Reportes</span>
+          <span>Cosechas</span>
         </ion-button>
       </ion-col>
     </ion-row>
@@ -64,7 +67,7 @@
   </div>
 
   <div class="reportes-container">
-    <h3>Tareas completadas</h3>
+    <h3>Productividad por Parcela</h3>
     <canvas id="grafico2"></canvas>
   </div>
 

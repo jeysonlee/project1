@@ -117,31 +117,56 @@ export class UsersService {
   // ==========================
   // LOGIN
   // ==========================
-  async login(username: string, password: string) {
-    const res = await this.crud.query(`
-      SELECT u.id,
-             u.username,
-             u.password,
-             u.rol_id,
-             r.nombre AS rol
-      FROM usuarios u
-      JOIN roles r ON r.id = u.rol_id
-      WHERE u.username = ?
-        AND u.deleted_at IS NULL
-      LIMIT 1
-    `, [username]);
+async login(username: string, password: string) {
+  console.log('LOGIN → username recibido:', username);
+  console.log('LOGIN → password ingresado:', password);
 
-    if (!res.length) return null;
+  const res = await this.crud.query(
+    `
+    SELECT u.id,
+           u.username,
+           u.password,
+           u.rol_id,
+           r.nombre AS rol,
+           u.nombre,
+           u.apellido,
+           u.email,
+           u.telefono
+    FROM usuarios u
+    JOIN roles r ON r.id = u.rol_id
+    WHERE u.username = ?
+      AND u.deleted_at IS NULL
+    LIMIT 1
+    `,
+    [username]
+  );
 
-    const user = res[0];
-    const match = bcrypt.compareSync(password, user.password);
+  console.log('LOGIN → resultado query:', res);
 
-    if (!match) return null;
-
-    const { password: _pwd, ...userData } = user;
-    localStorage.setItem(this.currentUserKey, JSON.stringify(userData));
-    return userData;
+  if (!res.length) {
+    console.warn('LOGIN → usuario NO encontrado en BD');
+    return null;
   }
+
+  const user = res[0];
+  console.log('LOGIN → usuario encontrado:', user);
+  console.log('LOGIN → password en BD (hash):', user.password);
+
+  const match = bcrypt.compareSync(password, user.password);
+  console.log('LOGIN → resultado bcrypt.compareSync:', match);
+
+  if (!match) {
+    console.warn('LOGIN → contraseña incorrecta');
+    return null;
+  }
+
+  const { password: _pwd, ...userData } = user;
+  console.log('LOGIN → login exitoso, datos usuario:', userData);
+
+  localStorage.setItem(this.currentUserKey, JSON.stringify(userData));
+  return userData;
+}
+
 
   // ==========================
   // SESIÓN

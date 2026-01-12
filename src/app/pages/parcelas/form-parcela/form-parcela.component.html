@@ -10,6 +10,14 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-item *ngIf="isAdmin">
+    <ion-label position="stacked">Usuario</ion-label>
+    <ion-select [(ngModel)]="usuario_id" placeholder="Seleccione un usuario">
+      <ion-select-option *ngFor="let user of users" [value]="user.id">
+        {{ user.nombre }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
   <ion-item>
     <ion-label position="stacked">Nombre</ion-label>
     <ion-input [(ngModel)]="nombre"></ion-input>

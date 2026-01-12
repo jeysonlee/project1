@@ -1,12 +1,16 @@
 
 import { Injectable } from '@angular/core';
 import { CrudGenericService } from './crud-generic.service';
+import { UsersService } from './users.service';
 
 @Injectable({ providedIn: 'root' })
 export class CosechasService {
   private table = 'cosechas';
 
-  constructor(private crud: CrudGenericService) {}
+  constructor(
+    private crud: CrudGenericService,
+    private auth: UsersService
+  ) {}
 
   async create(
     parcela_id: string,
@@ -33,10 +37,35 @@ export class CosechasService {
   }
 
   async read() {
-    const rows: any[] = await this.crud.readAll(
-      this.table,
-      "ORDER BY fecha_cosecha DESC"
-    );
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    let query = '';
+    let params: any[] = [];
+
+    if (user.rol === 'Administrador') {
+      // Admin ve todas las cosechas
+      query = `
+        SELECT c.*
+        FROM ${this.table} c
+        WHERE c.deleted_at IS NULL
+        ORDER BY c.fecha_cosecha DESC
+      `;
+    } else {
+      // Usuario normal solo ve cosechas de sus parcelas
+      query = `
+        SELECT c.*
+        FROM ${this.table} c
+        JOIN parcelas p ON p.id = c.parcela_id
+        WHERE c.deleted_at IS NULL
+          AND p.usuario_id = ?
+          AND p.deleted_at IS NULL
+        ORDER BY c.fecha_cosecha DESC
+      `;
+      params = [user.id];
+    }
+
+    const rows: any[] = await this.crud.query(query, params);
 
     return rows.map(r => ({
       ...r,
@@ -45,11 +74,39 @@ export class CosechasService {
       kg_seco: r.kg_seco ? Number(r.kg_seco) : 0
     }));
   }
+
   async readAll() {
-    const rows: any[] = await this.crud.readAll(
-      this.table,
-      "AND estado != 'VENDIDO' ORDER BY fecha_cosecha DESC"
-    );
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    let query = '';
+    let params: any[] = [];
+
+    if (user.rol === 'Administrador') {
+      // Admin ve todas las cosechas no vendidas
+      query = `
+        SELECT c.*
+        FROM ${this.table} c
+        WHERE c.deleted_at IS NULL
+          AND c.estado != 'VENDIDO'
+        ORDER BY c.fecha_cosecha DESC
+      `;
+    } else {
+      // Usuario normal solo ve cosechas no vendidas de sus parcelas
+      query = `
+        SELECT c.*
+        FROM ${this.table} c
+        JOIN parcelas p ON p.id = c.parcela_id
+        WHERE c.deleted_at IS NULL
+          AND p.usuario_id = ?
+          AND p.deleted_at IS NULL
+          AND c.estado != 'VENDIDO'
+        ORDER BY c.fecha_cosecha DESC
+      `;
+      params = [user.id];
+    }
+
+    const rows: any[] = await this.crud.query(query, params);
 
     return rows.map(r => ({
       ...r,

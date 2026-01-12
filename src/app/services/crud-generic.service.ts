@@ -17,11 +17,18 @@ export class CrudGenericService {
   }
 
   /**
+   * Guardar a store (público para sync)
+   */
+  async saveToStore() {
+    await this.saveIfWeb();
+  }
+
+  /**
    * Crear un nuevo registro
    */
   async create(table: string, data: Record<string, any>) {
     const dbName = await this.sqlite.getDbName();
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString();
 
     // 🔑 UUID si no existe
     if (!data['id']) {
@@ -84,7 +91,7 @@ export class CrudGenericService {
    */
   async update(table: string, id: string, data: Record<string, any>) {
     const dbName = await this.sqlite.getDbName();
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString();
 
     // Auditoría
     data['updated_at'] = now;
@@ -110,11 +117,34 @@ export class CrudGenericService {
   }
 
   /**
+   * Actualización interna para sincronización
+   * NO actualiza updated_at, solo campos especificados
+   */
+  async updateSyncFlags(table: string, id: string, data: Record<string, any>) {
+    const dbName = await this.sqlite.getDbName();
+
+    const keys = Object.keys(data);
+    const setClause = keys.map(k => `${k} = ?`).join(', ');
+    const values = [...keys.map(k => (data as any)[k]), id];
+
+    const res = await CapacitorSQLite.executeSet({
+      database: dbName,
+      set: [{
+        statement: `UPDATE ${table} SET ${setClause} WHERE id = ?`,
+        values
+      }]
+    });
+
+    await this.saveIfWeb();
+    return res;
+  }
+
+  /**
    * Borrado lógico
    */
   async delete(table: string, id: string) {
     const dbName = await this.sqlite.getDbName();
-    const now = new Date().toISOString();
+    const now = new Date().toLocaleString();
 
     const res = await CapacitorSQLite.executeSet({
       database: dbName,

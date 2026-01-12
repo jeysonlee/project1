@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { InsumosService } from 'src/app/services/insumos.service';
+import { UsersService } from 'src/app/services/users.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 @Component({
   selector: 'app-form-insumos',
@@ -17,12 +18,18 @@ export class FormInsumosComponent  implements OnInit {
   foto: string | null = null;
   isEdit = false;
 
+  // Control de usuarios
+  usuarios: any[] = [];
+  usuarioSeleccionado: string = '';
+
   constructor(
     private insumosService: InsumosService,
+    private usersService: UsersService,
     private modalCtrl: ModalController
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
+
     if (this.insumo) {
       this.isEdit = true;
       this.nombre = this.insumo.nombre;
@@ -31,6 +38,7 @@ export class FormInsumosComponent  implements OnInit {
       this.costo_unitario = this.insumo.costo_unitario ?? 0;
       this.unidad_medida = this.insumo.unidad_medida || '';
       this.foto = this.insumo.foto || null;
+
     }
   }
 async takePhoto(fromGallery = false): Promise<void> {
@@ -41,11 +49,11 @@ async takePhoto(fromGallery = false): Promise<void> {
 
     const image = await Camera.getPhoto({
       quality: 80,
-      resultType: CameraResultType.Uri,
+      resultType: CameraResultType.Base64,
       source: fromGallery ? CameraSource.Photos : CameraSource.Camera
     });
 
-    this.foto = image.webPath!;
+    this.foto = image.base64String ? `data:image/jpeg;base64,${image.base64String}` : null;
 
   } catch (err: any) {
     if (err?.message === 'User cancelled photos app') {
@@ -60,27 +68,32 @@ async takePhoto(fromGallery = false): Promise<void> {
   async save() {
     if (!this.nombre.trim()) return;
 
-    if (this.isEdit) {
-      await this.insumosService.update(
-        this.insumo.id,
-        this.nombre,
-        this.descripcion,
-        this.categoria,
-        this.costo_unitario,
-        this.unidad_medida,
-        this.foto
-      );
-    } else {
-      await this.insumosService.create(
-        this.nombre,
-        this.descripcion,
-        this.categoria,
-        this.costo_unitario,
-        this.unidad_medida,
-        this.foto
-      );
+
+    try {
+      if (this.isEdit) {
+        await this.insumosService.update(
+          this.insumo.id,
+          this.nombre,
+          this.descripcion,
+          this.categoria,
+          this.costo_unitario,
+          this.unidad_medida,
+          this.foto,
+        );
+      } else {
+        await this.insumosService.create(
+          this.nombre,
+          this.descripcion,
+          this.categoria,
+          this.costo_unitario,
+          this.unidad_medida,
+          this.foto,
+        );
+      }
+      this.modalCtrl.dismiss();
+    } catch (error: any) {
+      alert(error.message || 'Error al guardar el insumo');
     }
-    this.modalCtrl.dismiss();
   }
   close() {
     this.modalCtrl.dismiss();

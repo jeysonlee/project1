@@ -24,9 +24,10 @@ export class ListParcelasPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.loadParcelas();
   }
-
+ionViewWillEnter() {
+    this.loadParcelas();
+  }
   async loadParcelas() {
     this.parcelas = await this.parcelasService.readAll();
     console.log("Parcelas cargadas:", this.parcelas);

@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class ListPage implements OnInit {
   obreros: any[] = [];
-
+  now = new Date().toLocaleString();
   constructor(
     private obrerosService: ObrerosService,
     private UsersService: UsersService,
@@ -24,11 +24,14 @@ export class ListPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.loadObreros();
   }
-
+  ionViewWillEnter() {
+    this.loadObreros();
+    console.log('ListPage cargada en:', this.now);
+  }
   async loadObreros() {
     this.obreros = await this.obrerosService.readAll();
+    console.log('Obreros cargados:', this.obreros);
   }
 
   async openObreroForm(obrero?: any) {

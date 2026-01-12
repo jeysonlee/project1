@@ -8,47 +8,71 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="ion-padding">
-  <ion-item>
-    <ion-label position="stacked">Usuario</ion-label>
-    <ion-input [(ngModel)]="username"></ion-input>
-  </ion-item>
+  <form [formGroup]="form">
 
   <ion-item>
-    <ion-label position="stacked">Contraseña</ion-label>
-    <ion-input type="password" [(ngModel)]="password"
-      [placeholder]="isEdit ? 'Dejar en blanco para no cambiar' : ''">
+    <ion-label position="stacked">Usuario *</ion-label>
+    <ion-input formControlName="username"></ion-input>
+  </ion-item>
+  <ion-text color="danger" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+    Usuario obligatorio
+  </ion-text>
+
+  <ion-item>
+    <ion-label position="stacked">Contraseña {{ isEdit ? '' : '*' }}</ion-label>
+    <ion-input type="password"
+               formControlName="password"
+               [placeholder]="isEdit ? 'Dejar en blanco para no cambiar' : ''">
     </ion-input>
   </ion-item>
+  <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['required']">
+    La contraseña es obligatoria
+  </ion-text>
+  <ion-text color="danger" *ngIf="form.get('password')?.errors?.['minlength']">
+    Mínimo 6 caracteres
+  </ion-text>
 
-<ion-item>
-  <ion-label position="stacked">Rol</ion-label>
-  <ion-select [(ngModel)]="rol_id" placeholder="Seleccione un rol">
-    <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
-      {{ rol.nombre }}
-    </ion-select-option>
-  </ion-select>
-</ion-item>
+  <ion-item>
+    <ion-label position="stacked">Rol*</ion-label>
+    <ion-select formControlName="rol_id" placeholder="Seleccione un rol">
+      <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
+        {{ rol.nombre }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-text color="danger" *ngIf="form.get('rol_id')?.touched && form.get('rol_id')?.invalid">
+    El rol es obligatorio
+  </ion-text>
+
   <ion-item>
     <ion-label position="stacked">Nombre</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
+    <ion-input formControlName="nombre"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Apellido</ion-label>
-    <ion-input [(ngModel)]="apellido"></ion-input>
+    <ion-input formControlName="apellido"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Email</ion-label>
-    <ion-input type="email" [(ngModel)]="email"></ion-input>
+    <ion-input type="email" formControlName="email"></ion-input>
   </ion-item>
+
   <ion-item>
     <ion-label position="stacked">Teléfono</ion-label>
-    <ion-input [(ngModel)]="telefono"></ion-input>
+    <ion-input formControlName="telefono"></ion-input>
   </ion-item>
 
-
-  <ion-button expand="block" (click)="save()" class="ion-margin-top">
+  <ion-button expand="block"
+              class="ion-margin-top"
+              (click)="save()"
+              [disabled]="form.invalid">
     {{ isEdit ? 'Actualizar' : 'Guardar' }}
   </ion-button>
+
+</form>
+
 </ion-content>
+

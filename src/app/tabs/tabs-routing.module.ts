@@ -1,3 +1,4 @@
+import { FormMovimientoComponent } from './../pages/insumos/form-movimiento/form-movimiento.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -77,7 +78,10 @@ const routes: Routes = [
           loadChildren: () => import('../pages/cosechas/form-cosechas/form-cosechas.module').then( m => m.FormCosechasPageModule)
         },
 
-
+        {
+          path: 'movimientos',
+          loadChildren: () => import('../pages/insumos/list-movimientos/list-movimientos.module').then( m => m.ListMovimientosPageModule)
+        },
 
 
 

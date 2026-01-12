@@ -1,6 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
-
+import { UsersService } from 'src/app/services/users.service';
+import { FirebaseTestService } from '../../services/firebase-test.service';
+import { ParcelasService } from 'src/app/services/parcelas.service';
 
 @Component({
   selector: 'app-home',
@@ -14,20 +17,37 @@ export class HomePage implements OnDestroy {
   grafico1: Chart | null = null;
   grafico2: Chart | null = null;
 
-  constructor() {}
-
-  // 🔥 IONIC — se ejecuta CADA VEZ que entras a la vista
-  ionViewDidEnter() {
-    this.renderCharts();
+  constructor(
+    private userService:UsersService,
+    private router: Router,
+    private firebaseTest: FirebaseTestService,
+    private parcelasService: ParcelasService
+  ) {
   }
 
+    probarFirebase() {
+    this.firebaseTest.testConnection();
+  }
+  // 🔥 IONIC — se ejecuta CADA VEZ que entras a la vista
+ionViewDidEnter() {
+  //console.log('ionViewDidEnter - HomePage');
+   setTimeout(() => {
+    this.renderCharts();
+  }, 100); 
+}
+
+
   renderCharts() {
+    //console.log('Renderizando gráficos...');
     this.cargarGrafico1();
     this.cargarGrafico2();
   }
 
   // 🔥 Destruir gráficos cuando la página se elimina
   ngOnDestroy() {
+    this.destroyCharts();
+  }
+  ionViewWillLeave() {
     this.destroyCharts();
   }
 
@@ -61,29 +81,114 @@ export class HomePage implements OnDestroy {
     });
   }
 
-  cargarGrafico2() {
+  async cargarGrafico2() {
     if (this.grafico2) this.grafico2.destroy();
 
-    const canvas = document.getElementById('grafico2') as HTMLCanvasElement;
+    try {
+      // Obtener datos de productividad de parcelas
+      const datos = await this.parcelasService.getListaProductividad(null, null);
 
-    this.grafico2 = new Chart(canvas, {
-      type: 'line',
-      data: {
-        labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
-        datasets: [{
-          label: 'Tareas completadas',
-          data: [10, 15, 12, 18],
-          borderColor: '#2196F3',
-          borderWidth: 2
-        }]
-      }
-    });
+      // Preparar datos para el gráfico
+      const labels = datos.map(d => d.parcela_nombre);
+      const ingresos = datos.map(d => d.ingresos);
+      const inversiones = datos.map(d => d.inversion);
+      const productividad = datos.map(d => d.productividad);
+
+      const canvas = document.getElementById('grafico2') as HTMLCanvasElement;
+
+      this.grafico2 = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Ingresos',
+              data: ingresos,
+              backgroundColor: '#4CAF50',
+              type: 'bar',
+              yAxisID: 'y'
+            },
+            {
+              label: 'Inversión',
+              data: inversiones,
+              backgroundColor: '#FF5722',
+              type: 'bar',
+              yAxisID: 'y'
+            },
+            {
+              label: 'Productividad',
+              data: productividad,
+              borderColor: '#2196F3',
+              backgroundColor: 'rgba(33, 150, 243, 0.1)',
+              borderWidth: 3,
+              type: 'line',
+              yAxisID: 'y',
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          plugins: {
+            title: {
+              display: false
+            },
+            legend: {
+              display: true,
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: {
+                display: true,
+                text: 'Monto ($)'
+              }
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error al cargar gráfico de productividad:', error);
+    }
   }
+ionViewWillEnter() {
+  //console.log('HomePage - ionViewWillEnter');
+  this.cargarUSer();
+}
 
+  async cargarUSer() {
+    const user = await this.userService.getCurrentUser();
+    //console.log('Usuario actual en HomePage:', user);
+    if (user) {
+      this.usuario = user.nombre + ' ' + user.apellido;
+    }
+  }
   // Botones
-  accion1() {}
-  accion2() {}
-  accion3() {}
-  accion4() {}
+  accion1() {
+    this.router.navigate(['/tabs/obreros']);
+    //obrero
+  }
+  accion2() {
+    //parcela
+    this.router.navigate(['/tabs/parcelas']);
+  }
+  accion3() {
+    //tareas
+    this.router.navigate(['/tabs/tareas']);
+  }
+  accion4() {
+    //osechas
+    this.router.navigate(['/tabs/cosechas']);
+  }
 
 }

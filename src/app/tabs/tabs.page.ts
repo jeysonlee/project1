@@ -14,6 +14,17 @@ export class TabsPage implements OnInit {
     private alertCtrl: AlertController
   ) {}
 
+  user: any;
+  isAdmin: boolean = false;
   ngOnInit() {}
+  ionViewWillEnter() {
+    this.getUser();
+  }
 
+  async getUser() {
+    const user = this.userService.getCurrentUser();
+    this.user = user;
+    this.isAdmin = user?.rol === 'Administrador';
+    console.log('Usuario actual en TabsPage:', user.rol);
+  }
 }

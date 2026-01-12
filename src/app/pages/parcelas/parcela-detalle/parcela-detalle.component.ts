@@ -86,6 +86,7 @@ async cargarDetalle() {
     fechaInicio,
     fechaFin
   );
+  console.log('Detalle de productividad:', this.detalle);
 
   if (this.chart) {
     this.chart.destroy();
