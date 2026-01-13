@@ -33,7 +33,7 @@ export class InsumosListPage implements OnInit {
   }
   async loadInsumos() {
     const currentUser = await this.usersService.getCurrentUser();
-    console.log('Usuario actual:', currentUser);
+    //console.log('Usuario actual:', currentUser);
     this.isAdmin = currentUser?.rol === 'Administrador';
     if (this.isAdmin) {
     this.insumos = await this.insumoStockService.getAllStock();

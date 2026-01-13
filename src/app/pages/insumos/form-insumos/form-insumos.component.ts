@@ -29,10 +29,11 @@ export class FormInsumosComponent  implements OnInit {
   ) { }
 
   async ngOnInit() {
-
+  }
+  ionicViewWillEnter() {
     if (this.insumo) {
       this.isEdit = true;
-      this.nombre = this.insumo.nombre;
+      this.nombre = this.insumo.insumo_nombre;
       this.descripcion = this.insumo.descripcion || '';
       this.categoria = this.insumo.categoria || '';
       this.costo_unitario = this.insumo.costo_unitario ?? 0;
@@ -72,7 +73,7 @@ async takePhoto(fromGallery = false): Promise<void> {
     try {
       if (this.isEdit) {
         await this.insumosService.update(
-          this.insumo.id,
+          this.insumo.insumo_id,
           this.nombre,
           this.descripcion,
           this.categoria,

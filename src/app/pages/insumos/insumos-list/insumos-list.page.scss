@@ -1,12 +1,132 @@
-.insumo-img {
-  width: 150px;         /* ancho (ajústalo a gusto) */
-  height: 100px;        /* alto para formato rectangular */
-  border-radius: 8px;  /* esquinas redondeadas opcional */
-  overflow: hidden;    /* recorta imagen sobrante */
+ion-content {
+  --background: var(--ion-background-color);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+.categories-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 8px 0;
+  ion-chip {
+    flex-shrink: 0;
+  }
+}
+
+.add-button {
+  --border-radius: 12px;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9em;
+  color: var(--ion-color-medium);
+  ion-icon {
+    font-size: 1.1em;
+  }
+}
+
+.stock-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.9em;
+  .stock-amount {
+    font-weight: 600;
+    color: var(--ion-text-color);
+  }
+}
+
+ion-item {
+  --background: var(--ion-item-background, var(--ion-background-color));
+  --border-color: var(--ion-border-color);
+  ion-thumbnail {
+    min-width: 56px;
+    min-height: 56px;
+    ion-icon {
+      font-size: 48px;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+.insumo-item {
+  --padding-start: 10px;
+  --inner-padding-end: 10px;
 }
 
 .insumo-img img {
-  object-fit: cover;   /* evita deformación */
-  width: 100%;
-  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.insumo-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.unidad {
+  font-size: 13px;
+  color: var(--ion-color-medium);
+}
+
+.descripcion {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-top: 2px;
+}
+
+.meta,
+.datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--ion-color-dark);
+}
+
+.meta ion-icon,
+.datos ion-icon {
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.stock {
+  font-weight: 600;
+}
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap; // ⬅ evita que baje a otra línea
+}
+
+.meta span {
+  display: flex;
+  align-items: center;
+  min-width: 0; // ⬅ OBLIGATORIO para ellipsis en flex
+}
+
+.ellipsis {
+  max-width: 160px; // ajusta según tu diseño
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meta ion-icon {
+  margin-right: 4px;
+  flex-shrink: 0;
 }

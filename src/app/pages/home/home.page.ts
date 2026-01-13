@@ -4,6 +4,7 @@ import Chart from 'chart.js/auto';
 import { UsersService } from 'src/app/services/users.service';
 import { FirebaseTestService } from '../../services/firebase-test.service';
 import { ParcelasService } from 'src/app/services/parcelas.service';
+import { InsumoStockService } from 'src/app/services/insumo-stock.service';
 
 @Component({
   selector: 'app-home',
@@ -21,7 +22,8 @@ export class HomePage implements OnDestroy {
     private userService:UsersService,
     private router: Router,
     private firebaseTest: FirebaseTestService,
-    private parcelasService: ParcelasService
+    private parcelasService: ParcelasService,
+    private stockService: InsumoStockService
   ) {
   }
 
@@ -62,23 +64,57 @@ ionViewDidEnter() {
     }
   }
 
-  cargarGrafico1() {
-    // Evitar duplicados
+  async cargarGrafico1() {
     if (this.grafico1) this.grafico1.destroy();
 
-    const canvas = document.getElementById('grafico1') as HTMLCanvasElement;
+    try {
+      const datos = await this.stockService.getStocksParaGrafico();
 
-    this.grafico1 = new Chart(canvas, {
-      type: 'bar',
-      data: {
-        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie'],
-        datasets: [{
-          label: 'Kg producidos',
-          data: [20, 25, 30, 28, 35],
-          backgroundColor: '#4CAF50'
-        }]
-      }
-    });
+      const labels = datos.map(d => d.insumo_nombre);
+      const cantidades = datos.map(d => parseFloat(d.cantidad_total) || 0);
+      const unidades = datos.map(d => d.unidad_medida);
+
+      const canvas = document.getElementById('grafico1') as HTMLCanvasElement;
+
+      this.grafico1 = new Chart(canvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Stock disponible',
+            data: cantidades,
+            backgroundColor: '#4CAF50'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const index = context.dataIndex;
+                  const valor = context.parsed.y;
+                  const unidad = unidades[index];
+                  return `${valor} ${unidad}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Cantidad'
+              }
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error al cargar gráfico de stocks:', error);
+    }
   }
 
   async cargarGrafico2() {

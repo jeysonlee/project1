@@ -1,35 +1,106 @@
 <app-header></app-header>
 
-<ion-content>
-  <!-- Subcabecera -->
-  <ion-toolbar color="light">
-    <ion-title size="small">Insumos</ion-title>
+<ion-content class="ion-padding">
+
+  <!-- Categorías -->
+
+  <div class="section-header">
+    <h3>Insumos</h3>
+    <ion-button fill="clear" size="small">Ver todas</ion-button>
+  </div>
+
+  <div class="categories-scroll">
+    <ion-chip color="primary" outline>
+      <ion-icon name="bug-outline"></ion-icon>
+      <ion-label>Insecticidas</ion-label>
+    </ion-chip>
+
+    <ion-chip color="success" outline>
+      <ion-icon name="leaf-outline"></ion-icon>
+      <ion-label>Abonos</ion-label>
+    </ion-chip>
+
+    <ion-chip color="warning" outline>
+      <ion-icon name="nutrition-outline"></ion-icon>
+      <ion-label>Follares</ion-label>
+    </ion-chip>
+
+    <ion-chip color="tertiary" outline>
+      <ion-icon name="flask-outline"></ion-icon>
+      <ion-label>Laboratorio</ion-label>
+    </ion-chip>
+
+    <ion-chip color="medium" outline>
+      <ion-icon name="construct-outline"></ion-icon>
+      <ion-label>Equipos</ion-label>
+    </ion-chip>
+  </div>
+
+  <!-- Botón agregar -->
+  <ion-button expand="block" color="primary" (click)="openInsumoForm()" class="add-button ion-margin-vertical">
+    Agregar nuevo insumo
+  </ion-button>
+
+<ion-list lines="inset">
+  <ion-item *ngFor="let insumo of insumos" class="insumo-item">
+
+    <!-- Imagen -->
+    <ion-thumbnail slot="start" *ngIf="insumo.foto" class="insumo-img">
+      <img [src]="insumo.foto" />
+    </ion-thumbnail>
+
+    <!-- Información -->
+    <ion-label class="ion-text-wrap">
+      <!-- Nombre -->
+      <h2 class="insumo-title">
+        {{ insumo.insumo_nombre }}
+        <span class="unidad"> 1 {{ insumo.unidad_medida }}</span>
+      </h2>
+
+      <!-- Descripción -->
+      <p class="descripcion">{{ insumo.descripcion }}</p>
+
+      <!-- Metadatos -->
+    <div class="meta">
+      <span class="categoria">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        {{ insumo.categoria }}
+      </span>
+
+      <span class="usuario ellipsis" *ngIf="isAdmin">
+        <ion-icon name="person-outline"></ion-icon>
+        {{ insumo.usuario_nombre }} {{ insumo.usuario_apellido }}
+      </span>
+    </div>
+
+
+      <!-- Datos clave -->
+      <div class="datos">
+        <span class="precio">
+          <ion-icon name="cash-outline"></ion-icon>
+          {{ insumo.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}
+        </span>
+
+        <span class="stock">
+          <ion-icon name="cube-outline"></ion-icon>
+          Stock: {{ insumo.cantidad_stock }}
+        </span>
+      </div>
+    </ion-label>
+
+    <!-- Acciones -->
     <ion-buttons slot="end">
-      <ion-button (click)="openInsumoForm()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-  <ion-list>
-    <ion-item *ngFor="let insumo of insumos">
-      <ion-thumbnail slot="start" *ngIf="insumo.foto" class="insumo-img">
-        <img [src]="insumo.foto" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ insumo.nombre }}</h2>
-        <p> {{ insumo.descripcion }}</p>
-        <p>{{ insumo.categoria }}</p>
-        <p>{{ insumo.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
-
-        <p>{{ insumo.unidad_medida }}</p>
-      </ion-label>
       <ion-button fill="clear" color="primary" (click)="openInsumoForm(insumo)">
         <ion-icon name="create-outline"></ion-icon>
       </ion-button>
+
       <ion-button fill="clear" color="danger" (click)="deleteInsumo(insumo.id)">
         <ion-icon name="trash-outline"></ion-icon>
       </ion-button>
-    </ion-item>
-  </ion-list>
+    </ion-buttons>
+
+  </ion-item>
+</ion-list>
+
+
 </ion-content>

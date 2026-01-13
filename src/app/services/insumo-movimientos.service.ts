@@ -22,19 +22,11 @@ export class InsumoMovimientosService {
     motivo: string = 'Compra',
     umbralMinimo: number = 0
   ) {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
-
     if (cantidad <= 0) {
       throw new Error('La cantidad debe ser mayor a 0');
     }
-
-    if (costoUnitario < 0) {
-      throw new Error('El costo unitario no puede ser negativo');
-    }
-
     // Verificar si ya existe stock para este usuario
-    const stockExistente = await this.stockService.getStockByInsumo(insumoId);
+    const stockExistente = await this.stockService.getStockByInsumo(insumoId, usuario_id);
 
     if (!stockExistente) {
       // Si no existe, inicializar el stock primero
@@ -61,15 +53,12 @@ export class InsumoMovimientosService {
     motivo: string = 'Uso en tarea',
     tareaId?: string
   ) {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
-
     if (cantidad <= 0) {
       throw new Error('La cantidad debe ser mayor a 0');
     }
 
     // Verificar que existe stock
-    const stockExistente = await this.stockService.getStockByInsumo(insumoId);
+    const stockExistente = await this.stockService.getStockByInsumo(insumoId, usuario_id);
 
     if (!stockExistente) {
       throw new Error('No tienes stock registrado de este insumo');
@@ -122,32 +111,13 @@ export class InsumoMovimientosService {
   /**
    * Actualizar umbral mínimo de un insumo
    */
-  async actualizarUmbralMinimo(
-    insumoId: string,
-    umbralMinimo: number
-  ) {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
 
-    if (umbralMinimo < 0) {
-      throw new Error('El umbral mínimo no puede ser negativo');
-    }
-
-    return this.stockService.actualizarUmbralMinimo(insumoId, umbralMinimo);
-  }
-
-  /**
-   * Obtener mi stock actual de insumos
-   */
-  async getMiStock() {
-    return this.stockService.getStockUsuario();
-  }
 
   /**
    * Obtener stock de un insumo específico
    */
-  async getStockInsumo(insumoId: string) {
-    return this.stockService.getStockByInsumo(insumoId);
+  async getStockInsumo(insumoId: string, usuarioId: string) {
+    return this.stockService.getStockByInsumo(insumoId, usuarioId);
   }
 
   /**

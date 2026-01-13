@@ -317,14 +317,12 @@ async getMovimientosStockByTarea(tareaId: string) {
  * Verificar disponibilidad de stock antes de crear tarea
  * Retorna array de insumos con stock insuficiente
  */
-async verificarStockDisponible(insumos: any[]): Promise<any[]> {
-  const user = this.auth.getCurrentUser();
-  if (!user) throw new Error('Usuario no autenticado');
+async verificarStockDisponible(insumos: any[], usuarioId: string): Promise<any[]> {
 
   const insuficientes: any[] = [];
 
   for (const ins of insumos) {
-    const stock = await this.stockService.getStockByInsumo(ins.insumo_id);
+    const stock = await this.stockService.getStockByInsumo(ins.insumo_id, usuarioId);
     const cantidadSolicitada = Number(ins.cantidad);
 
     if (!stock) {

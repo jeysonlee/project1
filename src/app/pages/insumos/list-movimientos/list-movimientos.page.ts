@@ -29,11 +29,11 @@ export class ListMovimientosPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    await this.cargarUsuario();
   }
 
   ionViewWillEnter() {
     this.cargarMovimientos();
+    this.cargarUsuario();
   }
 
   async cargarUsuario() {
@@ -46,20 +46,13 @@ export class ListMovimientosPage implements OnInit {
   }
 
   async cargarMovimientos() {
-    const loading = await this.loadingController.create({
-      message: 'Cargando movimientos...'
-    });
-    await loading.present();
-
     try {
       this.movimientos = await this.movimientosService.getMisMovimientos(
         this.fechaInicio || undefined,
         this.fechaFin || undefined
       );
-      await loading.dismiss();
+      console.log('Movimientos cargados:', this.movimientos);
     } catch (error) {
-      await loading.dismiss();
-      console.error('Error al cargar movimientos:', error);
       this.mostrarAlerta('Error', 'No se pudieron cargar los movimientos');
     }
   }
@@ -92,15 +85,7 @@ export class ListMovimientosPage implements OnInit {
     return tipo === 'ENTRADA' ? 'arrow-down-circle' : 'arrow-up-circle';
   }
 
-  formatearFecha(fecha: string): string {
-    if (!fecha) return '';
-    const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
+
 
   formatearNumero(numero: number): string {
     return numero.toFixed(2);

@@ -65,14 +65,14 @@
         </h3>
         <p>{{ movimiento.motivo }}</p>
         <p style="font-size: 12px; color: gray;">
-          {{ formatearFecha(movimiento.fecha_movimiento) }}
+          {{  (movimiento.fecha_movimiento) }}
         </p>
       </ion-label>
 
       <ion-note slot="end" *ngIf="movimiento.costo_total > 0">
-        <strong>${{ formatearNumero(movimiento.costo_total) }}</strong>
+        <strong>S/ {{ formatearNumero(movimiento.costo_total) }}</strong>
         <br>
-        <small>${{ formatearNumero(movimiento.costo_unitario) }}/{{ movimiento.unidad_medida }}</small>
+        <small>S/ {{ formatearNumero(movimiento.costo_unitario) }}/{{ movimiento.unidad_medida }}</small>
       </ion-note>
     </ion-item>
   </ion-list>

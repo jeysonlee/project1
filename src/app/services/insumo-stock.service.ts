@@ -15,14 +15,12 @@ export class InsumoStockService {
   /**
    * Obtener el stock de un insumo para el usuario actual
    */
-  async getStockByInsumo(insumoId: string): Promise<any> {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
+  async getStockByInsumo(insumoId: string, usuarioId: string): Promise<any> {
 
     const result = await this.crud.query(
       `SELECT * FROM ${this.tableStock}
        WHERE insumo_id = ? AND usuario_id = ? AND deleted_at IS NULL`,
-      [insumoId, user.id]
+      [insumoId, usuarioId]
     );
 
     return result.length > 0 ? result[0] : null;
@@ -38,11 +36,13 @@ async getStockUsuario(): Promise<any[]> {
   return this.crud.query(
     `
     SELECT
+      s.id,
       s.insumo_id,
       i.nombre        AS insumo_nombre,
       i.foto,
       i.unidad_medida,
       i.costo_unitario,
+      i.categoria,
       s.cantidad_stock,
       u.id            AS usuario_id,
       u.nombre        AS usuario_nombre,
@@ -80,6 +80,7 @@ async getAllStock(): Promise<any[]> {
       i.foto,
       i.unidad_medida,
       i.costo_unitario,
+      i.categoria,
       s.cantidad_stock,
       u.id            AS usuario_id,
       u.nombre        AS usuario_nombre,
@@ -135,13 +136,14 @@ async getAllStock(): Promise<any[]> {
    * Actualizar umbral mínimo de un stock
    */
   async actualizarUmbralMinimo(
+    usuarioId: string,
     insumoId: string,
     umbralMinimo: number
   ): Promise<any> {
     const user = this.auth.getCurrentUser();
     if (!user) throw new Error('Usuario no autenticado');
 
-    const stock = await this.getStockByInsumo(insumoId);
+    const stock = await this.getStockByInsumo(insumoId, usuarioId);
     if (!stock) {
       throw new Error('No existe stock para este insumo');
     }
@@ -198,7 +200,7 @@ async getAllStock(): Promise<any[]> {
       costo_unitario: costoUnitario,
       costo_total: cantidad * costoUnitario,
       motivo: motivo,
-      fecha_movimiento: new Date().toLocaleString().split('T')[0]
+      fecha_movimiento: new Date().toLocaleString()
     });
 
     // Actualizar stock
@@ -228,7 +230,7 @@ async getAllStock(): Promise<any[]> {
     }
 
     // Obtener stock
-    const stock = await this.getStockByInsumo(insumoId);
+    const stock = await this.getStockByInsumo(insumoId, usuario_id);
     if (!stock) {
       throw new Error('No existe stock para este insumo');
     }
@@ -248,7 +250,7 @@ async getAllStock(): Promise<any[]> {
       cantidad: cantidad,
       motivo: motivo,
       tarea_id: tareaId,
-      fecha_movimiento: new Date().toLocaleString().split('T')[0]
+      fecha_movimiento: new Date().toLocaleString()
     });
 
     // Actualizar stock
@@ -303,39 +305,47 @@ async getAllStock(): Promise<any[]> {
   /**
    * Obtener todos los movimientos del usuario actual
    */
-  async getMovimientosUsuario(
-    fechaInicio: string | null = null,
-    fechaFin: string | null = null
-  ): Promise<any[]> {
-    const user = this.auth.getCurrentUser();
-    if (!user) throw new Error('Usuario no autenticado');
+ async getMovimientosUsuario(
+  fechaInicio: string | null = null,
+  fechaFin: string | null = null
+): Promise<any[]> {
+  const user = this.auth.getCurrentUser();
+  if (!user) throw new Error('Usuario no autenticado');
 
-    let query = `
-      SELECT
-        m.*,
-        i.nombre as insumo_nombre,
-        i.unidad_medida
-      FROM ${this.tableMovimientos} m
-      INNER JOIN insumos i ON i.id = m.insumo_id
-      WHERE m.usuario_id = ? AND m.deleted_at IS NULL
-    `;
+  let query = `
+    SELECT
+      m.*,
+      i.nombre AS insumo_nombre,
+      i.unidad_medida
+    FROM ${this.tableMovimientos} m
+    INNER JOIN insumos i ON i.id = m.insumo_id
+    WHERE m.deleted_at IS NULL
+  `;
 
-    const params: any[] = [user.id];
+  const params: any[] = [];
 
-    if (fechaInicio) {
-      query += ` AND m.fecha_movimiento >= ?`;
-      params.push(fechaInicio);
-    }
-
-    if (fechaFin) {
-      query += ` AND m.fecha_movimiento <= ?`;
-      params.push(fechaFin);
-    }
-
-    query += ` ORDER BY m.fecha_movimiento DESC, m.created_at DESC`;
-
-    return this.crud.query(query, params);
+  // 🔐 Filtro por rol
+  if (user.rol !== 'Administrador') {
+    query += ` AND m.usuario_id = ?`;
+    params.push(user.id);
   }
+
+  // 📅 Filtro por fechas
+  if (fechaInicio) {
+    query += ` AND m.fecha_movimiento >= ?`;
+    params.push(fechaInicio);
+  }
+
+  if (fechaFin) {
+    query += ` AND m.fecha_movimiento <= ?`;
+    params.push(fechaFin);
+  }
+
+  query += ` ORDER BY m.fecha_movimiento DESC, m.created_at DESC`;
+
+  return this.crud.query(query, params);
+}
+
 
   /**
    * Obtener insumos con stock bajo (por debajo del umbral)
@@ -388,5 +398,51 @@ async getAllStock(): Promise<any[]> {
       insumos_stock_bajo: 0,
       valor_total_stock: 0
     };
+  }
+
+  /**
+   * Obtener stocks de insumos para gráfico
+   * Si es admin: suma total de cada insumo
+   * Si es usuario: stock propio de cada insumo
+   */
+  async getStocksParaGrafico(): Promise<any[]> {
+    const user = this.auth.getCurrentUser();
+    if (!user) throw new Error('Usuario no autenticado');
+
+    if (user.rol === 'Administrador') {
+      // Admin: suma de stocks por insumo
+      return this.crud.query(
+        `SELECT
+          i.id AS insumo_id,
+          i.nombre AS insumo_nombre,
+          i.unidad_medida,
+          SUM(s.cantidad_stock) AS cantidad_total
+        FROM ${this.tableStock} s
+        INNER JOIN insumos i ON i.id = s.insumo_id
+        WHERE s.deleted_at IS NULL
+          AND i.deleted_at IS NULL
+        GROUP BY i.id, i.nombre, i.unidad_medida
+        ORDER BY cantidad_total DESC
+        LIMIT 10`,
+        []
+      );
+    } else {
+      // Usuario: solo sus stocks
+      return this.crud.query(
+        `SELECT
+          i.id AS insumo_id,
+          i.nombre AS insumo_nombre,
+          i.unidad_medida,
+          s.cantidad_stock AS cantidad_total
+        FROM ${this.tableStock} s
+        INNER JOIN insumos i ON i.id = s.insumo_id
+        WHERE s.usuario_id = ?
+          AND s.deleted_at IS NULL
+          AND i.deleted_at IS NULL
+        ORDER BY s.cantidad_stock DESC
+        LIMIT 10`,
+        [user.id]
+      );
+    }
   }
 }

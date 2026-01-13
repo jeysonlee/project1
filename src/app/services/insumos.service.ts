@@ -81,12 +81,11 @@ export class InsumosService {
   /**
    * Obtener insumo con el stock del usuario actual
    */
-  async getInsumoConStock(id: string) {
+  async getInsumoConStock(id: string, usuarioId: string) {
     const insumo = await this.getById(id);
     if (!insumo) return null;
 
-    const stock = await this.stockService.getStockByInsumo(id);
-
+    const stock = await this.stockService.getStockByInsumo(id, usuarioId);
     return {
       ...insumo,
       stock: stock ? stock.cantidad_stock : 0,

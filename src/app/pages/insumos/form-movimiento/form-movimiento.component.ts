@@ -92,7 +92,7 @@ export class FormMovimientoComponent implements OnInit {
 
     try {
       // Verificar si ya tiene stock registrado para ocultar el campo de umbral
-      const stock = await this.movimientosService.getStockInsumo(insumoId);
+      const stock = await this.movimientosService.getStockInsumo(insumoId, this.usuarioActual.id);
       this.mostrarUmbral = !stock && this.form.get('tipoMovimiento')?.value === 'ENTRADA';
 
       // Si es entrada, obtener el costo unitario del insumo
@@ -119,23 +119,15 @@ export class FormMovimientoComponent implements OnInit {
       return;
     }
 
-    const formValue = this.form.value;
+    const formValue = this.form.getRawValue();
+    const usuarioId = this.esAdministrador ? formValue.usuarioId : this.usuarioActual.id;
+
     console.log('Valores del formulario:', formValue);
+    console.log('Usuario seleccionado:', usuarioId);
 
-    // Validación adicional para administradores
-    if (this.esAdministrador && !formValue.usuarioId) {
-      this.mostrarAlerta('Error', 'Debe seleccionar un usuario');
-      return;
-    }
-
-    const loading = await this.loadingController.create({
-      message: 'Registrando movimiento...'
-    });
-    await loading.present();
-
-    try {
       if (formValue.tipoMovimiento === 'ENTRADA') {
         await this.movimientosService.registrarEntrada(
+          usuarioId,
           formValue.insumoId,
           formValue.cantidad,
           formValue.costoUnitario,
@@ -144,19 +136,16 @@ export class FormMovimientoComponent implements OnInit {
         );
       } else {
         await this.movimientosService.registrarSalida(
+          usuarioId,
           formValue.insumoId,
           formValue.cantidad,
           formValue.motivo
         );
       }
 
-      await loading.dismiss();
+
       this.modalCtrl.dismiss({ success: true });
-    } catch (error: any) {
-      await loading.dismiss();
-      console.error('Error al registrar movimiento:', error);
-      this.mostrarAlerta('Error', error.message || 'No se pudo registrar el movimiento');
-    }
+
   }
 
   async mostrarAlerta(titulo: string, mensaje: string) {
