@@ -235,7 +235,7 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-button expand="block" color="primary" (click)="guardar()" [disabled]="!detalles.length">
+  <ion-button expand="block" color="primary" (click)="guardar()" [disabled]="!isFormValid()">
     Guardar Venta
   </ion-button>
 

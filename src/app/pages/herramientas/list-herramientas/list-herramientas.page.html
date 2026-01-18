@@ -1,34 +1,63 @@
 <app-header></app-header>
-<ion-content>
-  <!-- Subcabecera -->
-  <ion-toolbar color="light">
-    <ion-title size="small">Herramientas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openHerramientaForm()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
 
-  <ion-list>
-    <ion-item *ngFor="let herramienta of herramientas">
-      <ion-thumbnail slot="start" *ngIf="herramienta.foto" class="insumo-img">
-        <img [src]="herramienta.foto" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ herramienta.nombre }}</h2>
-        <p> {{ herramienta.descripcion }}</p>
-        <p>{{ herramienta.categoria }}</p>
-        <p>{{ herramienta.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}</p>
+<ion-content class="ion-padding">
+  <div class="section-header">
+    <h3>Herramientas</h3>
+    <ion-button fill="clear" size="small" (click)="openHerramientaForm()">
+      <ion-icon name="add-outline"></ion-icon> Nueva
+    </ion-button>
+  </div>
 
-        <p>{{ herramienta.unidad_medida }}</p>
-      </ion-label>
-      <ion-button fill="clear" color="primary" (click)="openHerramientaForm(herramienta)">
-        <ion-icon name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" color="danger" (click)="deleteHerramienta(herramienta.id)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-list>
+  <div class="item-card" *ngFor="let herramienta of herramientas">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <!-- Col 1: Foto -->
+        <ion-col size="3" class="col-foto">
+          <div class="item-img" *ngIf="herramienta.foto">
+            <img [src]="herramienta.foto" />
+          </div>
+          <div class="item-img placeholder" *ngIf="!herramienta.foto">
+            <ion-icon name="hammer-outline"></ion-icon>
+          </div>
+        </ion-col>
+
+        <!-- Col 2: Datos -->
+        <ion-col size="6" class="col-datos">
+          <h2 class="item-title">{{ herramienta.nombre }}</h2>
+          <span class="unidad">{{ herramienta.unidad_medida }}</span>
+
+          <ion-row class="datos-row">
+            <ion-col size="12" *ngIf="herramienta.categoria">
+              <span class="dato">
+                <ion-icon name="pricetag-outline"></ion-icon>
+                {{ herramienta.categoria }}
+              </span>
+            </ion-col>
+            <ion-col size="12">
+              <span class="dato precio">
+                <ion-icon name="cash-outline"></ion-icon>
+                {{ herramienta.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}
+              </span>
+            </ion-col>
+            <ion-col size="12" *ngIf="herramienta.descripcion">
+              <span class="dato descripcion">
+                <ion-icon name="document-text-outline"></ion-icon>
+                {{ herramienta.descripcion }}
+              </span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <!-- Col 3: Botones -->
+        <ion-col size="3" class="col-acciones">
+          <ion-button fill="clear" color="primary" (click)="openHerramientaForm(herramienta)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteHerramienta(herramienta.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

@@ -117,40 +117,50 @@ export class SyncService {
     local: any,
     remote: any
   ) {
-    const localUpdatedAt = this.getTimestamp(local.updated_at);
-    const remoteUpdatedAt = this.getTimestamp(remote.updated_at);
+    // Comparar updated_at para saber cuál es más reciente
+    const localTime = this.getTimestamp(local.updated_at);
+    const remoteTime = this.getTimestamp(remote.updated_at);
 
-    // 🔍 Caso especial: Detectar eliminación vs restauración
-    const localDeleted = local.deleted_at != null;
-    const remoteDeleted = remote.deleted_at != null;
+    console.log(`🔍 ${table}:${id} - Local: ${local.updated_at} (${localTime}) | Remote: ${remote.updated_at} (${remoteTime})`);
 
-    if (localDeleted !== remoteDeleted) {
-      // Hay conflicto de deleted_at → usar updated_at para decidir
-      if (remoteUpdatedAt > localUpdatedAt) {
-        // ⬇️ Remoto más reciente → aplicar cambio del remoto
-        console.log(`🔄 ${table}:${id} - Aplicando estado remoto (${remoteDeleted ? 'eliminado' : 'restaurado'})`);
-        await this.updateLocalFromRemote(table, id, remote);
-      } else if (localUpdatedAt > remoteUpdatedAt) {
-        // ⬆️ Local más reciente → subir cambio local
-        console.log(`🔄 ${table}:${id} - Subiendo estado local (${localDeleted ? 'eliminado' : 'restaurado'})`);
-        await this.uploadToFirebase(table, local);
-      }
-      return;
-    }
-
-    // 📊 Caso normal: ambos tienen el mismo estado de deleted_at
-    if (remoteUpdatedAt > localUpdatedAt) {
-      await this.updateLocalFromRemote(table, id, remote);
-    }
-    else if (localUpdatedAt > remoteUpdatedAt) {
+    if (localTime > remoteTime) {
+      // Local es más reciente → subir a Firebase
+      console.log(`⬆️ ${table}:${id} - Local gana, subiendo a Firebase`);
       await this.uploadToFirebase(table, local);
+    } else if (remoteTime > localTime) {
+      // Remoto es más reciente → actualizar local
+      console.log(`⬇️ ${table}:${id} - Remoto gana, actualizando local`);
+      await this.updateLocalFromRemote(table, id, remote);
+    } else {
+      console.log(`✓ ${table}:${id} - Sin cambios (misma fecha)`);
     }
-    // si son iguales → no hacer nada
   }
 
   private getTimestamp(dateString: string | null | undefined): number {
     if (!dateString) return 0;
-    return new Date(dateString).getTime();
+
+    // Intentar parsear la fecha
+    const date = new Date(dateString);
+
+    // Si es válida, retornar timestamp
+    if (!isNaN(date.getTime())) {
+      return date.getTime();
+    }
+
+    // Si no se pudo parsear, intentar formato local (dd/mm/yyyy, hh:mm:ss)
+    try {
+      const parts = dateString.split(', ');
+      if (parts.length === 2) {
+        const [datePart, timePart] = parts;
+        const [day, month, year] = datePart.split('/').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        return new Date(year, month - 1, day, hours, minutes, seconds).getTime();
+      }
+    } catch (e) {
+      console.warn('Error parseando fecha:', dateString);
+    }
+
+    return 0;
   }
 
   // ============================
@@ -181,7 +191,7 @@ export class SyncService {
       ...remote,
       id,
       is_synced: 1,
-      synced_at: new Date().toISOString()
+      synced_at: new Date().toLocaleString()
     };
 
     const cols = Object.keys(data).join(',');
@@ -202,7 +212,7 @@ export class SyncService {
     const fields: any = { ...remote };
     delete fields.id;
     fields.is_synced = 1;
-    fields.synced_at = new Date().toISOString();
+    fields.synced_at = new Date().toLocaleString();
 
     // Construir UPDATE que preserve el updated_at del remoto
     const keys = Object.keys(fields);

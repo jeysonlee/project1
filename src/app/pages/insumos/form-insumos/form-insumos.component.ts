@@ -30,7 +30,7 @@ export class FormInsumosComponent  implements OnInit {
 
   async ngOnInit() {
   }
-  ionicViewWillEnter() {
+  ionViewWillEnter() {
     if (this.insumo) {
       this.isEdit = true;
       this.nombre = this.insumo.insumo_nombre;

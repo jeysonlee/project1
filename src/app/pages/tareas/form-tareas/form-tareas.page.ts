@@ -285,7 +285,33 @@ async ngOnInit() {
     this.totalGeneral = this.totalObreros + this.totalInsumos + this.totalHerramientas;
   }
 
+  // Método de validación del formulario
+  isFormValid(): boolean {
+    // Debe tener parcela seleccionada
+    if (!this.form.parcela_id) return false;
+
+    // Debe tener tipo de tarea seleccionado
+    if (!this.form.tipo_tarea_id) return false;
+
+    // Debe tener fecha de inicio
+    if (!this.form.fecha_inicio) return false;
+
+    // Debe tener fecha de fin
+    if (!this.form.fecha_fin) return false;
+
+    // Si es cosecha, validar campos de cosecha
+    if (this.mostrarCosecha()) {
+      if (!this.form.cant_baldes || this.form.cant_baldes <= 0) return false;
+      if (!this.form.cant_kg_fresco || this.form.cant_kg_fresco <= 0) return false;
+    }
+
+    return true;
+  }
+
   async guardarTarea() {
+    // Validar antes de guardar
+    if (!this.isFormValid()) return;
+
     const tarea = {
       id: uuidv4(),
       parcela_id:this.form.parcela_id,

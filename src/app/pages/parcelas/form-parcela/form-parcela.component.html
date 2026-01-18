@@ -12,7 +12,7 @@
 <ion-content class="ion-padding">
   <ion-item *ngIf="isAdmin">
     <ion-label position="stacked">Usuario</ion-label>
-    <ion-select [(ngModel)]="usuario_id" placeholder="Seleccione un usuario">
+    <ion-select [(ngModel)]="usuario_id" placeholder="Seleccione un usuario" interface="popover">
       <ion-select-option *ngFor="let user of users" [value]="user.id">
         {{ user.nombre }}
       </ion-select-option>
@@ -35,7 +35,10 @@
 
   <ion-item>
     <ion-label position="stacked">Tipo de Cultivo</ion-label>
-    <ion-input [(ngModel)]="tipo_cultivo"></ion-input>
+    <ion-select [(ngModel)]="tipo_cultivo" placeholder="Seleccione cultivo" interface="popover">
+      <ion-select-option value="organico">Orgánico</ion-select-option>
+      <ion-select-option value="convencional">Convencional</ion-select-option>
+    </ion-select>
   </ion-item>
 
   <ion-button expand="block" (click)="save()" class="ion-margin-top">

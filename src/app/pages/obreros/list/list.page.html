@@ -1,38 +1,68 @@
 <app-header></app-header>
 
-<ion-content>
-  <!-- Subcabecera -->
-  <ion-toolbar color="light">
-    <ion-title size="small">Obreros</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openObreroForm()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-
-  <ion-list>
-  <ion-item *ngFor="let obrero of obreros">
-    <ion-avatar slot="start" *ngIf="obrero.foto">
-      <img [src]="obrero.foto" />
-    </ion-avatar>
-    <ion-label>
-      <h2>{{ obrero.nombre }}</h2>
-      <p>Apellido: {{ obrero.apellido }}</p>
-      <p>DNI: {{ obrero.dni }}</p>
-      <p>Teléfono: {{ obrero.telefono }}</p>
-      <p>Precio Base: {{ obrero.precio_base | currency:'USD':'symbol':'1.2-2' }}</p>
-      <p>Dirección: {{ obrero.direccion }}</p>
-
-      <p>Especialidad: {{ obrero.especialidad }}</p>
-    </ion-label>
-    <ion-button fill="clear" color="primary" (click)="openObreroForm(obrero)">
-      <ion-icon name="create-outline"></ion-icon>
+<ion-content class="ion-padding">
+  <div class="section-header">
+    <h3>Obreros</h3>
+    <ion-button fill="clear" size="small" (click)="openObreroForm()">
+      <ion-icon name="add-outline"></ion-icon> Nuevo
     </ion-button>
-    <ion-button fill="clear" color="danger" (click)="deleteObrero(obrero.id)">
-      <ion-icon name="trash-outline"></ion-icon>
-    </ion-button>
-  </ion-item>
-</ion-list>
+  </div>
 
+  <div class="item-card" *ngFor="let obrero of obreros">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <!-- Col 1: Foto -->
+        <ion-col size="3" class="col-foto">
+          <div class="item-img" *ngIf="obrero.foto">
+            <img [src]="obrero.foto" />
+          </div>
+          <div class="item-img placeholder" *ngIf="!obrero.foto">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+
+        <!-- Col 2: Datos -->
+        <ion-col size="6" class="col-datos">
+          <h2 class="item-title">{{ obrero.nombre }} {{ obrero.apellido }}</h2>
+
+          <ion-row class="datos-row">
+            <ion-col size="12">
+              <span class="dato">
+                <ion-icon name="card-outline"></ion-icon>
+                {{ obrero.dni }}
+              </span>
+            </ion-col>
+            <ion-col size="12">
+              <span class="dato">
+                <ion-icon name="call-outline"></ion-icon>
+                {{ obrero.telefono }}
+              </span>
+            </ion-col>
+            <ion-col size="12">
+              <span class="dato precio">
+                <ion-icon name="cash-outline"></ion-icon>
+                {{ obrero.precio_base | currency:'S/ ':'symbol':'1.2-2' }}/día
+              </span>
+            </ion-col>
+            <ion-col size="12" *ngIf="obrero.especialidad">
+              <span class="dato">
+                <ion-icon name="construct-outline"></ion-icon>
+                {{ obrero.especialidad }}
+              </span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <!-- Col 3: Botones -->
+        <ion-col size="3" class="col-acciones">
+          <ion-button fill="clear" color="primary" (click)="openObreroForm(obrero)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteObrero(obrero.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

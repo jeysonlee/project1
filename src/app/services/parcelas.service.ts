@@ -13,8 +13,8 @@ export class ParcelasService {
 
   // Crear parcela asignando usuario_id del logueado
   async create(
-    nombre: string,
     usuario_id: string,
+    nombre: string,
     ubicacion: string,
     tamanio: number,
     tipo_cultivo: string

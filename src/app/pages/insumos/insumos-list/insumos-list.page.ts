@@ -1,3 +1,4 @@
+import { FormMovimientoComponent } from './../form-movimiento/form-movimiento.component';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, ModalController } from '@ionic/angular';
@@ -13,7 +14,9 @@ import { InsumoStockService } from 'src/app/services/insumo-stock.service';
 })
 export class InsumosListPage implements OnInit {
   insumos: any[] = [];
+  insumosFiltrados: any[] = [];
   isAdmin: boolean = false;
+  categoriaSeleccionada: string = '';
 
   constructor(
     private insumosService: InsumosService,
@@ -33,18 +36,27 @@ export class InsumosListPage implements OnInit {
   }
   async loadInsumos() {
     const currentUser = await this.usersService.getCurrentUser();
-    //console.log('Usuario actual:', currentUser);
     this.isAdmin = currentUser?.rol === 'Administrador';
     if (this.isAdmin) {
-    this.insumos = await this.insumoStockService.getAllStock();
-    console.log('Insumos cargados para admin:', this.insumos);
+      this.insumos = await this.insumoStockService.getAllStock();
     } else {
-    this.insumos = await this.insumoStockService.getStockUsuario();
-    console.log('Insumos cargados para usuario:', this.insumos);
+      this.insumos = await this.insumoStockService.getStockUsuario();
     }
+    this.filtrarPorCategoria(this.categoriaSeleccionada);
+  }
 
+  filtrarPorCategoria(categoria: string) {
+    this.categoriaSeleccionada = categoria;
+    if (!categoria) {
+      this.insumosFiltrados = [...this.insumos];
+    } else {
+      this.insumosFiltrados = this.insumos.filter(
+        i => i.categoria?.toLowerCase() === categoria.toLowerCase()
+      );
+    }
   }
   async openInsumoForm(insumo?: any) {
+    console.log('Abriendo formulario para insumo:', insumo);
     const modal = await this.modalCtrl.create({
       component: FormInsumosComponent, // Asegúrate de tener este componente creado
       componentProps: { insumo }
@@ -69,24 +81,13 @@ export class InsumosListPage implements OnInit {
     });
     await alert.present();
   }
-  async logout() {
-    const alert = await this.alertCtrl.create({
-      header: 'Confirmar',
-      message: '¿Seguro que quieres cerrar sesión?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Cerrar sesión',
-          handler: () => {
-            localStorage.removeItem('currentUser');
-            this.router.navigate(['/login']).then(() => {
-            window.location.reload(); // Recarga total de la página
-          });
-          }
-        }
-      ]
-    });
-    await alert.present();
-  }
 
+  async aggStock() {
+    const modal = await this.modalCtrl.create({
+      component: FormMovimientoComponent,
+      componentProps: { insumo: null }
+    });
+    modal.onDidDismiss().then(() => this.loadInsumos());
+    await modal.present();
+  }
 }

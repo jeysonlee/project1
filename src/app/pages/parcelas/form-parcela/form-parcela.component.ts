@@ -27,37 +27,34 @@ export class FormParcelaComponent implements OnInit {
     private userService: UsersService,
   ) {}
 
-  ngOnInit(): void {
-    // Aquí podrías verificar el rol del usuario si es necesario
-  }
-  ionViewWillEnter() {
-    this.loadUsersData();
+  async ngOnInit() {
+    await this.loadUsersData();
+
     if (this.parcela) {
       this.isEdit = true;
       this.usuario_id = this.parcela.usuario_id || '';
       this.nombre = this.parcela.nombre || '';
       this.ubicacion = this.parcela.ubicacion || '';
       this.alias = this.parcela.alias || '';
-      this.tamanio = this.parcela.tamano ?? 0;
+      this.tamanio = this.parcela.tamanio ?? 0;
       this.tipo_cultivo = this.parcela.tipo_cultivo || '';
     }
   }
-async loadUsersData() {
-  const user = await this.userService.getCurrentUser();
-  console.log('Current User:', user);
 
-  this.isAdmin = user.rol === 'Administrador';
+  async loadUsersData() {
+    const user = await this.userService.getCurrentUser();
+    this.isAdmin = user.rol === 'Administrador';
 
-  if (this.isAdmin) {
-    // Si es administrador, cargar lista de usuarios
-    this.users = await this.userService.readAll();
-    console.log('Loaded Users:', this.users);
-    this.usuario_id = null; // se elegirá desde el select
-  } else {
-    // Si es usuario normal, asignar su ID automáticamente
-    this.usuario_id = user.id;
+    if (this.isAdmin) {
+      this.users = await this.userService.readAll();
+      // Solo asignar null si NO es edición
+      if (!this.parcela) {
+        this.usuario_id = '';
+      }
+    } else {
+      this.usuario_id = user.id;
+    }
   }
-}
 
   async save() {
     if (!this.nombre.trim()) return;

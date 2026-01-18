@@ -13,11 +13,11 @@ agregar andoriod
 
 para  abrir en androdstudio
 export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/current/bin/studio.sh---cuando no encuentra android studio
-
+	npx cap sync android -------------------sincronyzar con android
 	npx cap open android
 
 
-	npx cap sync android -------------------sincronyzar con android
+
 
 parte 2-- esto es para arrancar el proyecto en otra maquina
 npm install -g @ionic/cli

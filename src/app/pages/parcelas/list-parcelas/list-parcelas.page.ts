@@ -34,6 +34,7 @@ ionViewWillEnter() {
   }
 
   async openParcelaForm(parcela?: any) {
+   // console.log('Abriendo formulario para parcela:', parcela);
     const modal = await this.modalCtrl.create({
       component: FormParcelaComponent,
       componentProps: { parcela }

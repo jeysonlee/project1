@@ -1,33 +1,55 @@
 <app-header></app-header>
 
-<ion-content>
-  <ion-toolbar color="light">
-    <ion-title size="small">Listado de Parcelas</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openParcelaForm()">
-        <ion-icon name="add-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<ion-content class="ion-padding">
+  <div class="section-header">
+    <h3>Parcelas</h3>
+    <ion-button fill="clear" size="small" (click)="openParcelaForm()">
+      <ion-icon name="add-outline"></ion-icon> Nueva
+    </ion-button>
+  </div>
 
-  <ion-list>
-    <ion-item *ngFor="let parcela of parcelas">
-      <ion-label>
-        <h2>{{ parcela.nombre }}</h2>
-        <p>Ubicación: {{ parcela.ubicacion }}</p>
-        <p>Tamaño: {{ parcela.tamanio }} ha</p>
-        <p>Tipo de cultivo: {{ parcela.tipo_cultivo }}</p>
-      </ion-label>
-      <ion-button fill="clear" color="primary" (click)="openParcelaForm(parcela)">
-        <ion-icon name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" color="danger" (click)="deleteParcela(parcela.id)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="outline" color="secondary" (click)="verDetalle(parcela)">
-        <ion-icon slot="start" name="analytics-outline"></ion-icon>
-      </ion-button>
+  <div class="item-card" *ngFor="let parcela of parcelas">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <!-- Col 1: Datos -->
+        <ion-col size="8" class="col-datos">
+          <h2 class="item-title">{{ parcela.nombre }}</h2>
 
-    </ion-item>
-  </ion-list>
+          <ion-row class="datos-row">
+            <ion-col size="12">
+              <span class="dato">
+                <ion-icon name="location-outline"></ion-icon>
+                {{ parcela.ubicacion }}
+              </span>
+            </ion-col>
+            <ion-col size="6">
+              <span class="dato">
+                <ion-icon name="resize-outline"></ion-icon>
+                {{ parcela.tamanio }} ha
+              </span>
+            </ion-col>
+            <ion-col size="6">
+              <span class="dato cultivo">
+                <ion-icon name="leaf-outline"></ion-icon>
+                {{ parcela.tipo_cultivo }}
+              </span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <!-- Col 2: Botones -->
+        <ion-col size="4" class="col-acciones">
+          <ion-button fill="clear" color="secondary" (click)="verDetalle(parcela)">
+            <ion-icon slot="icon-only" name="analytics-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="primary" (click)="openParcelaForm(parcela)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteParcela(parcela.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

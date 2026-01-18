@@ -300,4 +300,24 @@ onKgBrutoManual() {
   this.kgBrutoManual = true;
   this.recalcular();
 }
+
+// Método de validación del formulario
+isFormValid(): boolean {
+  // Debe tener al menos un detalle (cosecha seleccionada)
+  if (!this.detalles.length) return false;
+
+  // Debe tener usuario seleccionado (admin) o asignado (user)
+  if (!this.venta.usuario_id) return false;
+
+  // Debe tener precio por kg mayor a 0
+  if (!this.venta.precio_kg || this.venta.precio_kg <= 0) return false;
+
+  // Si es fresco, debe tener kg_bruto del comprador
+  if (this.esFresco && (!this.venta.kg_bruto || this.venta.kg_bruto <= 0)) return false;
+
+  // Si es seco, debe tener kg_seco del comprador
+  if (!this.esFresco && (!this.venta.kg_seco || this.venta.kg_seco <= 0)) return false;
+
+  return true;
+}
 }

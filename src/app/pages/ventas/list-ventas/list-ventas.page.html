@@ -1,131 +1,103 @@
-
 <app-header></app-header>
-<ion-content>
 
-  <!-- BUSCADOR Y BOTÓN NUEVO -->
-  <ion-grid>
-    <ion-row class="ion-align-items-center">
-      <ion-col size="10">
-        <ion-searchbar
-          placeholder="Buscar Ventas"
-        ></ion-searchbar>
-      </ion-col>
+<ion-content class="ion-padding">
+  <div class="section-header">
+    <h3>Ventas</h3>
+    <ion-button fill="clear" size="small" (click)="nuevo()">
+      <ion-icon name="add-outline"></ion-icon> Nueva
+    </ion-button>
+  </div>
 
-      <ion-col size="2" class="ion-text-end">
-        <ion-button expand="block" size="small" (click)="nuevo()">
-          <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="item-card" *ngFor="let v of ventas">
+    <!-- Header -->
+    <div class="card-header">
+      <div>
+        <h2 class="card-title">Venta N° {{ v.nr_venta }}</h2>
+        <p class="card-subtitle">{{ v.fecha_venta }}</p>
+      </div>
+      <ion-badge class="badge-estado" [color]="v.estado_humedad === 'FRESCO' ? 'success' : 'warning'">
+        {{ v.estado_humedad }}
+      </ion-badge>
+    </div>
 
-<ion-card *ngFor="let v of ventas">
-
-  <!-- HEADER -->
-  <ion-card-header>
-    <ion-card-title>
-      Venta N° {{ v.nr_venta }}
-    </ion-card-title>
-    <ion-card-subtitle>
-      {{ v.fecha_venta | date:'dd/MM/yyyy HH:mm' }}
-    </ion-card-subtitle>
-  </ion-card-header>
-
-  <!-- RESUMEN -->
-  <ion-card-content>
-    <ion-grid>
+    <!-- Datos -->
+    <ion-grid class="datos-grid">
       <ion-row>
         <ion-col size="6">
-          <strong>Kg vendidos</strong><br />
-          {{ v.cantidad_vendida_kg }} kg
+          <div class="dato">
+            <span class="label">Kg vendidos</span>
+            <span class="value">{{ v.cantidad_vendida_kg | number:'1.2-2' }} kg</span>
+          </div>
         </ion-col>
         <ion-col size="6">
-          <strong>Estado humedad</strong><br />
-          {{ v.estado_humedad }}
+          <div class="dato">
+            <span class="label">Precio/Kg</span>
+            <span class="value">S/ {{ v.precio_kg | number:'1.2-2' }}</span>
+          </div>
         </ion-col>
       </ion-row>
-
       <ion-row>
         <ion-col size="6">
-          <strong>Precio/Kg</strong><br />
-          S/ {{ v.precio_kg }}
+          <div class="dato" *ngIf="v.estado_humedad === 'FRESCO'">
+            <span class="label">Kg Bruto</span>
+            <span class="value">{{ v.kg_bruto | number:'1.2-2' }} kg</span>
+          </div>
+          <div class="dato" *ngIf="v.estado_humedad !== 'FRESCO'">
+            <span class="label">Kg Seco</span>
+            <span class="value">{{ v.kg_seco | number:'1.2-2' }} kg</span>
+          </div>
         </ion-col>
         <ion-col size="6">
-          <strong>Total</strong><br />
-          <strong>S/ {{ v.total_venta }}</strong>
+          <div class="dato total">
+            <span class="label">Total Venta</span>
+            <span class="value">S/ {{ v.total_venta | number:'1.2-2' }}</span>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
 
-    <!-- BOTONES -->
-    <ion-row class="ion-margin-top">
-      <ion-col size="6">
-        <ion-button
-          expand="block"
-          fill="solid"
-          (click)="verDetalle(v.id)"
-        >
-          <ion-icon
-
-            slot="start"
-            [name]="ventaExpandidaId === v.id ? 'chevron-up-outline' : 'chevron-down-outline'"
-          ></ion-icon>
-          Detalle
-        </ion-button>
-      </ion-col>
-
-<!--       <ion-col size="4">
-        <ion-button
-        expand="block"
-        color="secondary"
-        (click)="editarVenta(v.id)"
-        >
-          <ion-icon slot="start" name="create-outline"></ion-icon>
-          Editar
-        </ion-button>
-      </ion-col> -->
-
-      <ion-col size="6">
-        <ion-button
-          expand="block"
-          color="danger"
-          (click)="confirmarEliminar(v)"
-        >
-          <ion-icon slot="start" name="trash-outline"></ion-icon>
-          Eliminar
-        </ion-button>
-      </ion-col>
-    </ion-row>
-
-    <!-- ACORDEÓN -->
-    <div *ngIf="ventaExpandidaId === v.id && detallesCache[v.id]">
-
-      <ion-list class="ion-margin-top" lines="full">
-        <ion-item-divider color="light">
-          <ion-label>
-            Detalle por Cosecha
-          </ion-label>
-        </ion-item-divider>
-
-        <ion-item
-          *ngFor="let d of detallesCache[v.id].detalles"
-        >
-          <ion-label>
-            <h3>Cosecha: {{ d.cosecha_id }}</h3>
-            <p>Kg Bruto: {{ d.kg_bruto }}</p>
-            <p>Kg Seco: {{ d.kg_seco }}</p>
-            <p>Vendido: {{ d.cantidad_vendida_kg }} kg</p>
-            <p>Participación: {{ d.porcentaje_total_venta }} %</p>
-          </ion-label>
-
-          <ion-note slot="end">
-            <strong>S/ {{ d.subtotal }}</strong>
-          </ion-note>
-        </ion-item>
-      </ion-list>
-
+    <!-- Botones -->
+    <div class="col-acciones">
+      <ion-button fill="outline" color="primary" (click)="verDetalle(v.id)">
+        <ion-icon slot="start" [name]="ventaExpandidaId === v.id ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        Detalle
+      </ion-button>
+      <ion-button fill="outline" color="danger" (click)="confirmarEliminar(v)">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Eliminar
+      </ion-button>
     </div>
-  </ion-card-content>
 
-</ion-card>
+    <!-- Detalle Expandido -->
+    <div class="detalle-section" *ngIf="ventaExpandidaId === v.id && detallesCache[v.id]">
+      <p class="detalle-header">Detalle por Cosecha</p>
+
+      <div class="detalle-item" *ngFor="let d of detallesCache[v.id].detalles">
+        <div class="detalle-row">
+          <span class="detalle-label">Cosecha ID</span>
+          <span class="detalle-value">{{ d.cosecha_id }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Kg Bruto</span>
+          <span class="detalle-value">{{ d.kg_bruto | number:'1.2-2' }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Kg Seco</span>
+          <span class="detalle-value">{{ d.kg_seco | number:'1.2-2' }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Kg Vendido</span>
+          <span class="detalle-value">{{ d.cantidad_vendida_kg | number:'1.2-2' }} kg</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Participación</span>
+          <span class="detalle-value">{{ d.porcentaje_total_venta | number:'1.0-2' }}%</span>
+        </div>
+        <div class="detalle-row subtotal">
+          <span class="detalle-label">Subtotal</span>
+          <span class="detalle-value">S/ {{ d.subtotal | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -1,27 +1,59 @@
 <app-header></app-header>
-<!-- users.page.html -->
-<ion-content>
-  <!-- Subcabecera dentro del contenido -->
-  <ion-toolbar color="light" >
-    <ion-title size="small">Usuarios</ion-title>
-      <ion-button size="small" slot="end" (click)="openUserForm()" color="light">
-        <ion-icon name="add" color="primary"></ion-icon>
-      </ion-button>
-  </ion-toolbar>
 
-  <ion-list>
-    <ion-item *ngFor="let user of usuarios">
-      <ion-label>
-        <h2>{{ user.username }}</h2>
-        <p>Rol: {{ user.rol }}</p>
-      </ion-label>
-      <ion-button fill="clear" color="primary" (click)="openUserForm(user)">
-        <ion-icon name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" color="danger" (click)="deleteUser(user.id)">
-        <ion-icon name="trash-outline"></ion-icon>
-      </ion-button>
-    </ion-item>
-  </ion-list>
+<ion-content class="ion-padding">
+  <div class="section-header">
+    <h3>Usuarios</h3>
+    <ion-button fill="clear" size="small" (click)="openUserForm()">
+      <ion-icon name="add-outline"></ion-icon> Nuevo
+    </ion-button>
+  </div>
 
+  <div class="item-card" *ngFor="let user of usuarios">
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <!-- Col 1: Foto -->
+        <ion-col size="3" class="col-foto">
+          <div class="item-img placeholder">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+        </ion-col>
+
+        <!-- Col 2: Datos -->
+        <ion-col size="6" class="col-datos">
+          <h2 class="item-title">{{ user.nombre }} {{ user.apellido }}</h2>
+
+          <ion-row class="datos-row">
+            <ion-col size="12">
+              <span class="dato">
+                <ion-icon name="at-outline"></ion-icon>
+                {{ user.username }}
+              </span>
+            </ion-col>
+            <ion-col size="12">
+              <span class="dato rol">
+                <ion-icon name="shield-outline"></ion-icon>
+                {{ user.rol }}
+              </span>
+            </ion-col>
+            <ion-col size="12" *ngIf="user.email">
+              <span class="dato">
+                <ion-icon name="mail-outline"></ion-icon>
+                {{ user.email }}
+              </span>
+            </ion-col>
+          </ion-row>
+        </ion-col>
+
+        <!-- Col 3: Botones -->
+        <ion-col size="3" class="col-acciones">
+          <ion-button fill="clear" color="primary" (click)="openUserForm(user)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="deleteUser(user.id)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

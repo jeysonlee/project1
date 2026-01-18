@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Nueva Tarea</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="guardarTarea()">Guardar</ion-button>
+      <ion-button (click)="guardarTarea()" [disabled]="!isFormValid()">Guardar</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

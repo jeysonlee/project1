@@ -31,14 +31,27 @@
   </ion-item>
 <ion-item>
   <ion-label position="stacked">Categoría</ion-label>
-  <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría">
-    <ion-select-option value="herbicida">Herbicida</ion-select-option>
-    <ion-select-option value="insecticida">Insecticida</ion-select-option>
-    <ion-select-option value="follar">Follar</ion-select-option>
-      <ion-select-option value="herramienta">Abono</ion-select-option>
-    <ion-select-option value="herramienta">Fungicida</ion-select-option>
-    <ion-select-option value="otro">Otro</ion-select-option>
-  </ion-select>
+    <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría" interface="popover">
+      <ion-select-option value="herbicida">Herbicida</ion-select-option>
+      <ion-select-option value="insecticida">Insecticida</ion-select-option>
+      <ion-select-option value="fungicida">Fungicida</ion-select-option>
+      <ion-select-option value="acaricida">Acaricida</ion-select-option>
+      <ion-select-option value="nematicida">Nematicida</ion-select-option>
+
+      <ion-select-option value="abono">Abono / Fertilizante</ion-select-option>
+      <ion-select-option value="fertilizante_foliar">Fertilizante foliar</ion-select-option>
+      <ion-select-option value="bioestimulante">Bioestimulante</ion-select-option>
+      <ion-select-option value="corrector">Corrector nutricional</ion-select-option>
+
+      <ion-select-option value="biologico">Biológico</ion-select-option>
+      <ion-select-option value="micorriza">Micorriza</ion-select-option>
+
+      <ion-select-option value="coadyuvante">Coadyuvante</ion-select-option>
+      <ion-select-option value="enmienda">Enmienda agrícola</ion-select-option>
+
+      <ion-select-option value="otro">Otro</ion-select-option>
+    </ion-select>
+
 </ion-item>
   <ion-item>
     <ion-label position="stacked">Costo Unitario</ion-label>
