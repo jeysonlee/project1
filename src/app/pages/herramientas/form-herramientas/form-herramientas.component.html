@@ -1,76 +1,112 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-title>{{ isEdit ? 'Editar Herramienta':'Nueva Herramienta' }}</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>{{ isEdit ? 'Editar Herramienta' : 'Nueva Herramienta' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item lines="none">
-    <ion-avatar slot="start" *ngIf="foto">
-      <img [src]="foto" />
-    </ion-avatar>
-    <ion-buttons>
-      <ion-button (click)="takePhoto(false)">
-        <ion-icon name="camera-outline"></ion-icon> Cámara
-      </ion-button>
-      <ion-button (click)="takePhoto(true)">
-        <ion-icon name="image-outline"></ion-icon> Galería
-      </ion-button>
-    </ion-buttons>
-  </ion-item>
 
-  <!-- Select de Usuario (Solo para Administradores) -->
-  <ion-item *ngIf="esAdmin">
-    <ion-label position="stacked">Asignar a Usuario *</ion-label>
-    <ion-select [(ngModel)]="usuarioSeleccionado" interface="popover">
-      <ion-select-option *ngFor="let usuario of usuarios" [value]="usuario.id">
-        {{ usuario.nombre }} {{ usuario.apellido }} ({{ usuario.username }})
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
+  <!-- Foto -->
+  <ion-card>
+    <ion-card-content>
+      <div class="photo-section">
+        <ion-avatar *ngIf="foto">
+          <img [src]="foto" />
+        </ion-avatar>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <ion-button fill="outline" size="small" (click)="takePhoto(false)">
+            <ion-icon slot="start" name="camera-outline"></ion-icon>
+            Cámara
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="takePhoto(true)">
+            <ion-icon slot="start" name="image-outline"></ion-icon>
+            Galería
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
-  <!-- Información del usuario asignado (Solo para usuarios normales) -->
-  <ion-item *ngIf="!esAdmin" lines="none">
-    <ion-label>
-      <p><strong>Asignado a:</strong> {{ usuarioActual?.nombre }} {{ usuarioActual?.apellido }}</p>
-    </ion-label>
-  </ion-item>
+  <!-- Asignación (admin) -->
+  <ion-card *ngIf="esAdmin">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="person-circle-outline"></ion-icon>
+        Asignación
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Asignar a Usuario *</ion-label>
+        <ion-select [(ngModel)]="usuarioSeleccionado" interface="popover">
+          <ion-select-option *ngFor="let usuario of usuarios" [value]="usuario.id">
+            {{ usuario.nombre }} {{ usuario.apellido }} ({{ usuario.username }})
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-  <ion-item>
-    <ion-label position="stacked">Nombre</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
-  </ion-item>
-<ion-item>
-  <ion-label position="stacked">Categoría</ion-label>
-  <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría" interface="popover">
-    <ion-select-option value="Manual">Manual</ion-select-option>
-    <ion-select-option value="Motorizada">Motorizada</ion-select-option>
-    <ion-select-option value="Hidraulica">Hidráulica</ion-select-option>
-    <ion-select-option value="otro">Otro</ion-select-option>
-  </ion-select>
-</ion-item>
-  <ion-item>
-    <ion-label position="stacked">Costo base de alquiler/día</ion-label>
-    <ion-input type="number" [(ngModel)]="costo_unitario"></ion-input>
-  </ion-item>
-<ion-item>
-  <ion-label position="stacked">Unidad de Medida</ion-label>
-  <ion-select [(ngModel)]="unidad_medida" interface="popover" placeholder="Seleccione unidad">
-    <ion-select-option value="unidad">Unidad</ion-select-option>
-    <ion-select-option value="Caja/50">Caja/50</ion-select-option>
-    <ion-select-option value="Caja/100">Caja/100</ion-select-option>
-    <ion-select-option value="Docena">Docena</ion-select-option>
-  </ion-select>
-</ion-item>
+  <ion-card *ngIf="!esAdmin">
+    <ion-card-content>
+      <ion-item lines="none">
+        <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
+        <ion-label>
+          <p style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ion-color-medium);">Asignado a</p>
+          <h2 style="font-weight: 600;">{{ usuarioActual?.nombre }} {{ usuarioActual?.apellido }}</h2>
+        </ion-label>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
+  <!-- Datos de la herramienta -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="hammer-outline"></ion-icon>
+        Información de la Herramienta
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Categoría</ion-label>
+        <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría" interface="popover">
+          <ion-select-option value="Manual">Manual</ion-select-option>
+          <ion-select-option value="Motorizada">Motorizada</ion-select-option>
+          <ion-select-option value="Hidraulica">Hidráulica</ion-select-option>
+          <ion-select-option value="otro">Otro</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Unidad de Medida</ion-label>
+        <ion-select [(ngModel)]="unidad_medida" interface="popover" placeholder="Seleccione unidad">
+          <ion-select-option value="unidad">Unidad</ion-select-option>
+          <ion-select-option value="Caja/50">Caja/50</ion-select-option>
+          <ion-select-option value="Caja/100">Caja/100</ion-select-option>
+          <ion-select-option value="Docena">Docena</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Costo base de alquiler/día</ion-label>
+        <ion-input type="number" [(ngModel)]="costo_unitario"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()" color="primary">
+      <ion-icon slot="start" [name]="isEdit ? 'create-outline' : 'save-outline'"></ion-icon>
+      {{ isEdit ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
+  </div>
 
-  <ion-button expand="block" (click)="save()" class="ion-margin-top">
-    {{ isEdit ? 'Actualizar' : 'Guardar' }}
-  </ion-button>
 </ion-content>

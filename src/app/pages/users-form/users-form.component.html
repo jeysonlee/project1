@@ -1,78 +1,108 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>{{ isEdit ? 'Editar Usuario' : 'Nuevo Usuario' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content class="ion-padding">
   <form [formGroup]="form">
 
-  <ion-item>
-    <ion-label position="stacked">Usuario *</ion-label>
-    <ion-input formControlName="username"></ion-input>
-  </ion-item>
-  <ion-text color="danger" *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
-    Usuario obligatorio
-  </ion-text>
+    <!-- Acceso -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          Datos de Acceso
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
 
-  <ion-item>
-    <ion-label position="stacked">Contraseña {{ isEdit ? '' : '*' }}</ion-label>
-    <ion-input type="password"
-               formControlName="password"
-               [placeholder]="isEdit ? 'Dejar en blanco para no cambiar' : ''">
-    </ion-input>
-  </ion-item>
-  <ion-text color="danger" *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['required']">
-    La contraseña es obligatoria
-  </ion-text>
-  <ion-text color="danger" *ngIf="form.get('password')?.errors?.['minlength']">
-    Mínimo 6 caracteres
-  </ion-text>
+        <ion-item>
+          <ion-label position="stacked">Usuario *</ion-label>
+          <ion-input formControlName="username"></ion-input>
+        </ion-item>
+        <ion-note color="danger" class="ion-padding-start"
+          *ngIf="form.get('username')?.touched && form.get('username')?.invalid">
+          Usuario obligatorio
+        </ion-note>
 
-  <ion-item>
-    <ion-label position="stacked">Rol*</ion-label>
-    <ion-select formControlName="rol_id" placeholder="Seleccione un rol">
-      <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
-        {{ rol.nombre }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-text color="danger" *ngIf="form.get('rol_id')?.touched && form.get('rol_id')?.invalid">
-    El rol es obligatorio
-  </ion-text>
+        <ion-item>
+          <ion-label position="stacked">Contraseña {{ isEdit ? '' : '*' }}</ion-label>
+          <ion-input
+            type="password"
+            formControlName="password"
+            [placeholder]="isEdit ? 'Dejar en blanco para no cambiar' : ''">
+          </ion-input>
+        </ion-item>
+        <ion-note color="danger" class="ion-padding-start"
+          *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['required']">
+          La contraseña es obligatoria
+        </ion-note>
+        <ion-note color="danger" class="ion-padding-start"
+          *ngIf="form.get('password')?.errors?.['minlength']">
+          Mínimo 6 caracteres
+        </ion-note>
 
-  <ion-item>
-    <ion-label position="stacked">Nombre</ion-label>
-    <ion-input formControlName="nombre"></ion-input>
-  </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Rol *</ion-label>
+          <ion-select formControlName="rol_id" placeholder="Seleccione un rol" interface="popover">
+            <ion-select-option *ngFor="let rol of roles" [value]="rol.id">
+              {{ rol.nombre }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-note color="danger" class="ion-padding-start"
+          *ngIf="form.get('rol_id')?.touched && form.get('rol_id')?.invalid">
+          El rol es obligatorio
+        </ion-note>
 
-  <ion-item>
-    <ion-label position="stacked">Apellido</ion-label>
-    <ion-input formControlName="apellido"></ion-input>
-  </ion-item>
+      </ion-card-content>
+    </ion-card>
 
-  <ion-item>
-    <ion-label position="stacked">Email</ion-label>
-    <ion-input type="email" formControlName="email"></ion-input>
-  </ion-item>
+    <!-- Datos personales -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="person-outline"></ion-icon>
+          Datos Personales
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
 
-  <ion-item>
-    <ion-label position="stacked">Teléfono</ion-label>
-    <ion-input formControlName="telefono"></ion-input>
-  </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input formControlName="nombre"></ion-input>
+        </ion-item>
 
-  <ion-button expand="block"
-              class="ion-margin-top"
-              (click)="save()"
-              [disabled]="form.invalid">
-    {{ isEdit ? 'Actualizar' : 'Guardar' }}
-  </ion-button>
+        <ion-item>
+          <ion-label position="stacked">Apellido</ion-label>
+          <ion-input formControlName="apellido"></ion-input>
+        </ion-item>
 
-</form>
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
 
+        <ion-item>
+          <ion-label position="stacked">Teléfono</ion-label>
+          <ion-input formControlName="telefono"></ion-input>
+        </ion-item>
+
+      </ion-card-content>
+    </ion-card>
+
+    <div class="form-actions">
+      <ion-button expand="block" (click)="save()" color="primary" [disabled]="form.invalid">
+        <ion-icon slot="start" [name]="isEdit ? 'create-outline' : 'save-outline'"></ion-icon>
+        {{ isEdit ? 'Actualizar' : 'Guardar' }}
+      </ion-button>
+    </div>
+
+  </form>
 </ion-content>
-

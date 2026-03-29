@@ -11,6 +11,8 @@ import { FormTipoTareaComponent } from '../form-tipo-tarea/form-tipo-tarea.compo
 })
 export class ListTipoTareasPage implements OnInit {
   tiposTarea: any[] = [];
+  filteredTiposTarea: any[] = [];
+  searchTerm = '';
 
   constructor(
     private tiposTareaService: TiposTareaService,
@@ -26,6 +28,14 @@ export class ListTipoTareasPage implements OnInit {
   }
   async loadTiposTarea() {
     this.tiposTarea = await this.tiposTareaService.readAll();
+    this.filterTiposTarea();
+  }
+
+  filterTiposTarea() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredTiposTarea = this.tiposTarea.filter(t =>
+      t.descripcion?.toLowerCase().includes(term)
+    );
   }
   async openTipoTareaForm(tipoTarea?: any) {
     const modal = await this.modalCtrl.create({

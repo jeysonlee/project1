@@ -55,11 +55,11 @@ ionViewDidEnter() {
 
   destroyCharts() {
     if (this.grafico1) {
-      this.grafico1.destroy();
+      try { this.grafico1.destroy(); } catch {}
       this.grafico1 = null;
     }
     if (this.grafico2) {
-      this.grafico2.destroy();
+      try { this.grafico2.destroy(); } catch {}
       this.grafico2 = null;
     }
   }
@@ -75,6 +75,7 @@ ionViewDidEnter() {
       const unidades = datos.map(d => d.unidad_medida);
 
       const canvas = document.getElementById('grafico1') as HTMLCanvasElement;
+      if (!canvas) return;
 
       this.grafico1 = new Chart(canvas, {
         type: 'bar',
@@ -131,6 +132,7 @@ ionViewDidEnter() {
       const productividad = datos.map(d => d.productividad);
 
       const canvas = document.getElementById('grafico2') as HTMLCanvasElement;
+      if (!canvas) return;
 
       this.grafico2 = new Chart(canvas, {
         type: 'bar',

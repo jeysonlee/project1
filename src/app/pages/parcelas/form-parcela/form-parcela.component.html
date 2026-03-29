@@ -1,47 +1,72 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>{{ isEdit ? 'Editar Parcela' : 'Nueva Parcela' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item *ngIf="isAdmin">
-    <ion-label position="stacked">Usuario</ion-label>
-    <ion-select [(ngModel)]="usuario_id" placeholder="Seleccione un usuario" interface="popover">
-      <ion-select-option *ngFor="let user of users" [value]="user.id">
-        {{ user.nombre }}
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
-  <ion-item>
-    <ion-label position="stacked">Nombre</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
-  </ion-item>
 
-  <ion-item>
-    <ion-label position="stacked">Ubicación</ion-label>
-    <ion-input [(ngModel)]="ubicacion"></ion-input>
-  </ion-item>
+  <!-- Asignación (solo admin) -->
+  <ion-card *ngIf="isAdmin">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="person-circle-outline"></ion-icon>
+        Asignación
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-select [(ngModel)]="usuario_id" placeholder="Seleccione un usuario" interface="popover">
+          <ion-select-option *ngFor="let user of users" [value]="user.id">
+            {{ user.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-  <ion-item>
-    <ion-label position="stacked">Tamaño (hectáreas)</ion-label>
-    <ion-input type="number" [(ngModel)]="tamanio"></ion-input>
-  </ion-item>
+  <!-- Datos de la parcela -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="earth-outline"></ion-icon>
+        Información de la Parcela
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Ubicación</ion-label>
+        <ion-input [(ngModel)]="ubicacion"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Tamaño (hectáreas)</ion-label>
+        <ion-input type="number" [(ngModel)]="tamanio"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Tipo de Cultivo</ion-label>
+        <ion-select [(ngModel)]="tipo_cultivo" placeholder="Seleccione cultivo" interface="popover">
+          <ion-select-option value="organico">Orgánico</ion-select-option>
+          <ion-select-option value="convencional">Convencional</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-  <ion-item>
-    <ion-label position="stacked">Tipo de Cultivo</ion-label>
-    <ion-select [(ngModel)]="tipo_cultivo" placeholder="Seleccione cultivo" interface="popover">
-      <ion-select-option value="organico">Orgánico</ion-select-option>
-      <ion-select-option value="convencional">Convencional</ion-select-option>
-    </ion-select>
-  </ion-item>
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()" color="primary">
+      <ion-icon slot="start" [name]="isEdit ? 'create-outline' : 'save-outline'"></ion-icon>
+      {{ isEdit ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
+  </div>
 
-  <ion-button expand="block" (click)="save()" class="ion-margin-top">
-    {{ isEdit ? 'Actualizar' : 'Guardar' }}
-  </ion-button>
 </ion-content>

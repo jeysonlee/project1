@@ -1,64 +1,87 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>Cosecha</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancelar()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-list>
-    <ion-item>
-      <ion-label position="stacked">Parcela</ion-label>
-      <ion-select [(ngModel)]="form.parcela_id" interface="popover">
-        <ion-select-option *ngFor="let p of parcelas" [value]="p.id">
-          {{ p.nombre }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-label position="stacked">Fecha</ion-label>
-      <ion-input type="date" [(ngModel)]="form.fecha_cosecha"></ion-input>
-    </ion-item>
+<ion-content class="ion-padding">
 
-    <ion-item>
-      <ion-label position="stacked">Baldes</ion-label>
-      <ion-input type="number" [(ngModel)]="form.cant_baldes"></ion-input>
-    </ion-item>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="archive-outline"></ion-icon>
+        Datos de la Cosecha
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
 
-    <ion-item>
-      <ion-label position="stacked">Kg Bruto</ion-label>
-      <ion-input type="number" [(ngModel)]="form.kg_bruto"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Parcela</ion-label>
+        <ion-select [(ngModel)]="form.parcela_id" interface="popover">
+          <ion-select-option *ngFor="let p of parcelas" [value]="p.id">
+            {{ p.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
 
-    <ion-item>
-      <ion-label position="stacked">Kg Seco</ion-label>
-      <ion-input type="number" [(ngModel)]="form.kg_seco"></ion-input>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Fecha</ion-label>
+        <ion-input type="date" [(ngModel)]="form.fecha_cosecha"></ion-input>
+      </ion-item>
 
-    <ion-item>
-      <ion-label>Estado</ion-label>
-      <ion-select [(ngModel)]="form.estado">
-        <ion-select-option value="COSECHADO">COSECHADO</ion-select-option>
-        <ion-select-option value="PARCIAL">PARCIAL</ion-select-option>
-        <ion-select-option value="VENDIDO">VENDIDO</ion-select-option>
-      </ion-select>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Baldes</ion-label>
+        <ion-input type="number" [(ngModel)]="form.cant_baldes"></ion-input>
+      </ion-item>
 
-  </ion-list>
-  <ion-row>
-    <ion-col size="6">
-      <ion-button
-      color="medium"
-      expand="block"
-      (click)="cancelar()">
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="scale-outline"></ion-icon>
+        Pesos
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+
+      <ion-item>
+        <ion-label position="stacked">Kg Bruto</ion-label>
+        <ion-input type="number" [(ngModel)]="form.kg_bruto"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Kg Seco</ion-label>
+        <ion-input type="number" [(ngModel)]="form.kg_seco"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Estado</ion-label>
+        <ion-select [(ngModel)]="form.estado" interface="popover">
+          <ion-select-option value="COSECHADO">Cosechado</ion-select-option>
+          <ion-select-option value="PARCIAL">Parcial</ion-select-option>
+          <ion-select-option value="VENDIDO">Vendido</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <div class="form-actions">
+    <ion-button expand="block" (click)="guardar()" color="primary">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      Guardar
+    </ion-button>
+    <ion-button expand="block" (click)="cancelar()" color="medium" fill="outline">
+      <ion-icon slot="start" name="close-outline"></ion-icon>
       Cancelar
     </ion-button>
-    </ion-col >
-
-    <ion-col size="6">
-      <ion-button expand="block" (click)="guardar()">Guardar</ion-button>
-    </ion-col>
-
-  </ion-row>
-
+  </div>
 
 </ion-content>

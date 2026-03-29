@@ -29,7 +29,7 @@ jeepSqlite(window)
     FormParcelaComponent,
     FormHerramientasComponent,
     ParcelaDetalleComponent,
-    FormMovimientoComponent,
+    FormMovimientoComponent
   ],
   imports: [
     BrowserModule,

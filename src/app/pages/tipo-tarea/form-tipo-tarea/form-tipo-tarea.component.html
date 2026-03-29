@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>{{ isEdit ? 'Editar Tipo de Tarea' : 'Nuevo Tipo de Tarea' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -11,13 +11,26 @@
 
 <ion-content class="ion-padding">
 
-  <ion-item>
-    <ion-label position="stacked">Descripción</ion-label>
-    <ion-input [(ngModel)]="descripcion"></ion-input>
-  </ion-item>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="receipt-outline"></ion-icon>
+        Datos del Tipo de Tarea
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-input [(ngModel)]="descripcion"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()" color="primary">
+      <ion-icon slot="start" [name]="isEdit ? 'create-outline' : 'save-outline'"></ion-icon>
+      {{ isEdit ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
+  </div>
 
-  <ion-button expand="block" (click)="save()" class="ion-margin-top">
-    {{ isEdit ? 'Actualizar' : 'Guardar' }}
-  </ion-button>
 </ion-content>

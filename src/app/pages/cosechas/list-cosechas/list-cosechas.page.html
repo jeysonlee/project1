@@ -1,96 +1,103 @@
 <app-header></app-header>
 
-<ion-content>
-  <ion-toolbar color="light">
-    <ion-title size="small">Cosechas</ion-title>
+<ion-content class="list-cosechas-content">
 
-  </ion-toolbar>
+  <ion-grid class="search-grid">
+    <ion-row class="ion-align-items-center">
+      <ion-col>
+        <ion-searchbar
+          placeholder="Buscar cosechas..."
+          [(ngModel)]="searchTerm"
+          (ionInput)="filterCosechas()"
+          animated="true">
+        </ion-searchbar>
+      </ion-col>
+      <ion-col size="auto">
+        <ion-button shape="round" (click)="nuevo()">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Nueva
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="medium">
+          <small>{{ filteredCosechas.length }} cosecha{{ filteredCosechas.length !== 1 ? 's' : '' }} encontrada{{ filteredCosechas.length !== 1 ? 's' : '' }}</small>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-  <ion-list lines="none">
-    <ion-card *ngFor="let c of cosechas">
-      <ion-card-header>
-        <ion-card-title>
-          Cosecha: {{ c.fecha_cosecha | date:'dd/MM/yyyy' }}
-        </ion-card-title>
+  <ion-grid class="cards-grid">
+    <ion-row *ngFor="let c of filteredCosechas">
+      <ion-col size="12">
+        <ion-card class="cosecha-card">
 
-      </ion-card-header>
+          <div class="card-header-custom">
+            <div class="card-header-left">
+              <div class="cosecha-icon-wrap">
+                <ion-icon name="leaf-outline"></ion-icon>
+              </div>
+              <div class="card-header-info">
+                <h2 class="cosecha-fecha">{{ c.fecha_cosecha | date:'dd MMMM yyyy' }}</h2>
+                <p class="cosecha-sub">
+                  <ion-icon name="layers-outline"></ion-icon>
+                  {{ c.cant_baldes }} baldes
+                </p>
+              </div>
+            </div>
+            <ion-chip [color]="getEstadoColor(c.estado)" class="estado-chip">
+              <ion-icon [name]="getEstadoIcon(c.estado)"></ion-icon>
+              <ion-label>{{ c.estado }}</ion-label>
+            </ion-chip>
+          </div>
 
-      <ion-card-content>
-        <ion-grid>
-          <ion-row>
-            <ion-col size="6">
-              <strong>Baldes:
-                {{ c.cant_baldes}}
-              </strong><br />
-            </ion-col>
-            <ion-col size="6">
-              <ion-badge
-                [color]="getEstadoColor(c.estado)"
-              >
-                {{ c.estado }}
-              </ion-badge>
-            </ion-col>
+          <ion-card-content>
+            <ion-grid class="ion-no-padding datos-grid">
+              <ion-row>
+                <ion-col class="dato-col">
+                  <ion-icon name="scale-outline" color="primary"></ion-icon>
+                  <span class="dato-label">KG Bruto</span>
+                  <span class="dato-valor">{{ c.kg_bruto }} <small>kg</small></span>
+                  <ion-badge color="light" class="disp-badge">Disp: {{ c.kg_bruto_disponible }} kg</ion-badge>
+                </ion-col>
+                <ion-col class="dato-col">
+                  <ion-icon name="sunny-outline" color="warning"></ion-icon>
+                  <span class="dato-label">KG Seco</span>
+                  <span class="dato-valor">{{ c.kg_seco }} <small>kg</small></span>
+                  <ion-badge color="light" class="disp-badge">Disp: {{ c.kg_seco_disponible }} kg</ion-badge>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
 
-          </ion-row>
-          <ion-row>
+            <ion-grid class="ion-no-padding acciones-grid">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-button expand="block" fill="outline" size="small" color="secondary" (click)="editar(c.id)">
+                    <ion-icon slot="start" name="create-outline"></ion-icon>
+                    Editar
+                  </ion-button>
+                </ion-col>
+                <ion-col size="auto" *ngIf="c.estado === 'COSECHADO'">
+                  <ion-button fill="outline" size="small" color="danger" (click)="eliminar(c.id)">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
 
-            <ion-col size="6">
-              <strong>Kg Bruto:</strong><br />
-              {{ c.kg_bruto }} kg
-            </ion-col>
-            <ion-col size="6">
-              <strong>Disponible:</strong><br />
-              {{ c.kg_bruto_disponible }} kg
-            </ion-col>
-          </ion-row>
+        </ion-card>
+      </ion-col>
+    </ion-row>
 
-          <ion-row>
-            <ion-col size="6">
-              <strong>Kg Seco:</strong><br />
-              {{ c.kg_seco }} kg
-            </ion-col>
-            <ion-col size="6">
-              <strong>Disponible:</strong><br />
-              {{ c.kg_seco_disponible }} kg
-            </ion-col>
-          </ion-row>
+    <ion-row *ngIf="filteredCosechas.length === 0">
+      <ion-col class="empty-state">
+        <ion-icon name="leaf-outline"></ion-icon>
+        <p>Sin cosechas registradas</p>
+        <small>Intenta con otro término o crea una nueva cosecha</small>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-          <ion-row class="ion-margin-top">
-
-          </ion-row>
-        </ion-grid>
-
-        <ion-row class="ion-margin-top">
-
-          <!-- Editar: solo cuando está COSECHADO -->
-          <ion-col [size]="c.estado === 'COSECHADO' ? 6 : 12">
-            <ion-button
-              expand="block"
-              fill="solid"
-              color="secondary"
-              (click)="editar( c.id )"
-            >
-              <ion-icon slot="start" name="create-outline"></ion-icon>
-              Editar
-            </ion-button>
-          </ion-col>
-
-          <!-- Eliminar: tamaño dinámico -->
-          <ion-col [size]="c.estado === 'COSECHADO' ? 6 : 12" *ngIf="c.estado=== 'COSECHADO'">
-            <ion-button
-              expand="block"
-              fill="solid"
-              color="danger"
-              (click)="eliminar(c.id)"
-            >
-              <ion-icon slot="start" name="trash-outline"></ion-icon>
-              Eliminar
-            </ion-button>
-          </ion-col>
-
-        </ion-row>
-
-      </ion-card-content>
-    </ion-card>
-  </ion-list>
 </ion-content>

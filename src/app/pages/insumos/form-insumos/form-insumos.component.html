@@ -1,74 +1,89 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>{{ isEdit ? 'Editar Insumo' : 'Nuevo Insumo' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="close()">
-        <ion-icon name="close-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-item lines="none">
-    <ion-avatar slot="start" *ngIf="foto">
-      <img [src]="foto" />
-    </ion-avatar>
-    <ion-buttons>
-      <ion-button (click)="takePhoto(false)">
-        <ion-icon name="camera-outline"></ion-icon> Cámara
-      </ion-button>
-      <ion-button (click)="takePhoto(true)">
-        <ion-icon name="image-outline"></ion-icon> Galería
-      </ion-button>
-    </ion-buttons>
-  </ion-item>
 
+  <!-- Foto -->
+  <ion-card>
+    <ion-card-content>
+      <div class="photo-section">
+        <ion-avatar *ngIf="foto">
+          <img [src]="foto" />
+        </ion-avatar>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <ion-button fill="outline" size="small" (click)="takePhoto(false)">
+            <ion-icon slot="start" name="camera-outline"></ion-icon>
+            Cámara
+          </ion-button>
+          <ion-button fill="outline" size="small" (click)="takePhoto(true)">
+            <ion-icon slot="start" name="image-outline"></ion-icon>
+            Galería
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
 
-  <ion-item>
-    <ion-label position="stacked">Nombre</ion-label>
-    <ion-input [(ngModel)]="nombre"></ion-input>
-  </ion-item>
-<ion-item>
-  <ion-label position="stacked">Categoría</ion-label>
-    <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría" interface="popover">
-      <ion-select-option value="herbicida">Herbicida</ion-select-option>
-      <ion-select-option value="insecticida">Insecticida</ion-select-option>
-      <ion-select-option value="fungicida">Fungicida</ion-select-option>
-      <ion-select-option value="acaricida">Acaricida</ion-select-option>
-      <ion-select-option value="nematicida">Nematicida</ion-select-option>
+  <!-- Datos del insumo -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="flask-outline"></ion-icon>
+        Información del Insumo
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Categoría</ion-label>
+        <ion-select [(ngModel)]="categoria" placeholder="Seleccione categoría" interface="popover">
+          <ion-select-option value="herbicida">Herbicida</ion-select-option>
+          <ion-select-option value="insecticida">Insecticida</ion-select-option>
+          <ion-select-option value="fungicida">Fungicida</ion-select-option>
+          <ion-select-option value="acaricida">Acaricida</ion-select-option>
+          <ion-select-option value="nematicida">Nematicida</ion-select-option>
+          <ion-select-option value="abono">Abono / Fertilizante</ion-select-option>
+          <ion-select-option value="fertilizante_foliar">Fertilizante foliar</ion-select-option>
+          <ion-select-option value="bioestimulante">Bioestimulante</ion-select-option>
+          <ion-select-option value="corrector">Corrector nutricional</ion-select-option>
+          <ion-select-option value="biologico">Biológico</ion-select-option>
+          <ion-select-option value="micorriza">Micorriza</ion-select-option>
+          <ion-select-option value="coadyuvante">Coadyuvante</ion-select-option>
+          <ion-select-option value="enmienda">Enmienda agrícola</ion-select-option>
+          <ion-select-option value="otro">Otro</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Unidad de Medida</ion-label>
+        <ion-select [(ngModel)]="unidad_medida" interface="popover" placeholder="Seleccione unidad">
+          <ion-select-option value="litro">Litro</ion-select-option>
+          <ion-select-option value="kilo">Kilo</ion-select-option>
+          <ion-select-option value="unidad">Unidad</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Costo Unitario</ion-label>
+        <ion-input type="number" [(ngModel)]="costo_unitario"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-      <ion-select-option value="abono">Abono / Fertilizante</ion-select-option>
-      <ion-select-option value="fertilizante_foliar">Fertilizante foliar</ion-select-option>
-      <ion-select-option value="bioestimulante">Bioestimulante</ion-select-option>
-      <ion-select-option value="corrector">Corrector nutricional</ion-select-option>
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()" color="primary">
+      <ion-icon slot="start" [name]="isEdit ? 'create-outline' : 'save-outline'"></ion-icon>
+      {{ isEdit ? 'Actualizar' : 'Guardar' }}
+    </ion-button>
+  </div>
 
-      <ion-select-option value="biologico">Biológico</ion-select-option>
-      <ion-select-option value="micorriza">Micorriza</ion-select-option>
-
-      <ion-select-option value="coadyuvante">Coadyuvante</ion-select-option>
-      <ion-select-option value="enmienda">Enmienda agrícola</ion-select-option>
-
-      <ion-select-option value="otro">Otro</ion-select-option>
-    </ion-select>
-
-</ion-item>
-  <ion-item>
-    <ion-label position="stacked">Costo Unitario</ion-label>
-    <ion-input type="number" [(ngModel)]="costo_unitario"></ion-input>
-  </ion-item>
-<ion-item>
-  <ion-label position="stacked">Unidad de Medida</ion-label>
-  <ion-select [(ngModel)]="unidad_medida" interface="popover" placeholder="Seleccione unidad">
-    <ion-select-option value="litro">Litro</ion-select-option>
-    <ion-select-option value="kilo">Kilo</ion-select-option>
-    <ion-select-option value="unidad">Unidad</ion-select-option>
-  </ion-select>
-</ion-item>
-
-
-
-  <ion-button expand="block" (click)="save()" class="ion-margin-top">
-    {{ isEdit ? 'Actualizar' : 'Guardar' }}
-  </ion-button>
 </ion-content>

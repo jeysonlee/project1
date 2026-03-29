@@ -1,68 +1,101 @@
 <app-header></app-header>
 
-<ion-content class="ion-padding">
-  <div class="section-header">
-    <h3>Obreros</h3>
-    <ion-button fill="clear" size="small" (click)="openObreroForm()">
-      <ion-icon name="add-outline"></ion-icon> Nuevo
-    </ion-button>
-  </div>
+<ion-content class="list-obreros-content">
 
-  <div class="item-card" *ngFor="let obrero of obreros">
-    <ion-grid>
-      <ion-row class="ion-align-items-center">
-        <!-- Col 1: Foto -->
-        <ion-col size="3" class="col-foto">
-          <div class="item-img" *ngIf="obrero.foto">
-            <img [src]="obrero.foto" />
+  <ion-grid class="search-grid">
+    <ion-row class="ion-align-items-center">
+      <ion-col>
+        <ion-searchbar
+          placeholder="Buscar obrero..."
+          [(ngModel)]="searchTerm"
+          (ionInput)="filterObreros()"
+          animated="true">
+        </ion-searchbar>
+      </ion-col>
+      <ion-col size="auto">
+        <ion-button shape="round" (click)="openObreroForm()">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Nuevo
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-text color="medium">
+          <small>{{ filteredObreros.length }} obrero{{ filteredObreros.length !== 1 ? 's' : '' }} encontrado{{ filteredObreros.length !== 1 ? 's' : '' }}</small>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <ion-grid class="cards-grid">
+    <ion-row *ngFor="let obrero of filteredObreros">
+      <ion-col size="12">
+        <ion-card class="item-card">
+
+          <div class="card-header-custom">
+            <div class="card-header-left">
+              <div class="avatar-wrap">
+                <img *ngIf="obrero.foto" [src]="obrero.foto" class="avatar-img" />
+                <ion-icon *ngIf="!obrero.foto" name="person-outline"></ion-icon>
+              </div>
+              <div class="card-header-info">
+                <h2 class="item-titulo">{{ obrero.nombre }} {{ obrero.apellido }}</h2>
+                <p class="item-sub">
+                  <ion-icon name="card-outline"></ion-icon>
+                  {{ obrero.dni }}
+                </p>
+              </div>
+            </div>
+            <ion-chip class="precio-chip">
+              <ion-label>S/ {{ obrero.precio_base | number:'1.0-2' }}/día</ion-label>
+            </ion-chip>
           </div>
-          <div class="item-img placeholder" *ngIf="!obrero.foto">
-            <ion-icon name="person-outline"></ion-icon>
-          </div>
-        </ion-col>
 
-        <!-- Col 2: Datos -->
-        <ion-col size="6" class="col-datos">
-          <h2 class="item-title">{{ obrero.nombre }} {{ obrero.apellido }}</h2>
+          <ion-card-content>
+            <ion-grid class="ion-no-padding datos-grid">
+              <ion-row>
+                <ion-col class="dato-col">
+                  <ion-icon name="call-outline" color="primary"></ion-icon>
+                  <span class="dato-label">Teléfono</span>
+                  <span class="dato-valor">{{ obrero.telefono || '—' }}</span>
+                </ion-col>
+                <ion-col class="dato-col">
+                  <ion-icon name="construct-outline" color="tertiary"></ion-icon>
+                  <span class="dato-label">Especialidad</span>
+                  <span class="dato-valor">{{ obrero.especialidad || '—' }}</span>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
 
-          <ion-row class="datos-row">
-            <ion-col size="12">
-              <span class="dato">
-                <ion-icon name="card-outline"></ion-icon>
-                {{ obrero.dni }}
-              </span>
-            </ion-col>
-            <ion-col size="12">
-              <span class="dato">
-                <ion-icon name="call-outline"></ion-icon>
-                {{ obrero.telefono }}
-              </span>
-            </ion-col>
-            <ion-col size="12">
-              <span class="dato precio">
-                <ion-icon name="cash-outline"></ion-icon>
-                {{ obrero.precio_base | currency:'S/ ':'symbol':'1.2-2' }}/día
-              </span>
-            </ion-col>
-            <ion-col size="12" *ngIf="obrero.especialidad">
-              <span class="dato">
-                <ion-icon name="construct-outline"></ion-icon>
-                {{ obrero.especialidad }}
-              </span>
-            </ion-col>
-          </ion-row>
-        </ion-col>
+            <ion-grid class="ion-no-padding acciones-grid">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-button expand="block" fill="outline" size="small" color="primary" (click)="openObreroForm(obrero)">
+                    <ion-icon slot="start" name="create-outline"></ion-icon>
+                    Editar
+                  </ion-button>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-button fill="outline" size="small" color="danger" (click)="deleteObrero(obrero.id)">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-content>
 
-        <!-- Col 3: Botones -->
-        <ion-col size="3" class="col-acciones">
-          <ion-button fill="clear" color="primary" (click)="openObreroForm(obrero)">
-            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-          </ion-button>
-          <ion-button fill="clear" color="danger" (click)="deleteObrero(obrero.id)">
-            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="filteredObreros.length === 0">
+      <ion-col class="empty-state">
+        <ion-icon name="people-outline"></ion-icon>
+        <p>Sin obreros registrados</p>
+        <small>Crea un nuevo obrero para comenzar</small>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
 </ion-content>

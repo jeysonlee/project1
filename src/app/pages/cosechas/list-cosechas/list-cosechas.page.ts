@@ -9,6 +9,8 @@ import { CosechasService } from 'src/app/services/cosechas.service';
 })
 export class ListCosechasPage implements OnInit {
   cosechas: any[] = [];
+  filteredCosechas: any[] = [];
+  searchTerm = '';
 
   constructor(
     private service: CosechasService,
@@ -20,7 +22,15 @@ export class ListCosechasPage implements OnInit {
 
   async ionViewWillEnter() {
     this.cosechas = await this.service.read();
-    console.log(this.cosechas);
+    this.filteredCosechas = [...this.cosechas];
+  }
+
+  filterCosechas() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredCosechas = this.cosechas.filter(c =>
+      c.fecha_cosecha?.toLowerCase().includes(term) ||
+      c.estado?.toLowerCase().includes(term)
+    );
   }
 
   nuevo() {
@@ -36,6 +46,15 @@ export class ListCosechasPage implements OnInit {
   }
 
   /* ====== ESTADOS ====== */
+
+  getEstadoIcon(estado: string): string {
+    switch (estado) {
+      case 'COSECHADO': return 'checkmark-circle';
+      case 'PARCIAL':   return 'time';
+      case 'VENDIDO':   return 'cash-outline';
+      default:          return 'ellipse-outline';
+    }
+  }
 
   getEstadoColor(estado: string): string {
     switch (estado) {

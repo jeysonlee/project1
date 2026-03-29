@@ -14,6 +14,8 @@ import { Router } from '@angular/router';
 })
 export class ListPage implements OnInit {
   obreros: any[] = [];
+  filteredObreros: any[] = [];
+  searchTerm = '';
   now = new Date().toLocaleString();
   constructor(
     private obrerosService: ObrerosService,
@@ -31,7 +33,16 @@ export class ListPage implements OnInit {
   }
   async loadObreros() {
     this.obreros = await this.obrerosService.readAll();
-    console.log('Obreros cargados:', this.obreros);
+    this.filterObreros();
+  }
+
+  filterObreros() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredObreros = this.obreros.filter(o =>
+      o.nombre?.toLowerCase().includes(term) ||
+      o.apellido?.toLowerCase().includes(term) ||
+      o.dni?.toLowerCase().includes(term)
+    );
   }
 
   async openObreroForm(obrero?: any) {

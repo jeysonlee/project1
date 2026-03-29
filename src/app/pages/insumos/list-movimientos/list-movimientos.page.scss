@@ -1,23 +1,111 @@
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  text-align: center;
+.list-movimientos-content { --background: var(--ion-color-light); }
 
-  ion-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
+// ─── Filtros en ion-header ────────────────────────────────────────────────────
+.filtro-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: rgba(255, 255, 255, 0.75);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.filtro-input {
+  --border-radius: 8px;
+  --background: rgba(255, 255, 255, 0.15);
+  --color: #fff;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --border-color: rgba(255, 255, 255, 0.3);
+  --highlight-color: #fff;
+  font-size: .85rem;
+  min-height: 36px;
+}
+
+// ─── Grid de datos en card ────────────────────────────────────────────────────
+.datos-grid {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+
+  ion-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 4px;
   }
 
-  p {
-    color: var(--ion-color-medium);
-    margin-bottom: 24px;
+  ion-icon {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
   }
 }
 
-ion-badge {
-  font-size: 11px;
-  padding: 4px 8px;
+.dato-label {
+  font-size: .65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ion-color-medium);
+}
+
+.dato-valor {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+
+  small {
+    font-size: .72rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.motivo-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-top: 8px;
+  font-size: .82rem;
+}
+
+.item-card {
+  border-radius: 16px !important; box-shadow: 0 2px 12px rgba(0,0,0,.09) !important;
+  margin-bottom: 14px; overflow: hidden;
+  ion-card-content { padding: 0 16px 16px; }
+}
+
+.card-header-custom {
+  display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%) !important;
+  color: #fff;
+
+  &.header-entrada { background: linear-gradient(135deg, var(--ion-color-success) 0%, var(--ion-color-success-shade) 100%) !important; }
+  &.header-salida  { background: linear-gradient(135deg, var(--ion-color-danger) 0%, var(--ion-color-danger-shade) 100%) !important; }
+  &.header-ajuste  { background: linear-gradient(135deg, var(--ion-color-warning) 0%, var(--ion-color-warning-shade) 100%) !important; }
+}
+.card-header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+
+.item-icon-wrap {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  ion-icon { font-size: 1.4rem; color: #fff; }
+}
+
+.card-header-info {
+  min-width: 0;
+  .item-titulo { font-size: 1rem; font-weight: 700; color: #fff; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-sub { font-size: .8rem; color: rgba(255,255,255,.8); margin: 0; display: flex; align-items: center; gap: 3px; ion-icon { font-size: .85rem; } }
+}
+
+.precio-chip {
+  flex-shrink: 0; font-size: .72rem; font-weight: 700; height: 26px;
+  --background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4);
+  ion-label { color: #fff; }
+}
+
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;
+  ion-icon { font-size: 4rem; color: var(--ion-color-light-shade); margin-bottom: 16px; }
+  p { font-size: 1rem; font-weight: 600; color: var(--ion-color-medium); margin: 0 0 6px; }
+  small { font-size: .82rem; color: var(--ion-color-medium-tint); }
 }

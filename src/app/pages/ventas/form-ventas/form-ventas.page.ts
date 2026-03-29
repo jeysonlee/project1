@@ -301,6 +301,10 @@ onKgBrutoManual() {
   this.recalcular();
 }
 
+cancelar() {
+  this.router.navigate(['/tabs/ventas']);
+}
+
 // Método de validación del formulario
 isFormValid(): boolean {
   // Debe tener al menos un detalle (cosecha seleccionada)

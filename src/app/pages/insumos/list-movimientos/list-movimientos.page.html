@@ -1,7 +1,7 @@
+<app-header></app-header>
 
-<ion-header [translucent]="true">
-  <app-header></app-header>
-  <ion-toolbar>
+
+  <ion-toolbar color="light">
     <ion-title>Movimientos de Insumos</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="verMiStock()">
@@ -10,83 +10,118 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Filtros -->
-  <ion-toolbar>
-    <ion-grid>
-      <ion-row>
+  <ion-toolbar color="light" class="filtro-toolbar">
+    <ion-grid class="ion-no-padding ion-padding-horizontal">
+      <ion-row class="ion-align-items-end">
         <ion-col size="5">
-          <ion-item>
-            <ion-label position="stacked">Desde</ion-label>
-            <ion-input type="date" [(ngModel)]="fechaInicio"></ion-input>
-          </ion-item>
+          <ion-label class="filtro-label">Desde</ion-label>
+          <ion-input
+            type="date"
+            [(ngModel)]="fechaInicio"
+            class="filtro-input"
+            fill="outline">
+          </ion-input>
         </ion-col>
+         <ion-col offset="2"></ion-col>
         <ion-col size="5">
-          <ion-item>
-            <ion-label position="stacked">Hasta</ion-label>
-            <ion-input type="date" [(ngModel)]="fechaFin"></ion-input>
-          </ion-item>
+          <ion-label class="filtro-label">Hasta</ion-label>
+          <ion-input
+            type="date"
+            [(ngModel)]="fechaFin"
+            class="filtro-input"
+            fill="outline">
+          </ion-input>
         </ion-col>
-        <ion-col size="2" class="ion-align-self-end">
-          <ion-button expand="block" (click)="filtrarPorFechas()" size="small">
-            <ion-icon name="search-outline"></ion-icon>
+       
+        <ion-col size="auto" class="ion-align-self-end">
+          <ion-button size="small" shape="round" fill="outline" color="light" (click)="filtrarPorFechas()">
+            <ion-icon slot="icon-only" name="search-outline"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
-      <ion-row>
         <ion-col>
-          <ion-button expand="block" (click)="limpiarFiltros()" size="small" fill="clear">
-            Limpiar Filtros
+          <ion-button expand="block" fill="solid" color="primary" size="small" (click)="limpiarFiltros()">
+            <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+            Limpiar filtros
           </ion-button>
         </ion-col>
-      </ion-row>
+
     </ion-grid>
   </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
 
-  <!-- Lista de Movimientos -->
-  <ion-list *ngIf="movimientos.length > 0">
-    <ion-item *ngFor="let movimiento of movimientos">
-      <ion-icon
-        slot="start"
-        [name]="getTipoIcon(movimiento.tipo_movimiento)"
-        [color]="getTipoColor(movimiento.tipo_movimiento)"
-        size="large">
-      </ion-icon>
+<ion-content class="list-movimientos-content">
 
-      <ion-label>
-        <h2>{{ movimiento.insumo_nombre }}</h2>
-        <h3>
-          <ion-badge [color]="getTipoColor(movimiento.tipo_movimiento)">
-            {{ movimiento.tipo_movimiento }}
-          </ion-badge>
-          <span style="margin-left: 8px;">{{ movimiento.cantidad }} {{ movimiento.unidad_medida }}</span>
-        </h3>
-        <p>{{ movimiento.motivo }}</p>
-        <p style="font-size: 12px; color: gray;">
-          {{  (movimiento.fecha_movimiento) }}
-        </p>
-      </ion-label>
+  <ion-grid class="ion-padding-horizontal ion-padding-top ion-no-padding-bottom">
+    <ion-row>
+      <ion-col>
+        <ion-text color="medium">
+          <small>{{ movimientos.length }} movimiento{{ movimientos.length !== 1 ? 's' : '' }}</small>
+        </ion-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 
-      <ion-note slot="end" *ngIf="movimiento.costo_total > 0">
-        <strong>S/ {{ formatearNumero(movimiento.costo_total) }}</strong>
-        <br>
-        <small>S/ {{ formatearNumero(movimiento.costo_unitario) }}/{{ movimiento.unidad_medida }}</small>
-      </ion-note>
-    </ion-item>
-  </ion-list>
+  <ion-grid class="ion-padding-horizontal ion-padding-bottom">
+    <ion-row *ngFor="let mov of movimientos">
+      <ion-col size="12">
 
-  <!-- Mensaje cuando no hay movimientos -->
-  <div *ngIf="movimientos.length === 0" class="empty-state">
-    <ion-icon name="file-tray-outline" size="large" color="medium"></ion-icon>
-    <p>No hay movimientos registrados</p>
-    <ion-button (click)="irARegistrar()" color="primary">
-      Registrar Primer Movimiento
-    </ion-button>
-  </div>
+        <ion-card class="item-card">
 
-  <!-- Botón flotante -->
+          <div class="card-header-custom" [ngClass]="'header-' + mov.tipo_movimiento?.toLowerCase()">
+            <div class="card-header-left">
+              <div class="item-icon-wrap">
+                <ion-icon [name]="getTipoIcon(mov.tipo_movimiento)"></ion-icon>
+              </div>
+              <div class="card-header-info">
+                <h2 class="item-titulo">{{ mov.insumo_nombre }}</h2>
+                <p class="item-sub">
+                  <ion-icon name="calendar-outline"></ion-icon>
+                  {{ mov.fecha_movimiento }}
+                </p>
+              </div>
+            </div>
+            <ion-chip class="precio-chip">
+              <ion-label>{{ mov.tipo_movimiento }}</ion-label>
+            </ion-chip>
+          </div>
+
+          <ion-card-content>
+            <ion-grid class="ion-no-padding datos-grid">
+              <ion-row class="ion-align-items-center">
+                <ion-col>
+                  <ion-icon name="layers-outline" color="primary"></ion-icon>
+                  <span class="dato-label">Cantidad</span>
+                  <span class="dato-valor">{{ mov.cantidad }} <small>{{ mov.unidad_medida }}</small></span>
+                </ion-col>
+                <ion-col *ngIf="mov.costo_total > 0">
+                  <ion-icon name="cash-outline" color="success"></ion-icon>
+                  <span class="dato-label">Costo total</span>
+                  <span class="dato-valor">S/ {{ formatearNumero(mov.costo_total) }}</span>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+
+            <ion-item *ngIf="mov.motivo" lines="none" class="motivo-item">
+              <ion-icon name="chatbox-outline" slot="start" color="medium"></ion-icon>
+              <ion-label class="ion-text-wrap">{{ mov.motivo }}</ion-label>
+            </ion-item>
+          </ion-card-content>
+
+        </ion-card>
+
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="movimientos.length === 0">
+      <ion-col class="empty-state">
+        <ion-icon name="file-tray-outline"></ion-icon>
+        <p>Sin movimientos registrados</p>
+        <small>Registra un movimiento o ajusta los filtros</small>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="irARegistrar()" color="primary">
       <ion-icon name="add"></ion-icon>

@@ -17,6 +17,7 @@ export class InsumosListPage implements OnInit {
   insumosFiltrados: any[] = [];
   isAdmin: boolean = false;
   categoriaSeleccionada: string = '';
+  searchTerm = '';
 
   constructor(
     private insumosService: InsumosService,
@@ -47,13 +48,12 @@ export class InsumosListPage implements OnInit {
 
   filtrarPorCategoria(categoria: string) {
     this.categoriaSeleccionada = categoria;
-    if (!categoria) {
-      this.insumosFiltrados = [...this.insumos];
-    } else {
-      this.insumosFiltrados = this.insumos.filter(
-        i => i.categoria?.toLowerCase() === categoria.toLowerCase()
-      );
-    }
+    const term = this.searchTerm.toLowerCase();
+    this.insumosFiltrados = this.insumos.filter(i => {
+      const matchCategoria = !categoria || i.categoria?.toLowerCase() === categoria.toLowerCase();
+      const matchSearch = !term || i.insumo_nombre?.toLowerCase().includes(term) || i.categoria?.toLowerCase().includes(term);
+      return matchCategoria && matchSearch;
+    });
   }
   async openInsumoForm(insumo?: any) {
     console.log('Abriendo formulario para insumo:', insumo);

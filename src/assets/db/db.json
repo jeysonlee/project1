@@ -330,6 +330,53 @@
         { "name": "idx_detalle_cosecha", "value": "cosecha_id" },
         { "name": "idx_detalle_parcela", "value": "parcela_id" }
       ]
+    },
+    {
+      "name": "proyectos",
+      "schema": [
+        { "column": "id", "value": "TEXT PRIMARY KEY" },
+        { "column": "clave", "value": "TEXT NOT NULL UNIQUE" },
+        { "column": "descripcion", "value": "TEXT" },
+        { "column": "region", "value": "TEXT" },
+        { "column": "provincia", "value": "TEXT" },
+        { "column": "distrito", "value": "TEXT" },
+        { "column": "centro_poblado", "value": "TEXT" },
+        { "column": "fecha_inicio", "value": "DATE" },
+        { "column": "fecha_fin", "value": "DATE" },
+        { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "deleted_at", "value": "TEXT" },
+        { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
+        { "column": "synced_at", "value": "TEXT" }
+      ]
+    },
+    {
+      "name": "beneficiarios",
+      "schema": [
+        { "column": "id", "value": "TEXT PRIMARY KEY" },
+        { "column": "proyecto_id", "value": "TEXT NOT NULL" },
+        { "column": "nr_vivienda", "value": "TEXT NOT NULL" },
+        { "column": "nombre_t", "value": "TEXT" },
+        { "column": "apellido_t", "value": "TEXT" },
+        { "column": "dni_t", "value": "TEXT NOT NULL UNIQUE" },
+        { "column": "nr_habitaciones_h", "value": "INTEGER" },
+        { "column": "nr_habitaciones_m", "value": "INTEGER" },
+        { "column": "total_habitaciones", "value": "INTEGER" },
+        { "column": "conexion_agua", "value": "TEXT" },
+        { "column": "alcantarillado", "value": "TEXT" },
+        { "column": "conexion_ubs", "value": "TEXT" },
+        { "column": "foto_firma", "value": "TEXT" },
+        { "column": "telefono", "value": "TEXT" },
+        { "column": "direccion", "value": "TEXT" },
+        { "column": "created_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "updated_at", "value": "TEXT DEFAULT (datetime('now'))" },
+        { "column": "deleted_at", "value": "TEXT" },
+        { "column": "is_synced", "value": "INTEGER DEFAULT 0" },
+        { "column": "synced_at", "value": "TEXT" }
+      ],
+      "indexes": [
+        { "name": "idx_beneficiario_proyecto", "value": "proyecto_id" }
+      ]
     }
 
   ]

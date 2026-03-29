@@ -1,242 +1,253 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Nueva Venta</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">
+        <ion-icon slot="icon-only" name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ esEdicion ? 'Editar Venta' : 'Nueva Venta' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="guardar()" [disabled]="!isFormValid()">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Guardar
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-    <ion-card>
-      <ion-item>
-      <ion-label>Tipo de venta</ion-label>
-      <ion-toggle [(ngModel)]="esFresco" (ionChange)="cambiarEstado()">
-        {{ esFresco ? 'Fresco' : 'Seco' }}
-        <ion-label slot="end">{{ esFresco ? 'Fresco' : 'Seco' }}</ion-label>
-      </ion-toggle>
-    </ion-item>
-    <!-- USUARIO (SOLO ADMIN) -->
-    <ion-item *ngIf="esAdmin">
-      <ion-label position="stacked">Usuario</ion-label>
-      <ion-select
-        [(ngModel)]="venta.usuario_id"
-        (ionChange)="onUsuarioSeleccionado($event)">
-        <ion-select-option
-          *ngFor="let u of usuarios"
-          [value]="u.id">
-          {{ u.nombre }} {{ u.apellido }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-    <!-- USUARIO (SOLO LECTURA PARA USER) -->
-    <ion-item *ngIf="!esAdmin">
-      <ion-label position="stacked">Usuario</ion-label>
-      <ion-input
-        [value]="venta.usuario_nombre"
-        readonly>
-      </ion-input>
-    </ion-item>
+<ion-content class="ion-padding form-ventas-content">
 
+  <!-- CONFIGURACIÓN -->
+  <ion-card>
     <ion-card-header>
-      <ion-card-title>Cosechas Disponibles</ion-card-title>
+      <ion-card-title>
+        <ion-icon name="cart-outline"></ion-icon>
+        Configuración de Venta
+      </ion-card-title>
     </ion-card-header>
-
     <ion-card-content>
-      <ion-list>
-        <ion-item *ngFor="let c of cosechas">
-          <ion-checkbox slot="start" [(ngModel)]="c.seleccionada" (ionChange)="toggleCosecha(c)"></ion-checkbox>
-          <ion-label>
-            <h3>{{ c.fecha_cosecha }}</h3>
-            <p *ngIf="esFresco">
-              {{ c.kg_bruto_disponible || 0 | number:'1.2-2' }} kg bruto
-            </p>
-            <p *ngIf="!esFresco">
-              {{ c.kg_seco_disponible || 0 | number:'1.2-2' }} kg seco
-            </p>
-          </ion-label>
 
-          <!-- Campo para ingresar cantidad a vender (solo si está seleccionada) -->
-          <div *ngIf="c.seleccionada" slot="end" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <ion-label style="font-size: 12px; margin: 0;">Todo</ion-label>
-              <ion-checkbox
-                [checked]="c.vender_todo"
-                (ionChange)="toggleVenderTodo(c, $event)">
-              </ion-checkbox>
-            </div>
+      <ion-item>
+        <ion-label position="stacked">Tipo de venta</ion-label>
+        <ion-toggle [(ngModel)]="esFresco" (ionChange)="cambiarEstado()">
+          <ion-label slot="end">{{ esFresco ? 'Fresco' : 'Seco' }}</ion-label>
+        </ion-toggle>
+      </ion-item>
+
+      <ion-item *ngIf="esAdmin">
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-select [(ngModel)]="venta.usuario_id" (ionChange)="onUsuarioSeleccionado($event)" interface="popover">
+          <ion-select-option *ngFor="let u of usuarios" [value]="u.id">
+            {{ u.nombre }} {{ u.apellido }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item *ngIf="!esAdmin">
+        <ion-label position="stacked">Usuario</ion-label>
+        <ion-input [value]="venta.usuario_nombre" readonly></ion-input>
+      </ion-item>
+
+    </ion-card-content>
+  </ion-card>
+
+  <!-- COSECHAS DISPONIBLES -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="archive-outline"></ion-icon>
+        Cosechas Disponibles
+      </ion-card-title>
+      <ion-card-subtitle>Toca una cosecha para seleccionarla</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content class="ion-no-padding">
+
+      <div *ngFor="let c of cosechas; let last = last" class="cosecha-item" [class.cosecha-item-selected]="c.seleccionada">
+
+        <!-- Fila de selección -->
+        <ion-item button detail="false" lines="none" class="cosecha-select-row"
+             (click)="c.seleccionada = !c.seleccionada; toggleCosecha(c)">
+          <ion-icon slot="start"
+            [name]="c.seleccionada ? 'checkbox' : 'square-outline'"
+            [color]="c.seleccionada ? 'primary' : 'medium'"
+            class="cosecha-check">
+          </ion-icon>
+          <ion-label>
+            <h3 class="cosecha-fecha">{{ c.fecha_cosecha | date:'dd MMM yyyy' }}</h3>
+            <p class="cosecha-disponible">Disponible: {{ (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0)) | number:'1.2-2' }} kg</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="c.seleccionada ? (esFresco ? 'primary' : 'warning') : 'medium'" class="cosecha-badge">
+            {{ (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0)) | number:'1.1-2' }} kg
+          </ion-badge>
+        </ion-item>
+
+        <!-- Control de cantidad (expandible) -->
+        <div *ngIf="c.seleccionada" class="cosecha-control" (click)="$event.stopPropagation()">
+
+          <ion-grid class="ion-no-padding">
+            <ion-row>
+              <ion-col>
+                <ion-button
+                  expand="block" size="small" shape="round"
+                  [fill]="c.vender_todo ? 'solid' : 'outline'"
+                  color="primary"
+                  (click)="toggleVenderTodo(c, {detail: {checked: true}})">
+                  <ion-icon slot="start" name="layers-outline"></ion-icon>
+                  Todo ({{ (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0)) | number:'1.1-2' }} kg)
+                </ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button
+                  expand="block" size="small" shape="round"
+                  [fill]="!c.vender_todo ? 'solid' : 'outline'"
+                  color="secondary"
+                  (click)="toggleVenderTodo(c, {detail: {checked: false}})">
+                  <ion-icon slot="start" name="options-outline"></ion-icon>
+                  Parcial
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <ion-item *ngIf="!c.vender_todo" lines="none" class="kg-input-item">
             <ion-input
+              fill="outline"
               type="number"
               inputmode="decimal"
               [(ngModel)]="c.cantidad_a_vender"
               (ionInput)="recalcular()"
-              [readonly]="c.vender_todo"
-              [placeholder]="'Max: ' + (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0))"
-              style="max-width: 100px; text-align: right;">
+              label="Kg a vender"
+              label-placement="stacked"
+              [placeholder]="'Máx: ' + (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0))">
             </ion-input>
+          </ion-item>
+
+          <div *ngIf="c.vender_todo" class="todo-confirmado">
+            <ion-icon name="checkmark-circle" color="primary"></ion-icon>
+            <span>Se venderán {{ (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0)) | number:'1.2-2' }} kg</span>
           </div>
-        </ion-item>
-      </ion-list>
+
+        </div>
+
+        <div class="cosecha-divider" *ngIf="!last"></div>
+      </div>
+
+      <div *ngIf="!cosechas.length" class="ion-padding ion-text-center">
+        <ion-text color="medium"><small>No hay cosechas disponibles</small></ion-text>
+      </div>
+
     </ion-card-content>
   </ion-card>
 
+  <!-- DATOS DE LA VENTA -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="scale-outline"></ion-icon>
+        Datos de la Venta
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
 
-  <!-- DATOS GENERALES -->
-<ion-card>
-  <ion-card-header>
-    <ion-card-title>Datos de la Venta</ion-card-title>
-  </ion-card-header>
+      <ion-item *ngIf="esFresco">
+        <ion-label position="stacked">Kg bruto (vendedor)</ion-label>
+        <ion-input type="number" inputmode="decimal" [value]="venta.kg_bruto_aproximados | number:'1.2-2'" readonly></ion-input>
+      </ion-item>
 
-  <ion-card-content>
+      <ion-item *ngIf="!esFresco">
+        <ion-label position="stacked">Kg seco (vendedor)</ion-label>
+        <ion-input type="number" inputmode="decimal" [value]="venta.kg_seco_aproximados | number:'1.2-2'" readonly></ion-input>
+      </ion-item>
 
+      <ion-item *ngIf="esFresco">
+        <ion-label position="stacked">Kg bruto (comprador)</ion-label>
+        <ion-input type="number" inputmode="decimal" [(ngModel)]="venta.kg_bruto" (ionInput)="onKgBrutoManual()"></ion-input>
+      </ion-item>
 
+      <ion-item *ngIf="esFresco">
+        <ion-label position="stacked">% Descuento Humedad</ion-label>
+        <ion-input type="number" inputmode="decimal" [(ngModel)]="venta.desc_humedad" (ionInput)="recalcular()"></ion-input>
+      </ion-item>
 
-    <!-- KG BRUTO APROXIMADOS (suma de lo que se va a vender) -->
-    <ion-item *ngIf="esFresco">
-      <ion-label position="stacked">Kg-bruto peso de vendedor</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [value]="venta.kg_bruto_aproximados | number:'1.2-2'"
-        readonly>
-      </ion-input>
-    </ion-item>
+      <ion-item *ngIf="esFresco && venta.kg_bruto > 0">
+        <ion-label position="stacked">Diferencia (Real - Aprox.)</ion-label>
+        <ion-note slot="end" [color]="getDiferencia() >= 0 ? 'success' : 'danger'">
+          {{ getDiferencia() | number:'1.2-2' }} kg
+        </ion-note>
+      </ion-item>
 
-    <!-- KG SECO APROXIMADOS (suma de lo que se va a vender) -->
-    <ion-item *ngIf="!esFresco">
-      <ion-label position="stacked">Kg-seco peso de vendedor</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [value]="venta.kg_seco_aproximados | number:'1.2-2'"
-        readonly>
-      </ion-input>
-    </ion-item>
+      <ion-item *ngIf="esFresco && venta.kg_bruto > 0 && getDiferencia() !== 0">
+        <ion-label>
+          <ion-text [color]="getDiferencia() >= 0 ? 'success' : 'warning'">
+            <small>
+              {{ getDiferencia() > 0
+                ? '✓ Hay ' + (getDiferencia() | number:'1.2-2') + ' kg más de lo esperado'
+                : '⚠ Faltan ' + (Math.abs(getDiferencia()) | number:'1.2-2') + ' kg respecto a lo esperado' }}
+            </small>
+          </ion-text>
+        </ion-label>
+      </ion-item>
 
-    <!-- KG BRUTO REAL (SOLO FRESCO) -->
-    <ion-item *ngIf="esFresco">
-      <ion-label position="stacked">Kg bruto peso de comprador</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [(ngModel)]="venta.kg_bruto"
-        (ionInput)="onKgBrutoManual()">
-      </ion-input>
-    </ion-item>
+      <ion-item *ngIf="!esFresco">
+        <ion-label position="stacked">Kg seco (comprador)</ion-label>
+        <ion-input type="number" inputmode="decimal" [(ngModel)]="venta.kg_seco" (ionInput)="recalcular()"></ion-input>
+      </ion-item>
 
-    <!-- DESCUENTO HUMEDAD -->
-    <ion-item *ngIf="esFresco">
-      <ion-label position="stacked">% Descuento Humedad</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [(ngModel)]="venta.desc_humedad"
-        (ionInput)="recalcular()">
-      </ion-input>
-    </ion-item>
+      <ion-item *ngIf="esFresco">
+        <ion-label position="stacked">Kg seco con descuento humedad</ion-label>
+        <ion-input type="number" inputmode="decimal" [value]="venta.kg_seco | number:'1.2-2'" readonly></ion-input>
+      </ion-item>
 
-    <!-- DIFERENCIA -->
-    <ion-item *ngIf="esFresco && venta.kg_bruto > 0">
-      <ion-label position="stacked">Diferencia (Real - Aproximado)</ion-label>
-      <ion-note slot="end" [color]="getDiferencia() >= 0 ? 'success' : 'danger'">
-        {{ getDiferencia() | number:'1.2-2' }} kg
-      </ion-note>
-    </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Precio por Kg (S/)</ion-label>
+        <ion-input type="number" inputmode="decimal" [(ngModel)]="venta.precio_kg" (ionInput)="recalcular()"></ion-input>
+      </ion-item>
 
-    <ion-item *ngIf="esFresco && venta.kg_bruto > 0 && getDiferencia() !== 0">
-      <ion-label>
-        <ion-text [color]="getDiferencia() >= 0 ? 'success' : 'warning'">
-          <small>
-            {{ getDiferencia() > 0
-              ? '✓ Hay ' + (getDiferencia() | number:'1.2-2') + ' kg más de lo esperado'
-              : '⚠ Faltan ' + (Math.abs(getDiferencia()) | number:'1.2-2') + ' kg respecto a lo esperado' }}
-          </small>
-        </ion-text>
-      </ion-label>
-    </ion-item>
+    </ion-card-content>
+  </ion-card>
 
-    <!-- KG SECO REAL (SOLO SECO) -->
-    <ion-item *ngIf="!esFresco">
-      <ion-label position="stacked">Kg-seco peso de comprador</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [(ngModel)]="venta.kg_seco"
-        (ionInput)="recalcular()">
-      </ion-input>
-    </ion-item>
-
-    <!-- KG SECO (calculado automáticamente en venta FRESCO) -->
-    <ion-item *ngIf="esFresco">
-      <ion-label position="stacked">Kg-seco con descuento de humedad</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [value]="venta.kg_seco | number:'1.2-2'"
-        readonly>
-      </ion-input>
-    </ion-item>
-
-    <!-- PRECIO -->
-    <ion-item>
-      <ion-label position="stacked">Precio por Kg (S/)</ion-label>
-      <ion-input
-        type="number"
-        inputmode="decimal"
-        [(ngModel)]="venta.precio_kg"
-        (ionInput)="recalcular()">
-      </ion-input>
-    </ion-item>
-
-  </ion-card-content>
-</ion-card>
-
-
-  <!-- COSECHAS -->
-
-<ion-card *ngIf="detalles.length">
-  <ion-card-header>
-    <ion-card-title>Detalle de Venta</ion-card-title>
-  </ion-card-header>
-
-  <ion-card-content>
-
-<table class="tabla-detalles">
-  <thead>
-    <tr>
-      <th>Kg a Vender</th>
-      <th>%</th>
-      <th>Subtotal</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr *ngFor="let d of detalles">
-      <td>{{ d.cantidad_vendida_kg | number:'1.2-2' }} kg</td>
-      <td>{{ d.porcentaje_total_venta | number:'1.0-2' }}%</td>
-      <td>S/ {{ d.subtotal | number:'1.2-2' }}</td>
-    </tr>
-  </tbody>
-</table>
-
-
-  </ion-card-content>
-</ion-card>
-
+  <!-- DETALLE DE VENTA -->
+  <ion-card *ngIf="detalles.length">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="list-outline"></ion-icon>
+        Detalle de Venta
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <table class="tabla-detalles">
+        <thead>
+          <tr>
+            <th>Kg a vender</th>
+            <th class="ion-text-center">%</th>
+            <th class="ion-text-end">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of detalles">
+            <td>{{ d.cantidad_vendida_kg | number:'1.2-2' }} kg</td>
+            <td class="ion-text-center">{{ d.porcentaje_total_venta | number:'1.0-2' }}%</td>
+            <td class="ion-text-end costo-cell">S/ {{ d.subtotal | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-card-content>
+  </ion-card>
 
   <!-- TOTALES -->
-  <ion-card color="success">
-    <ion-card-content>
-      <h2 style="color:white">Total Kg {{ esFresco ? 'Bruto' : 'Seco' }}</h2>
-      <h1 style="color:white">{{ esFresco ? venta.kg_bruto : venta.kg_seco | number:'1.2-2' }} kg</h1>
-
-      <h2 style="color:white" *ngIf="esFresco">Total Kg Seco (después de descuento)</h2>
-      <h1 style="color:white" *ngIf="esFresco">{{ venta.kg_seco | number:'1.2-2' }} kg</h1>
-
-      <h2 style="color:white">Total Venta</h2>
-      <h1 style="color:white">S/ {{ venta.total_venta | number:'1.2-2' }}</h1>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-button expand="block" color="primary" (click)="guardar()" [disabled]="!isFormValid()">
-    Guardar Venta
-  </ion-button>
+  <div class="totales-card">
+    <div class="totales-row">
+      <span class="totales-label">Total Kg {{ esFresco ? 'Bruto' : 'Seco' }}</span>
+      <span class="totales-value">{{ esFresco ? venta.kg_bruto : venta.kg_seco | number:'1.2-2' }} kg</span>
+    </div>
+    <div class="totales-row" *ngIf="esFresco">
+      <span class="totales-label">Total Kg Seco</span>
+      <span class="totales-value">{{ venta.kg_seco | number:'1.2-2' }} kg</span>
+    </div>
+    <div class="totales-row total-final">
+      <span class="totales-label-big">TOTAL VENTA</span>
+      <span class="totales-value-big">S/ {{ venta.total_venta | number:'1.2-2' }}</span>
+    </div>
+  </div>
 
 </ion-content>

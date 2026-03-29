@@ -11,9 +11,8 @@ agregar andoriod
 	ng build
 	ionic build                    -------- para generear el archivo para una app en android  cual quiera de las 2
 
-para  abrir en androdstudio
-export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/current/bin/studio.sh---cuando no encuentra android studio
 	npx cap sync android -------------------sincronyzar con android
+	export CAPACITOR_ANDROID_STUDIO_PATH=/snap/android-studio/current/bin/studio.sh---cuando no encuentra android studio
 	npx cap open android
 
 
@@ -36,3 +35,15 @@ para clonar
 git clone https://github.com/DiscoDurodeRoer/crud-ionic-sqlite.git
 npm install
 coppiar y pegar el src/app
+
+
+PARA DESPLEGAR EN SERVIDOR NG LOCAL EN LA RED
+ng serve --host 0.0.0.0 --port 4200
+
+
+para generar el ICONO de la app
+mkdir resources
+cp src/assets/icon.png resources/icon.png
+npx capacitor-assets generate
+
+

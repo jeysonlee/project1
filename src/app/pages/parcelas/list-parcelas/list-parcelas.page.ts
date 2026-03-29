@@ -14,6 +14,8 @@ import { ParcelaDetalleComponent } from '../parcela-detalle/parcela-detalle.comp
 })
 export class ListParcelasPage implements OnInit {
   parcelas: any[] = [];
+  filteredParcelas: any[] = [];
+  searchTerm = '';
 
   constructor(
     private parcelasService: ParcelasService,
@@ -30,7 +32,16 @@ ionViewWillEnter() {
   }
   async loadParcelas() {
     this.parcelas = await this.parcelasService.readAll();
-    console.log("Parcelas cargadas:", this.parcelas);
+    this.filterParcelas();
+  }
+
+  filterParcelas() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredParcelas = this.parcelas.filter(p =>
+      p.nombre?.toLowerCase().includes(term) ||
+      p.ubicacion?.toLowerCase().includes(term) ||
+      p.tipo_cultivo?.toLowerCase().includes(term)
+    );
   }
 
   async openParcelaForm(parcela?: any) {

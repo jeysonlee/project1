@@ -12,6 +12,8 @@ import { FormHerramientasComponent } from '../form-herramientas/form-herramienta
 })
 export class ListHerramientasPage implements OnInit {
   herramientas: any[] = [];
+  filteredHerramientas: any[] = [];
+  searchTerm = '';
 
   constructor(
     private HerramientaService: HerramientasService,
@@ -28,7 +30,15 @@ export class ListHerramientasPage implements OnInit {
   }
   async loadHerramientas() {
     this.herramientas = await this.HerramientaService.readAll();
-    console.log('Herramientas cargadas:', this.herramientas);
+    this.filterHerramientas();
+  }
+
+  filterHerramientas() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredHerramientas = this.herramientas.filter(h =>
+      h.nombre?.toLowerCase().includes(term) ||
+      h.categoria?.toLowerCase().includes(term)
+    );
   }
   async openHerramientaForm(herramienta?: any) {
     const modal = await this.modalCtrl.create({

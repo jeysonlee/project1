@@ -1,159 +1,123 @@
 <app-header></app-header>
 
-<ion-content class="ion-padding">
+<ion-content class="list-insumos-content">
 
-  <!-- Categorías -->
-
-  <div class="section-header">
-    <h3>Insumos</h3>
-    <ion-button fill="clear" size="small">Ver todas</ion-button>
+  <div class="toolbar-search ion-padding-horizontal ion-padding-top">
+    <ion-searchbar
+      placeholder="Buscar insumo..."
+      [(ngModel)]="searchTerm"
+      (ionInput)="filtrarPorCategoria(categoriaSeleccionada)"
+      animated="true"
+      class="custom-searchbar">
+    </ion-searchbar>
+    <ion-button *ngIf="isAdmin" class="btn-nueva" (click)="openInsumoForm()" shape="round">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Nuevo
+    </ion-button>
   </div>
 
-  <div class="categories-scroll">
-    <ion-chip [color]="categoriaSeleccionada === '' ? 'primary' : 'medium'"
-              [outline]="categoriaSeleccionada !== ''"
-              (click)="filtrarPorCategoria('')">
-      <ion-icon name="grid-outline"></ion-icon>
-      <ion-label>Todos</ion-label>
+  <!-- CHIPS DE CATEGORÍA -->
+  <div class="categories-scroll ion-padding-horizontal">
+    <ion-chip [color]="categoriaSeleccionada === '' ? 'primary' : 'medium'" [outline]="categoriaSeleccionada !== ''" (click)="filtrarPorCategoria('')">
+      <ion-icon name="grid-outline"></ion-icon><ion-label>Todos</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'herbicida' ? 'danger' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'herbicida'"
-              (click)="filtrarPorCategoria('herbicida')">
-      <ion-icon name="leaf-outline"></ion-icon>
-      <ion-label>Herbicida</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'herbicida' ? 'danger' : 'medium'" [outline]="categoriaSeleccionada !== 'herbicida'" (click)="filtrarPorCategoria('herbicida')">
+      <ion-icon name="leaf-outline"></ion-icon><ion-label>Herbicida</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'insecticida' ? 'warning' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'insecticida'"
-              (click)="filtrarPorCategoria('insecticida')">
-      <ion-icon name="bug-outline"></ion-icon>
-      <ion-label>Insecticida</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'insecticida' ? 'warning' : 'medium'" [outline]="categoriaSeleccionada !== 'insecticida'" (click)="filtrarPorCategoria('insecticida')">
+      <ion-icon name="bug-outline"></ion-icon><ion-label>Insecticida</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'fungicida' ? 'tertiary' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'fungicida'"
-              (click)="filtrarPorCategoria('fungicida')">
-      <ion-icon name="flask-outline"></ion-icon>
-      <ion-label>Fungicida</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'fungicida' ? 'tertiary' : 'medium'" [outline]="categoriaSeleccionada !== 'fungicida'" (click)="filtrarPorCategoria('fungicida')">
+      <ion-icon name="flask-outline"></ion-icon><ion-label>Fungicida</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'abono' ? 'success' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'abono'"
-              (click)="filtrarPorCategoria('abono')">
-      <ion-icon name="nutrition-outline"></ion-icon>
-      <ion-label>Abono</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'abono' ? 'success' : 'medium'" [outline]="categoriaSeleccionada !== 'abono'" (click)="filtrarPorCategoria('abono')">
+      <ion-icon name="nutrition-outline"></ion-icon><ion-label>Abono</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'fertilizante_foliar' ? 'primary' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'fertilizante_foliar'"
-              (click)="filtrarPorCategoria('fertilizante_foliar')">
-      <ion-icon name="water-outline"></ion-icon>
-      <ion-label>Foliar</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'fertilizante_foliar' ? 'primary' : 'medium'" [outline]="categoriaSeleccionada !== 'fertilizante_foliar'" (click)="filtrarPorCategoria('fertilizante_foliar')">
+      <ion-icon name="water-outline"></ion-icon><ion-label>Foliar</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'bioestimulante' ? 'secondary' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'bioestimulante'"
-              (click)="filtrarPorCategoria('bioestimulante')">
-      <ion-icon name="pulse-outline"></ion-icon>
-      <ion-label>Bioestimulante</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'bioestimulante' ? 'secondary' : 'medium'" [outline]="categoriaSeleccionada !== 'bioestimulante'" (click)="filtrarPorCategoria('bioestimulante')">
+      <ion-icon name="pulse-outline"></ion-icon><ion-label>Bioestimulante</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'biologico' ? 'success' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'biologico'"
-              (click)="filtrarPorCategoria('biologico')">
-      <ion-icon name="globe-outline"></ion-icon>
-      <ion-label>Biológico</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'biologico' ? 'success' : 'medium'" [outline]="categoriaSeleccionada !== 'biologico'" (click)="filtrarPorCategoria('biologico')">
+      <ion-icon name="globe-outline"></ion-icon><ion-label>Biológico</ion-label>
     </ion-chip>
-
-    <ion-chip [color]="categoriaSeleccionada === 'otro' ? 'dark' : 'medium'"
-              [outline]="categoriaSeleccionada !== 'otro'"
-              (click)="filtrarPorCategoria('otro')">
-      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
-      <ion-label>Otro</ion-label>
+    <ion-chip [color]="categoriaSeleccionada === 'otro' ? 'dark' : 'medium'" [outline]="categoriaSeleccionada !== 'otro'" (click)="filtrarPorCategoria('otro')">
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon><ion-label>Otro</ion-label>
     </ion-chip>
   </div>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="6">
-        <ion-button *ngIf="isAdmin" expand="block" color="primary" (click)="openInsumoForm()" class="add-button ion-margin-vertical">
-          Nuevo insumo
-        </ion-button>
-      </ion-col>
-      <ion-col size="6">
-        <ion-button expand="block" color="primary" (click)="aggStock()" class="add-button ion-margin-vertical">
-          Agregar Stock
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-  <!-- Botón agregar -->
 
-<div class="insumo-card" *ngFor="let insumo of insumosFiltrados">
-  <ion-grid>
-    <ion-row class="ion-align-items-center">
-      <!-- Col 1: Foto -->
-      <ion-col size="3" class="col-foto">
-        <div class="insumo-img" *ngIf="insumo.foto">
-          <img [src]="insumo.foto" />
-        </div>
-        <div class="insumo-img placeholder" *ngIf="!insumo.foto">
-          <ion-icon name="cube-outline"></ion-icon>
-        </div>
-      </ion-col>
+  <div class="toolbar-acciones ion-padding-horizontal">
+    <ion-text color="medium">
+      <small>{{ insumosFiltrados.length }} insumo{{ insumosFiltrados.length !== 1 ? 's' : '' }}</small>
+    </ion-text>
+    <ion-button fill="outline" size="small" color="primary" (click)="aggStock()" shape="round">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Agregar Stock
+    </ion-button>
+  </div>
 
-      <!-- Col 2: Datos -->
-      <ion-col size="6" class="col-datos">
-        <ion-row>
-          <ion-col size="12">
-            <h2 class="insumo-title">{{ insumo.insumo_nombre }}
-              <span class="unidad"> 1/{{ insumo.unidad_medida }} </span>
-            </h2>
-          </ion-col>
-        </ion-row>
+  <div class="cards-container ion-padding-horizontal ion-padding-bottom">
 
+    <ion-card *ngFor="let insumo of insumosFiltrados" class="item-card">
 
-
-        <ion-row class="datos-row">
-          <ion-col size="12">
-            <span class="dato">
+      <div class="card-header-custom">
+        <div class="card-header-left">
+          <div class="item-icon-wrap">
+            <img *ngIf="insumo.foto" [src]="insumo.foto" class="item-foto" />
+            <ion-icon *ngIf="!insumo.foto" name="cube-outline"></ion-icon>
+          </div>
+          <div class="card-header-info">
+            <h2 class="item-titulo">{{ insumo.insumo_nombre }}</h2>
+            <p class="item-sub">
               <ion-icon name="pricetag-outline"></ion-icon>
-              {{ insumo.categoria }}
-            </span>
-          </ion-col>
-          <ion-col size="8">
-            <span class="dato precio">
-              <ion-icon name="cash-outline"></ion-icon>
-              {{ insumo.costo_unitario | currency:'S/ ':'symbol':'1.2-2' }}
-            </span>
-          </ion-col>
-          <ion-col size="4">
-            <span class="dato stock">
-              <ion-icon name="cube-outline"></ion-icon>
-              {{ insumo.cantidad_stock }}
-            </span>
-          </ion-col>
-          <ion-col size="12" *ngIf="isAdmin">
-            <span class="dato ellipsis">
-              <ion-icon name="person-outline"></ion-icon>
-              {{ insumo.usuario_nombre }}
-            </span>
-          </ion-col>
-        </ion-row>
-      </ion-col>
+              {{ insumo.categoria }} · 1/{{ insumo.unidad_medida }}
+            </p>
+          </div>
+        </div>
+        <ion-chip class="precio-chip">
+          <ion-label>S/ {{ insumo.costo_unitario | number:'1.2-2' }}</ion-label>
+        </ion-chip>
+      </div>
 
-      <!-- Col 3: Botones -->
-      <ion-col size="3" class="col-acciones">
-        <ion-button fill="clear" color="primary" (click)="openInsumoForm(insumo)">
-          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-        </ion-button>
-        <ion-button fill="clear" color="danger" (click)="deleteInsumo(insumo.id)">
-          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</div>
+      <ion-card-content>
+        <div class="datos-row">
+          <div class="dato-item">
+            <ion-icon name="cube-outline" color="success"></ion-icon>
+            <div>
+              <span class="dato-label">Stock</span>
+              <span class="dato-valor">{{ insumo.cantidad_stock }} <small>{{ insumo.unidad_medida }}</small></span>
+            </div>
+          </div>
+          <div class="dato-divider" *ngIf="isAdmin"></div>
+          <div class="dato-item" *ngIf="isAdmin">
+            <ion-icon name="person-outline" color="medium"></ion-icon>
+            <div>
+              <span class="dato-label">Usuario</span>
+              <span class="dato-valor">{{ insumo.usuario_nombre || '—' }}</span>
+            </div>
+          </div>
+        </div>
 
+        <div class="acciones-row">
+          <ion-button fill="outline" size="small" color="primary" (click)="openInsumoForm(insumo)" class="btn-accion">
+            <ion-icon slot="start" name="create-outline"></ion-icon>
+            Editar
+          </ion-button>
+          <ion-button fill="outline" size="small" color="danger" (click)="deleteInsumo(insumo.id)" class="btn-eliminar">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+
+    </ion-card>
+
+    <div *ngIf="insumosFiltrados.length === 0" class="empty-state">
+      <ion-icon name="cube-outline"></ion-icon>
+      <p>Sin insumos encontrados</p>
+      <small>Prueba con otra categoría o término de búsqueda</small>
+    </div>
+
+  </div>
 
 </ion-content>

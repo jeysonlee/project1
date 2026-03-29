@@ -1,130 +1,244 @@
-.section-header {
+// ─── Contenedor principal ────────────────────────────────────────────────────
+.list-ventas-content {
+  --background: var(--ion-color-light);
+}
+
+// ─── Search grid
+.search-grid { padding: 12px 16px 0; }
+
+ion-searchbar {
+  --border-radius: 12px;
+  --background: #fff;
+  --box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  padding: 0;
+}
+
+// ─── Cards grid
+.cards-grid { padding: 4px 16px 80px; }
+
+// ─── Card principal ──────────────────────────────────────────────────────────
+.venta-card {
+  border-radius: 16px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09) !important;
+  margin-bottom: 14px;
+  overflow: hidden;
+
+  ion-card-content {
+    padding: 0 16px 16px;
+  }
+}
+
+// ─── Cabecera ────────────────────────────────────────────────────────────────
+.card-header-custom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%) !important;
+  color: #fff !important;
+}
+
+.card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.venta-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.4rem;
+    color: #fff;
+  }
+}
+
+.card-header-info {
+  min-width: 0;
+
+  .venta-titulo {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .venta-sub {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    ion-icon {
+      font-size: 0.85rem;
+    }
+  }
+}
+
+.estado-chip {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  height: 26px;
+  --background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+
+  ion-label { color: #fff; }
+  ion-icon  { color: #fff; font-size: 0.85rem; }
+}
+
+// ─── Data grid inside cards
+.datos-grid {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.dato-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 4px;
+  ion-icon { font-size: 1.1rem; margin-bottom: 2px; }
+}
+
+.dato-label {
+  font-size: .65rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--ion-color-medium);
+}
+
+.dato-valor {
+  font-size: .88rem; font-weight: 600; color: var(--ion-color-dark);
+  small { font-size: .72rem; color: var(--ion-color-medium); }
+}
+
+// ─── Total ───────────────────────────────────────────────────────────────────
+.total-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  padding: 0 16px;
+  padding: 10px 14px;
+  background: var(--ion-color-primary);
+  border-radius: 10px;
+  margin-top: 10px;
+
+  .total-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .total-valor {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+  }
 }
 
-.item-card {
-  background: var(--ion-card-background, #fff);
-  border-radius: 12px;
-  margin: 12px 16px;
-  padding: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+// ─── Actions grid
+.acciones-grid {
+  margin-top: 10px;
+  ion-col[size="auto"] { display: flex; align-items: center; }
 }
 
-.card-header {
+// ─── Detalles expandidos ─────────────────────────────────────────────────────
+.detalles-section {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 2px dashed var(--ion-color-light-shade);
+}
+
+.detalle-grupo-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.card-title {
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--ion-text-color);
-  margin: 0;
-}
-
-.card-subtitle {
-  font-size: 12px;
-  color: var(--ion-color-medium);
-  margin-top: 4px;
-}
-
-.badge-estado {
-  font-size: 11px;
-  padding: 4px 8px;
-  border-radius: 12px;
-}
-
-.datos-grid {
-  ion-col {
-    padding: 4px 8px;
-  }
-}
-
-.dato {
-  display: flex;
-  flex-direction: column;
-  font-size: 12px;
-
-  .label {
-    color: var(--ion-color-medium);
-    font-size: 11px;
-  }
-
-  .value {
-    font-weight: 500;
-    color: var(--ion-text-color);
-    margin-top: 2px;
-  }
-
-  &.total .value {
-    color: var(--ion-color-success);
-    font-weight: 600;
-    font-size: 14px;
-  }
-}
-
-.col-acciones {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--ion-color-light);
-
-  ion-button {
-    flex: 1;
-    --padding-start: 8px;
-    --padding-end: 8px;
-    margin: 0;
-    font-size: 12px;
-  }
-}
-
-.detalle-section {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--ion-color-light);
-
-  .detalle-header {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--ion-color-primary);
-    margin-bottom: 8px;
-  }
-}
-
-.detalle-item {
-  background: var(--ion-color-light);
-  border-radius: 8px;
-  padding: 8px 12px;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 8px;
 
-  .detalle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
+  ion-icon { font-size: 1rem; }
 
-    &:not(:last-child) {
-      margin-bottom: 4px;
-    }
+  span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-dark);
+    flex: 1;
+  }
+}
 
-    .detalle-label {
-      color: var(--ion-color-medium);
-    }
+.tabla-detalles {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  background: var(--ion-color-light);
+  border-radius: 10px;
+  overflow: hidden;
 
-    .detalle-value {
-      font-weight: 500;
-    }
+  th {
+    padding: 7px 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+    background: var(--ion-color-light-shade);
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
 
-    &.subtotal .detalle-value {
-      color: var(--ion-color-success);
-      font-weight: 600;
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    vertical-align: middle;
+
+    strong { font-size: 0.82rem; color: var(--ion-color-dark); }
+
+    &.costo-cell {
+      font-weight: 700;
+      color: var(--ion-color-primary);
     }
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+// ─── Estado vacío ────────────────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 4rem;
+    color: var(--ion-color-light-shade);
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+    margin: 0 0 6px;
+  }
+
+  small {
+    font-size: 0.82rem;
+    color: var(--ion-color-medium-tint);
   }
 }

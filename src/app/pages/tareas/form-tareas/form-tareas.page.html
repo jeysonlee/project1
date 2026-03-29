@@ -2,16 +2,25 @@
   <ion-toolbar color="primary">
     <ion-title>Nueva Tarea</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="guardarTarea()" [disabled]="!isFormValid()">Guardar</ion-button>
+      <ion-button (click)="guardarTarea()" [disabled]="!isFormValid()">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Guardar
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <!-- DATOS GENERALES -->
+  <!-- Datos generales -->
   <ion-card>
-    <ion-list>
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="newspaper-outline"></ion-icon>
+        Datos Generales
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
 
       <ion-item>
         <ion-label position="stacked">Parcela</ion-label>
@@ -24,15 +33,14 @@
 
       <ion-item>
         <ion-label position="stacked">Tipo de Tarea</ion-label>
-        <ion-select [(ngModel)]="form.tipo_tarea_id" interface="popover"
-          (ionChange)="onTipoTareaChange()">
+        <ion-select [(ngModel)]="form.tipo_tarea_id" interface="popover" (ionChange)="onTipoTareaChange()">
           <ion-select-option *ngFor="let t of tipoTareas" [value]="t.id">
             {{ t.descripcion }}
           </ion-select-option>
         </ion-select>
       </ion-item>
 
-      <ion-grid>
+      <ion-grid style="padding: 0;">
         <ion-row>
           <ion-col size="6">
             <ion-item (click)="abrirPopover($event,'inicio')">
@@ -40,7 +48,6 @@
               <ion-input [value]="form.fecha_inicio | date:'dd/MM/yyyy'" readonly />
             </ion-item>
           </ion-col>
-
           <ion-col size="6">
             <ion-item (click)="abrirPopover($event,'fin')">
               <ion-label position="stacked">Fecha Fin</ion-label>
@@ -50,26 +57,25 @@
         </ion-row>
       </ion-grid>
 
-    </ion-list>
+    </ion-card-content>
   </ion-card>
 
-  <!-- POPOVER FECHA -->
-  <ion-popover [isOpen]="popoverOpen" [event]="popoverEvent"
-    (didDismiss)="popoverOpen=false">
+  <!-- Popover fecha -->
+  <ion-popover [isOpen]="popoverOpen" [event]="popoverEvent" (didDismiss)="popoverOpen=false">
     <ng-template>
-      <ion-datetime [(ngModel)]="tempFecha"
-        presentation="date"
-        (ionChange)="confirmarFecha()">
+      <ion-datetime [(ngModel)]="tempFecha" presentation="date" (ionChange)="confirmarFecha()">
       </ion-datetime>
     </ng-template>
   </ion-popover>
 
-  <!-- SECCIÓN COSECHA -->
+  <!-- Sección cosecha -->
   <ion-card *ngIf="mostrarCosecha()">
     <ion-card-header>
-      <ion-card-title>Sección Cosecha</ion-card-title>
+      <ion-card-title>
+        <ion-icon name="archive-outline"></ion-icon>
+        Datos de Cosecha
+      </ion-card-title>
     </ion-card-header>
-
     <ion-card-content>
       <ion-item>
         <ion-label>Editar merma (%)</ion-label>
@@ -77,55 +83,34 @@
       </ion-item>
       <ion-item *ngIf="permitirEditarMerma">
         <ion-label position="stacked">Merma (%)</ion-label>
-        <ion-input
-          type="number"
-          [(ngModel)]="form.pctj_merma"
-          [readonly]="!permitirEditarMerma"
-          (ionInput)="onMermaChange()">
-        </ion-input>
+        <ion-input type="number" [(ngModel)]="form.pctj_merma" [readonly]="!permitirEditarMerma" (ionInput)="onMermaChange()"></ion-input>
       </ion-item>
-
       <ion-item>
         <ion-label position="stacked">Baldes</ion-label>
-        <ion-input
-          type="number"
-          [(ngModel)]="form.cant_baldes"
-          (ionInput)="onBaldesChange()">
-        </ion-input>
+        <ion-input type="number" [(ngModel)]="form.cant_baldes" (ionInput)="onBaldesChange()"></ion-input>
       </ion-item>
-
       <ion-item>
         <ion-label position="stacked">Kg Fresco</ion-label>
-        <ion-input
-          type="number"
-          [(ngModel)]="form.cant_kg_fresco"
-          (ionInput)="onKgFrescoChange()">
-        </ion-input>
+        <ion-input type="number" [(ngModel)]="form.cant_kg_fresco" (ionInput)="onKgFrescoChange()"></ion-input>
       </ion-item>
-
       <ion-item>
         <ion-label position="stacked">Kg Seco</ion-label>
-        <ion-input
-          [value]="form.cant_kg_secado"
-          readonly>
-        </ion-input>
+        <ion-input [value]="form.cant_kg_secado" readonly></ion-input>
       </ion-item>
-
     </ion-card-content>
   </ion-card>
 
-  <!-- ACORDEONES -->
-   <ion-card >
+  <!-- Acordeones: Obreros / Insumos / Herramientas -->
+  <ion-card>
     <ion-accordion-group>
 
-      <!-- OBREROS -->
+      <!-- Obreros -->
       <ion-accordion value="obreros">
-        <ion-item slot="header">
+        <ion-item slot="header" color="light">
+          <ion-icon slot="start" name="person-outline" color="primary"></ion-icon>
           <ion-label>Obreros</ion-label>
         </ion-item>
-
         <div slot="content" class="ion-padding">
-
           <ion-item>
             <ion-label position="stacked">Obrero</ion-label>
             <ion-select [(ngModel)]="formObrero.obrero_id" (ionChange)="onSelectObrero()" interface="popover">
@@ -134,51 +119,42 @@
               </ion-select-option>
             </ion-select>
           </ion-item>
-
           <ion-item>
-            <ion-label position="stacked">Días</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formObrero.dias_trabajados"
-              (ionInput)="calcularTotalObrero()" />
+            <ion-label position="stacked">Días trabajados</ion-label>
+            <ion-input type="number" [(ngModel)]="formObrero.dias_trabajados" (ionInput)="calcularTotalObrero()" />
           </ion-item>
-
           <ion-item>
-            <ion-label position="stacked">Costo día</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formObrero.costo_dia"
-              (ionInput)="calcularTotalObrero()" />
+            <ion-label position="stacked">Costo por día</ion-label>
+            <ion-input type="number" [(ngModel)]="formObrero.costo_dia" (ionInput)="calcularTotalObrero()" />
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Total</ion-label>
             <ion-input [value]="formObrero.costo_total" readonly />
           </ion-item>
-
-          <ion-button expand="block" (click)="agregarObrero()">Agregar</ion-button>
-
-        <ion-item *ngFor="let o of obreros; let i = index">
-          {{ o.nombre }} - {{ o.dias }} días → {{ o.total | currency:'S/ ' }}
-          <ion-button
-            slot="end"
-            color="danger"
-            fill="clear"
-            (click)="eliminarObrero(i)">
-            <ion-icon name="trash"></ion-icon>
+          <ion-button expand="block" (click)="agregarObrero()" fill="outline" color="primary">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            Agregar Obrero
           </ion-button>
-        </ion-item>
-
-
+          <ion-item *ngFor="let o of obreros; let i = index">
+            <ion-icon slot="start" name="person-outline" color="medium"></ion-icon>
+            <ion-label>
+              <h3>{{ o.nombre }}</h3>
+              <p>{{ o.dias }} días → {{ o.total | currency:'S/ ' }}</p>
+            </ion-label>
+            <ion-button slot="end" color="danger" fill="clear" (click)="eliminarObrero(i)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </ion-item>
         </div>
       </ion-accordion>
 
-      <!-- INSUMOS -->
+      <!-- Insumos -->
       <ion-accordion value="insumos">
-        <ion-item slot="header">
+        <ion-item slot="header" color="light">
+          <ion-icon slot="start" name="flask-outline" color="primary"></ion-icon>
           <ion-label>Insumos</ion-label>
         </ion-item>
-
         <div slot="content" class="ion-padding">
-
           <ion-item>
             <ion-label position="stacked">Insumo</ion-label>
             <ion-select [(ngModel)]="formInsumo.insumo_id" (ionChange)="onSelectInsumo()" interface="popover">
@@ -187,52 +163,42 @@
               </ion-select-option>
             </ion-select>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Cantidad</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formInsumo.cantidad"
-              (ionInput)="calcularTotalInsumo()" />
+            <ion-input type="number" [(ngModel)]="formInsumo.cantidad" (ionInput)="calcularTotalInsumo()" />
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Costo unitario</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formInsumo.costo_unitario"
-              (ionInput)="calcularTotalInsumo()" />
+            <ion-input type="number" [(ngModel)]="formInsumo.costo_unitario" (ionInput)="calcularTotalInsumo()" />
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Total</ion-label>
             <ion-input [value]="formInsumo.costo_total" readonly />
           </ion-item>
-
-          <ion-button expand="block" (click)="agregarInsumo()">Agregar</ion-button>
-
-
-          <ion-item *ngFor="let i of insumos">
-            {{ i.nombre }} x{{ i.cantidad }} → {{ i.total | currency:'S/ ' }}
-            <ion-button
-            slot="end"
-            color="danger"
-            fill="clear"
-            (click)="eliminarInsumo(i)">
-            <ion-icon name="trash"></ion-icon>
+          <ion-button expand="block" (click)="agregarInsumo()" fill="outline" color="primary">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            Agregar Insumo
           </ion-button>
+          <ion-item *ngFor="let i of insumos; let idx = index">
+            <ion-icon slot="start" name="flask-outline" color="medium"></ion-icon>
+            <ion-label>
+              <h3>{{ i.nombre }}</h3>
+              <p>x{{ i.cantidad }} → {{ i.total | currency:'S/ ' }}</p>
+            </ion-label>
+            <ion-button slot="end" color="danger" fill="clear" (click)="eliminarInsumo(idx)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
           </ion-item>
-
-
         </div>
       </ion-accordion>
 
-      <!-- HERRAMIENTAS -->
+      <!-- Herramientas -->
       <ion-accordion value="herramientas">
-        <ion-item slot="header">
+        <ion-item slot="header" color="light">
+          <ion-icon slot="start" name="hammer-outline" color="primary"></ion-icon>
           <ion-label>Herramientas</ion-label>
         </ion-item>
-
         <div slot="content" class="ion-padding">
-
           <ion-item>
             <ion-label position="stacked">Herramienta</ion-label>
             <ion-select [(ngModel)]="formHerramienta.herramienta_id" (ionChange)="onSelectHerramienta()" interface="popover">
@@ -241,52 +207,59 @@
               </ion-select-option>
             </ion-select>
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Cantidad</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formHerramienta.cantidad"
-              (ionInput)="calcularTotalHerramienta()" />
+            <ion-input type="number" [(ngModel)]="formHerramienta.cantidad" (ionInput)="calcularTotalHerramienta()" />
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Costo unitario</ion-label>
-            <ion-input type="number"
-              [(ngModel)]="formHerramienta.costo_unitario"
-              (ionInput)="calcularTotalHerramienta()" />
+            <ion-input type="number" [(ngModel)]="formHerramienta.costo_unitario" (ionInput)="calcularTotalHerramienta()" />
           </ion-item>
-
           <ion-item>
             <ion-label position="stacked">Total</ion-label>
             <ion-input [value]="formHerramienta.costo_total" readonly />
           </ion-item>
-
-          <ion-button expand="block" (click)="agregarHerramienta()">Agregar</ion-button>
-
-          <ion-item *ngFor="let h of herramientas">
-            {{ h.nombre }} x{{ h.cantidad }} → {{ h.total | currency:'S/ ' }}
-            <ion-button
-            slot="end"
-            color="danger"
-            fill="clear"
-            (click)="eliminarHerramienta(h)">
-            <ion-icon name="trash"></ion-icon>
+          <ion-button expand="block" (click)="agregarHerramienta()" fill="outline" color="primary">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            Agregar Herramienta
           </ion-button>
+          <ion-item *ngFor="let h of herramientas; let idx = index">
+            <ion-icon slot="start" name="hammer-outline" color="medium"></ion-icon>
+            <ion-label>
+              <h3>{{ h.nombre }}</h3>
+              <p>x{{ h.cantidad }} → {{ h.total | currency:'S/ ' }}</p>
+            </ion-label>
+            <ion-button slot="end" color="danger" fill="clear" (click)="eliminarHerramienta(idx)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
           </ion-item>
-
-
         </div>
       </ion-accordion>
 
     </ion-accordion-group>
   </ion-card>
-  <!-- TOTALES -->
-  <ion-card>
+
+  <!-- Totales -->
+  <ion-card color="success">
     <ion-card-content>
-      <p>Obreros: {{ totalObreros | currency:'S/ ' }}</p>
-      <p>Herramientas: {{ totalHerramientas | currency:'S/ ' }}</p>
-      <p>Insumos: {{ totalInsumos | currency:'S/ ' }}</p>
-      <h2>Total: {{ totalGeneral | currency:'S/ ' }}</h2>
+      <div style="padding: 4px 0;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <span style="color: rgba(255,255,255,0.8); font-size: 0.85rem;">Obreros</span>
+          <span style="color: white; font-weight: 600;">{{ totalObreros | currency:'S/ ' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+          <span style="color: rgba(255,255,255,0.8); font-size: 0.85rem;">Herramientas</span>
+          <span style="color: white; font-weight: 600;">{{ totalHerramientas | currency:'S/ ' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <span style="color: rgba(255,255,255,0.8); font-size: 0.85rem;">Insumos</span>
+          <span style="color: white; font-weight: 600;">{{ totalInsumos | currency:'S/ ' }}</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+          <span style="color: white; font-size: 1rem; font-weight: 700;">Total General</span>
+          <span style="color: white; font-size: 1.4rem; font-weight: 800;">{{ totalGeneral | currency:'S/ ' }}</span>
+        </div>
+      </div>
     </ion-card-content>
   </ion-card>
 

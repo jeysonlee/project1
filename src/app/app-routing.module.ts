@@ -26,10 +26,6 @@ const routes: Routes = [
     component: RedirectPage,
     canActivate: [RedirectGuard]
   },
-  {
-    path: 'list-movimientos',
-    loadChildren: () => import('./pages/insumos/list-movimientos/list-movimientos.module').then( m => m.ListMovimientosPageModule)
-  },
 
 ];
 

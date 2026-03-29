@@ -1,31 +1,166 @@
-.tabla-detalles {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
+.form-ventas-content {
+  --background: var(--ion-color-light);
 }
 
-.tabla-detalles th,
-.tabla-detalles td {
-  padding: 4px 6px;
-  text-align: right;
+// ─── Cosecha selector ────────────────────────────────────────────────────────
+.cosecha-item {
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 4px 0;
+  transition: background 0.15s;
+
+  &.cosecha-item-selected {
+    background: rgba(var(--ion-color-primary-rgb), 0.04);
+  }
+}
+
+.cosecha-select-row {
+  --background: transparent;
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --min-height: 60px;
+}
+
+.cosecha-check {
+  font-size: 1.4rem;
+  margin-inline-end: 10px;
+}
+
+.cosecha-fecha {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin: 0 0 2px;
+}
+
+.cosecha-disponible {
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.cosecha-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 8px;
   white-space: nowrap;
 }
 
-.tabla-detalles th {
+.cosecha-control {
+  background: rgba(var(--ion-color-light-rgb), 0.8);
+  padding: 10px 14px 14px;
+  border-top: 1px solid var(--ion-color-light-shade);
+
+  ion-grid { margin-bottom: 10px; }
+}
+
+.kg-input-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-top: 4px;
+}
+
+.todo-confirmado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: var(--ion-color-primary);
   font-weight: 600;
-  color: #555;
-  border-bottom: 1px solid #ddd;
+
+  ion-icon { font-size: 1.1rem; }
 }
 
-.tabla-detalles tbody tr {
-  border-bottom: 1px solid #eee;
+.cosecha-divider {
+  height: 1px;
+  background: var(--ion-color-light-shade);
+  margin: 0;
 }
 
-.tabla-detalles tbody tr:last-child {
-  border-bottom: none;
+// ─── Tabla de detalles ───────────────────────────────────────────────────────
+.tabla-detalles {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  background: var(--ion-color-light);
+  border-radius: 10px;
+  overflow: hidden;
+
+  th {
+    padding: 7px 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ion-color-medium);
+    background: var(--ion-color-light-shade);
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
+
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    vertical-align: middle;
+
+    &.costo-cell {
+      font-weight: 700;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  tr:last-child td { border-bottom: none; }
 }
 
-// Ocultar los botones de incrementar/decrementar en inputs numéricos
+// ─── Card de totales ─────────────────────────────────────────────────────────
+.totales-card {
+  background: var(--ion-color-primary);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.totales-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  .totales-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .totales-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  &.total-final {
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 12px;
+    margin-top: 4px;
+    margin-bottom: 0;
+
+    .totales-label-big {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .totales-value-big {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+    }
+  }
+}
+
+// ─── Ocultar flechas en inputs numéricos ─────────────────────────────────────
 ion-input[type="number"] {
   --padding-end: 8px;
 

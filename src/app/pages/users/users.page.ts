@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class UsersPage implements OnInit {
   usuarios: any[] = [];
+  filteredUsuarios: any[] = [];
+  searchTerm = '';
 
   constructor(
     private usersService: UsersService,
@@ -26,7 +28,16 @@ export class UsersPage implements OnInit {
 
   async loadUsers() {
     this.usuarios = await this.usersService.readAll();
-    console.log('Usuarios cargados:', this.usuarios);
+    this.filterUsuarios();
+  }
+
+  filterUsuarios() {
+    const term = this.searchTerm.toLowerCase();
+    this.filteredUsuarios = this.usuarios.filter(u =>
+      u.nombre?.toLowerCase().includes(term) ||
+      u.apellido?.toLowerCase().includes(term) ||
+      u.username?.toLowerCase().includes(term)
+    );
   }
 
   async openUserForm(user?: any) {
