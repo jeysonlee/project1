@@ -12,7 +12,10 @@
           animated="true">
         </ion-searchbar>
       </ion-col>
-      <ion-col size="auto">
+      <ion-col size="auto" style="display:flex; gap:8px;">
+        <ion-button shape="round" fill="outline" (click)="exportarReporte()" [disabled]="filteredHerramientas.length === 0">
+          <ion-icon slot="icon-only" name="image-outline"></ion-icon>
+        </ion-button>
         <ion-button shape="round" (click)="openHerramientaForm()">
           <ion-icon slot="start" name="add-outline"></ion-icon>
           Nueva

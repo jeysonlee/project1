@@ -1,6 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { ReportService } from 'src/app/services/report.service';
 import { FormObrerosComponent } from '../form-obreros/form-obreros.component';
 import { ObrerosService } from 'src/app/services/obreros.service';
 import { UsersService } from 'src/app/services/users.service';
@@ -22,7 +23,9 @@ export class ListPage implements OnInit {
     private UsersService: UsersService,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
-    private router: Router
+    private router: Router,
+    private loadingCtrl: LoadingController,
+    private reportService: ReportService
   ) {}
 
   async ngOnInit() {
@@ -90,5 +93,29 @@ export class ListPage implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  async exportarReporte() {
+    const loading = await this.loadingCtrl.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Obreros',
+        subtitulo: `${this.filteredObreros.length} obrero(s)`,
+        icono: '👷',
+        columnas: [
+          { cabecera: 'Nombre',       campo: 'nombre' },
+          { cabecera: 'Apellido',     campo: 'apellido' },
+          { cabecera: 'DNI',          campo: 'dni' },
+          { cabecera: 'Especialidad', campo: 'especialidad', formato: v => v || '—' },
+          { cabecera: 'Teléfono',     campo: 'telefono',    formato: v => v || '—' },
+          { cabecera: 'Precio/día',   campo: 'precio_base', alinear: 'derecha',
+            formato: v => `S/ ${Number(v || 0).toFixed(2)}` },
+        ],
+        datos: this.filteredObreros,
+      });
+    } finally {
+      await loading.dismiss();
+    }
   }
 }

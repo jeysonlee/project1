@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { HerramientasService } from 'src/app/services/herramientas.service';
 import { UsersService } from 'src/app/services/users.service';
 import { FormHerramientasComponent } from '../form-herramientas/form-herramientas.component';
+import { ReportService } from 'src/app/services/report.service';
 
 @Component({
   selector: 'app-list-herramientas',
@@ -20,7 +21,9 @@ export class ListHerramientasPage implements OnInit {
     private usersService: UsersService,
     private router: Router,
     private alertCtrl: AlertController,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private loadingCtrl: LoadingController,
+    private reportService: ReportService
   ) { }
 
   async ngOnInit() {
@@ -83,6 +86,32 @@ export class ListHerramientasPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  async exportarReporte() {
+    const loading = await this.loadingCtrl.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Herramientas',
+        subtitulo: `${this.filteredHerramientas.length} herramienta(s)`,
+        icono: '🔧',
+        columnas: [
+          { cabecera: 'Nombre',     campo: 'nombre' },
+          { cabecera: 'Categoría',  campo: 'categoria',
+            formato: v => v || '—' },
+          { cabecera: 'Unidad',     campo: 'unidad_medida',
+            formato: v => v || '—' },
+          { cabecera: 'Costo unit.', campo: 'costo_unitario', alinear: 'derecha',
+            formato: v => `S/ ${Number(v || 0).toFixed(2)}` },
+          { cabecera: 'Descripción', campo: 'descripcion',
+            formato: v => v || '—' },
+        ],
+        datos: this.filteredHerramientas,
+      });
+    } finally {
+      await loading.dismiss();
+    }
   }
 
 }

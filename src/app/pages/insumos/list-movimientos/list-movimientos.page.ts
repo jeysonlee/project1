@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AlertController, LoadingController, ModalController } from '@ionic/angular';
 import { InsumoMovimientosService } from 'src/app/services/insumo-movimientos.service';
 import { UsersService } from 'src/app/services/users.service';
+import { ReportService } from 'src/app/services/report.service';
 @Component({
   selector: 'app-list-movimientos',
   templateUrl: './list-movimientos.page.html',
@@ -25,7 +26,8 @@ export class ListMovimientosPage implements OnInit {
     private router: Router,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private reportService: ReportService
   ) {}
 
   async ngOnInit() {
@@ -134,6 +136,31 @@ export class ListMovimientosPage implements OnInit {
     } catch (error) {
       console.error('Error al obtener resumen:', error);
       this.mostrarAlerta('Error', 'No se pudo obtener el resumen del stock');
+    }
+  }
+
+  async exportarReporte() {
+    const loading = await this.loadingController.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Movimientos',
+        subtitulo: `${this.movimientos.length} movimiento(s)`,
+        icono: '📦',
+        columnas: [
+          { cabecera: 'Insumo',    campo: 'insumo_nombre' },
+          { cabecera: 'Tipo',      campo: 'tipo_movimiento' },
+          { cabecera: 'Fecha',     campo: 'fecha_movimiento' },
+          { cabecera: 'Cantidad',  campo: 'cantidad', alinear: 'centro',
+            formato: (v, f) => `${v} ${f.unidad_medida || ''}` },
+          { cabecera: 'Costo',     campo: 'costo_total', alinear: 'derecha',
+            formato: v => `S/ ${Number(v || 0).toFixed(2)}` },
+          { cabecera: 'Motivo',    campo: 'motivo', formato: v => v || '—' },
+        ],
+        datos: this.movimientos,
+      });
+    } finally {
+      await loading.dismiss();
     }
   }
 }

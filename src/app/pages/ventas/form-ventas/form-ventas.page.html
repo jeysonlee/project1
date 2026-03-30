@@ -27,12 +27,29 @@
     </ion-card-header>
     <ion-card-content>
 
-      <ion-item>
-        <ion-label position="stacked">Tipo de venta</ion-label>
-        <ion-toggle [(ngModel)]="esFresco" (ionChange)="cambiarEstado()">
-          <ion-label slot="end">{{ esFresco ? 'Fresco' : 'Seco' }}</ion-label>
-        </ion-toggle>
-      </ion-item>
+      <div class="tipo-venta-selector">
+        <p class="tipo-venta-label">Tipo de venta</p>
+        <ion-grid class="ion-no-padding">
+          <ion-row>
+            <ion-col>
+              <ion-button expand="block" shape="round" size="small"
+                [fill]="esFresco ? 'solid' : 'outline'" color="primary"
+                (click)="esFresco = true; cambiarEstado()">
+                <ion-icon slot="start" name="water-outline"></ion-icon>
+                Fresco
+              </ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button expand="block" shape="round" size="small"
+                [fill]="!esFresco ? 'solid' : 'outline'" color="warning"
+                (click)="esFresco = false; cambiarEstado()">
+                <ion-icon slot="start" name="sunny-outline"></ion-icon>
+                Seco
+              </ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
 
       <ion-item *ngIf="esAdmin">
         <ion-label position="stacked">Usuario</ion-label>
@@ -110,13 +127,13 @@
           </ion-grid>
 
           <ion-item *ngIf="!c.vender_todo" lines="none" class="kg-input-item">
+            <ion-label position="stacked">Cantidad a vender (kg)</ion-label>
             <ion-input
               fill="outline"
               type="number"
               inputmode="decimal"
               [(ngModel)]="c.cantidad_a_vender"
               (ionInput)="recalcular()"
-              label="Kg a vender"
               label-placement="stacked"
               [placeholder]="'Máx: ' + (esFresco ? (c.kg_bruto_disponible || 0) : (c.kg_seco_disponible || 0))">
             </ion-input>

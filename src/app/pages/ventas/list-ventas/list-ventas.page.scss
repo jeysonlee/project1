@@ -1,31 +1,19 @@
-// ─── Contenedor principal ────────────────────────────────────────────────────
+// ─── Contenedor ──────────────────────────────────────────────────────────────
 .list-ventas-content {
   --background: var(--ion-color-light);
 }
 
-// ─── Search grid
 .search-grid { padding: 12px 16px 0; }
+.cards-grid  { padding: 4px 16px 80px; }
 
-ion-searchbar {
-  --border-radius: 12px;
-  --background: #fff;
-  --box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  padding: 0;
-}
-
-// ─── Cards grid
-.cards-grid { padding: 4px 16px 80px; }
-
-// ─── Card principal ──────────────────────────────────────────────────────────
+// ─── Card ────────────────────────────────────────────────────────────────────
 .venta-card {
   border-radius: 16px !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.09) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.09) !important;
   margin-bottom: 14px;
   overflow: hidden;
 
-  ion-card-content {
-    padding: 0 16px 16px;
-  }
+  ion-card-content { padding: 0 16px 14px; }
 }
 
 // ─── Cabecera ────────────────────────────────────────────────────────────────
@@ -35,7 +23,6 @@ ion-searchbar {
   justify-content: space-between;
   padding: 14px 16px 10px;
   background: linear-gradient(135deg, var(--ion-color-primary) 0%, var(--ion-color-primary-shade) 100%) !important;
-  color: #fff !important;
 }
 
 .card-header-left {
@@ -50,41 +37,39 @@ ion-searchbar {
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255,255,255,0.2);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 
-  ion-icon {
-    font-size: 1.4rem;
-    color: #fff;
-  }
+  ion-icon { font-size: 1.4rem; color: #fff; }
 }
 
 .card-header-info {
   min-width: 0;
 
   .venta-titulo {
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #fff;
     margin: 0 0 2px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .venta-sub {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.8);
     margin: 0;
     display: flex;
     align-items: center;
     gap: 3px;
 
-    ion-icon {
-      font-size: 0.85rem;
-    }
+    ion-icon { font-size: 0.82rem; }
   }
 }
 
@@ -93,152 +78,140 @@ ion-searchbar {
   font-size: 0.72rem;
   font-weight: 700;
   height: 26px;
-  --background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  --background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
 
   ion-label { color: #fff; }
   ion-icon  { color: #fff; font-size: 0.85rem; }
 }
 
-// ─── Data grid inside cards
+// ─── Grid 2×2 de datos ───────────────────────────────────────────────────────
 .datos-grid {
-  padding: 10px 0;
-  border-bottom: 1px solid var(--ion-color-light-shade);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 14px;
 }
 
-.dato-col {
+.dato-item {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 0 4px;
-  ion-icon { font-size: 1.1rem; margin-bottom: 2px; }
+  gap: 6px;
+  padding: 12px 14px;
+  background: var(--ion-color-light);
+
+  &.borde-izq { border-left: 1px solid var(--ion-color-light-shade); }
+  &.borde-top { border-top: 1px solid var(--ion-color-light-shade); }
+
+  &.dato-total-cell {
+    background: rgba(var(--ion-color-primary-rgb), 0.07);
+  }
 }
 
 .dato-label {
-  font-size: .65rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .06em; color: var(--ion-color-medium);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ion-color-medium);
+
+  ion-icon { font-size: 0.82rem; flex-shrink: 0; }
 }
 
 .dato-valor {
-  font-size: .88rem; font-weight: 600; color: var(--ion-color-dark);
-  small { font-size: .72rem; color: var(--ion-color-medium); }
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+
+  small { font-size: 0.72rem; font-weight: 500; color: var(--ion-color-medium); }
 }
 
-// ─── Total ───────────────────────────────────────────────────────────────────
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  background: var(--ion-color-primary);
-  border-radius: 10px;
-  margin-top: 10px;
-
-  .total-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
-  .total-valor {
-    font-size: 1.1rem;
-    font-weight: 800;
-    color: #fff;
-  }
+.dato-total {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--ion-color-primary);
 }
 
-// ─── Actions grid
+// ─── Acciones ────────────────────────────────────────────────────────────────
 .acciones-grid {
-  margin-top: 10px;
+  margin-top: 12px;
   ion-col[size="auto"] { display: flex; align-items: center; }
 }
 
-// ─── Detalles expandidos ─────────────────────────────────────────────────────
+// ─── Detalle expandido ────────────────────────────────────────────────────────
 .detalles-section {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 2px dashed var(--ion-color-light-shade);
-}
-
-.detalle-grupo-header {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-
-  ion-icon { font-size: 1rem; }
-
-  span {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ion-color-dark);
-    flex: 1;
-  }
+  flex-direction: column;
+  gap: 16px;
 }
 
-.tabla-detalles {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.82rem;
-  background: var(--ion-color-light);
-  border-radius: 10px;
-  overflow: hidden;
+.detalle-grupo {
+  .detalle-grupo-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
 
-  th {
-    padding: 7px 10px;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ion-color-medium);
-    background: var(--ion-color-light-shade);
-    border-bottom: 1px solid var(--ion-color-light-shade);
-  }
+    ion-icon { font-size: 1rem; }
 
-  td {
-    padding: 8px 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-    vertical-align: middle;
-
-    strong { font-size: 0.82rem; color: var(--ion-color-dark); }
-
-    &.costo-cell {
+    span {
+      font-size: 0.78rem;
       font-weight: 700;
-      color: var(--ion-color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ion-color-dark);
+      flex: 1;
     }
   }
 
-  tr:last-child td { border-bottom: none; }
+  .tabla-detalles {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: var(--ion-color-light);
+    border-radius: 10px;
+    overflow: hidden;
+
+    th {
+      padding: 7px 8px;
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ion-color-medium);
+      background: var(--ion-color-light-shade);
+    }
+
+    td {
+      padding: 8px;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      vertical-align: middle;
+
+      strong { font-size: 0.82rem; color: var(--ion-color-dark); }
+      &.costo-cell { font-weight: 700; color: var(--ion-color-primary); }
+    }
+
+    tr:last-child td { border-bottom: none; }
+  }
 }
 
-// ─── Estado vacío ────────────────────────────────────────────────────────────
+// ─── Empty state ─────────────────────────────────────────────────────────────
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 60px 20px;
   text-align: center;
 
-  ion-icon {
-    font-size: 4rem;
-    color: var(--ion-color-light-shade);
-    margin-bottom: 16px;
-  }
-
-  p {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--ion-color-medium);
-    margin: 0 0 6px;
-  }
-
-  small {
-    font-size: 0.82rem;
-    color: var(--ion-color-medium-tint);
-  }
+  ion-icon { font-size: 4rem; color: var(--ion-color-light-shade); margin-bottom: 16px; }
+  p { font-size: 1rem; font-weight: 600; color: var(--ion-color-medium); margin: 0 0 6px; }
+  small { font-size: 0.82rem; color: var(--ion-color-medium-tint); }
 }

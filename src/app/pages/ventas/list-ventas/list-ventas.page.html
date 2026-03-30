@@ -9,7 +9,10 @@
           <small>{{ ventas.length }} venta{{ ventas.length !== 1 ? 's' : '' }} registrada{{ ventas.length !== 1 ? 's' : '' }}</small>
         </ion-text>
       </ion-col>
-      <ion-col size="auto">
+      <ion-col size="auto" style="display:flex; gap:8px;">
+        <ion-button shape="round" fill="outline" (click)="exportarReporte()" [disabled]="ventas.length === 0">
+          <ion-icon slot="icon-only" name="image-outline"></ion-icon>
+        </ion-button>
         <ion-button shape="round" (click)="nuevo()">
           <ion-icon slot="start" name="add-outline"></ion-icon>
           Nueva
@@ -23,6 +26,7 @@
       <ion-col size="12">
         <ion-card class="venta-card">
 
+          <!-- Cabecera -->
           <div class="card-header-custom">
             <div class="card-header-left">
               <div class="venta-icon-wrap">
@@ -32,7 +36,7 @@
                 <h2 class="venta-titulo">Venta N° {{ v.nr_venta }}</h2>
                 <p class="venta-sub">
                   <ion-icon name="calendar-outline"></ion-icon>
-                  {{ v.fecha_venta | date:'dd/MM/yyyy' }}
+                  {{ v._fechaDate | date:'dd MMM yyyy' }}
                 </p>
               </div>
             </div>
@@ -43,31 +47,37 @@
           </div>
 
           <ion-card-content>
-            <ion-grid class="ion-no-padding datos-grid">
-              <ion-row>
-                <ion-col class="dato-col">
-                  <ion-icon name="scale-outline" color="primary"></ion-icon>
-                  <span class="dato-label">Kg vendidos</span>
-                  <span class="dato-valor">{{ v.cantidad_vendida_kg | number:'1.2-2' }} <small>kg</small></span>
-                </ion-col>
-                <ion-col class="dato-col">
-                  <ion-icon name="pricetag-outline" color="tertiary"></ion-icon>
-                  <span class="dato-label">Precio / Kg</span>
-                  <span class="dato-valor">S/ {{ v.precio_kg | number:'1.2-2' }}</span>
-                </ion-col>
-                <ion-col class="dato-col">
-                  <ion-icon [name]="v.estado_humedad === 'FRESCO' ? 'water-outline' : 'sunny-outline'" color="warning"></ion-icon>
-                  <span class="dato-label">{{ v.estado_humedad === 'FRESCO' ? 'Kg Bruto' : 'Kg Seco' }}</span>
-                  <span class="dato-valor">{{ (v.estado_humedad === 'FRESCO' ? v.kg_bruto : v.kg_seco) | number:'1.2-2' }} <small>kg</small></span>
-                </ion-col>
-              </ion-row>
-            </ion-grid>
 
-            <div class="total-row">
-              <span class="total-label">TOTAL VENTA</span>
-              <span class="total-valor">S/ {{ v.total_venta | number:'1.2-2' }}</span>
+            <!-- Grid 2x2 de datos -->
+            <div class="datos-grid">
+              <div class="dato-item">
+                <span class="dato-label">
+                  <ion-icon name="scale-outline" color="primary"></ion-icon>
+                  Kg vendidos
+                </span>
+                <span class="dato-valor">{{ v.cantidad_vendida_kg | number:'1.2-2' }} <small>kg</small></span>
+              </div>
+              <div class="dato-item borde-izq">
+                <span class="dato-label">
+                  <ion-icon name="pricetag-outline" color="tertiary"></ion-icon>
+                  Precio / kg
+                </span>
+                <span class="dato-valor">S/ {{ v.precio_kg | number:'1.2-2' }}</span>
+              </div>
+              <div class="dato-item borde-top">
+                <span class="dato-label">
+                  <ion-icon [name]="v.estado_humedad === 'FRESCO' ? 'water-outline' : 'sunny-outline'" color="warning"></ion-icon>
+                  {{ v.estado_humedad === 'FRESCO' ? 'Kg Bruto' : 'Kg Seco' }}
+                </span>
+                <span class="dato-valor">{{ (v.estado_humedad === 'FRESCO' ? v.kg_bruto : v.kg_seco) | number:'1.2-2' }} <small>kg</small></span>
+              </div>
+              <div class="dato-item borde-izq borde-top dato-total-cell">
+                <span class="dato-label">Total venta</span>
+                <span class="dato-total">S/ {{ v.total_venta | number:'1.2-2' }}</span>
+              </div>
             </div>
 
+            <!-- Acciones -->
             <ion-grid class="ion-no-padding acciones-grid">
               <ion-row class="ion-align-items-center">
                 <ion-col>
@@ -84,33 +94,36 @@
               </ion-row>
             </ion-grid>
 
+            <!-- Detalle expandido -->
             <div *ngIf="ventaExpandidaId === v.id && detallesCache[v.id]" class="detalles-section">
-              <div class="detalle-grupo-header">
-                <ion-icon name="list-outline" color="primary"></ion-icon>
-                <span>Detalle por Cosecha</span>
-                <ion-badge color="primary">{{ detallesCache[v.id].detalles?.length }}</ion-badge>
+              <div class="detalle-grupo">
+                <div class="detalle-grupo-header">
+                  <ion-icon name="list-outline" color="primary"></ion-icon>
+                  <span>Detalle por Cosecha</span>
+                  <ion-badge color="primary">{{ detallesCache[v.id].detalles?.length }}</ion-badge>
+                </div>
+                <table class="tabla-detalles">
+                  <thead>
+                    <tr>
+                      <th>Cosecha</th>
+                      <th class="ion-text-center">Kg</th>
+                      <th class="ion-text-center">%</th>
+                      <th class="ion-text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let d of detallesCache[v.id].detalles">
+                      <td><strong>{{ d.cosecha_id }}</strong></td>
+                      <td class="ion-text-center">{{ d.cantidad_vendida_kg | number:'1.1-2' }}</td>
+                      <td class="ion-text-center">{{ d.porcentaje_total_venta | number:'1.0-1' }}%</td>
+                      <td class="ion-text-end costo-cell">S/ {{ d.subtotal | number:'1.2-2' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <table class="tabla-detalles">
-                <thead>
-                  <tr>
-                    <th>Cosecha</th>
-                    <th class="ion-text-center">Kg vendido</th>
-                    <th class="ion-text-center">%</th>
-                    <th class="ion-text-end">Subtotal</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let d of detallesCache[v.id].detalles">
-                    <td><strong>{{ d.cosecha_id }}</strong></td>
-                    <td class="ion-text-center">{{ d.cantidad_vendida_kg | number:'1.2-2' }} kg</td>
-                    <td class="ion-text-center">{{ d.porcentaje_total_venta | number:'1.0-2' }}%</td>
-                    <td class="ion-text-end costo-cell">S/ {{ d.subtotal | number:'1.2-2' }}</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
-          </ion-card-content>
 
+          </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>

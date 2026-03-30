@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { ReportService } from 'src/app/services/report.service';
 
 import { ParcelasService } from 'src/app/services/parcelas.service';
 import { UsersService } from 'src/app/services/users.service';
@@ -22,7 +23,9 @@ export class ListParcelasPage implements OnInit {
     private usersService: UsersService,
     private alertCtrl: AlertController,
     private modalCtrl: ModalController,
-    private router: Router
+    private router: Router,
+    private loadingCtrl: LoadingController,
+    private reportService: ReportService
   ) {}
 
   async ngOnInit() {
@@ -92,14 +95,33 @@ ionViewWillEnter() {
     await alert.present();
   }
   async verDetalle(parcela: any) {
-  const modal = await this.modalCtrl.create({
-    component: ParcelaDetalleComponent,
-    componentProps: {
-      parcelaId: parcela.id
-    }
-  });
-  await modal.present();
-}
+    const modal = await this.modalCtrl.create({
+      component: ParcelaDetalleComponent,
+      componentProps: { parcelaId: parcela.id }
+    });
+    await modal.present();
+  }
 
+  async exportarReporte() {
+    const loading = await this.loadingCtrl.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Parcelas',
+        subtitulo: `${this.filteredParcelas.length} parcela(s)`,
+        icono: '🌱',
+        columnas: [
+          { cabecera: 'Nombre',       campo: 'nombre' },
+          { cabecera: 'Ubicación',    campo: 'ubicacion',   formato: v => v || '—' },
+          { cabecera: 'Tipo cultivo', campo: 'tipo_cultivo', formato: v => v || '—' },
+          { cabecera: 'Tamaño',       campo: 'tamanio', alinear: 'derecha',
+            formato: v => `${Number(v || 0).toFixed(2)} ha` },
+        ],
+        datos: this.filteredParcelas,
+      });
+    } finally {
+      await loading.dismiss();
+    }
+  }
 
 }

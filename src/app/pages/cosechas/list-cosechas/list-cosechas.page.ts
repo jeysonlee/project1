@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { CosechasService } from 'src/app/services/cosechas.service';
+import { ReportService } from 'src/app/services/report.service';
 
 @Component({
   selector: 'app-list-cosechas',
@@ -15,7 +16,9 @@ export class ListCosechasPage implements OnInit {
   constructor(
     private service: CosechasService,
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
+    private reportService: ReportService
   ) {}
 
   ngOnInit() {}
@@ -35,6 +38,35 @@ export class ListCosechasPage implements OnInit {
 
   nuevo() {
     this.router.navigate(['/tabs/form-cosechas']);
+  }
+
+  async exportarReporte() {
+    const loading = await this.loadingCtrl.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Cosechas',
+        subtitulo: `${this.filteredCosechas.length} cosecha(s) encontradas`,
+        icono: '🌿',
+        columnas: [
+          { cabecera: 'Fecha',          campo: 'fecha_cosecha',
+            formato: v => v ? new Date(v).toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—' },
+          { cabecera: 'Estado',         campo: 'estado' },
+          { cabecera: 'Baldes',         campo: 'cant_baldes', alinear: 'centro' },
+          { cabecera: 'Kg Bruto',       campo: 'kg_bruto', alinear: 'derecha',
+            formato: v => `${Number(v || 0).toFixed(2)} kg` },
+          { cabecera: 'Disp. Bruto',    campo: 'kg_bruto_disponible', alinear: 'derecha',
+            formato: v => `${Number(v || 0).toFixed(2)} kg` },
+          { cabecera: 'Kg Seco',        campo: 'kg_seco', alinear: 'derecha',
+            formato: v => `${Number(v || 0).toFixed(2)} kg` },
+          { cabecera: 'Disp. Seco',     campo: 'kg_seco_disponible', alinear: 'derecha',
+            formato: v => `${Number(v || 0).toFixed(2)} kg` },
+        ],
+        datos: this.filteredCosechas,
+      });
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   editar( id: string) {

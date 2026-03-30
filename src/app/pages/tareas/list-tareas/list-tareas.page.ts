@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TareasService } from 'src/app/services/tareas.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
+import { ReportService } from 'src/app/services/report.service';
 
 @Component({
   selector: 'app-list-tareas',
@@ -17,7 +18,9 @@ export class ListTareasPage implements OnInit {
   constructor(
     private tareasService: TareasService,
     private router: Router,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadingCtrl: LoadingController,
+    private reportService: ReportService
   ) {}
 
   ngOnInit(){
@@ -61,6 +64,31 @@ export class ListTareasPage implements OnInit {
 
   nuevaTarea() {
     this.router.navigate(['/tabs/form-tareas']);
+  }
+
+  async exportarReporte() {
+    const loading = await this.loadingCtrl.create({ message: 'Generando reporte...' });
+    await loading.present();
+    try {
+      await this.reportService.generarImagen({
+        titulo: 'Reporte de Tareas',
+        subtitulo: `${this.filteredTareas.length} tarea(s) encontradas`,
+        icono: '📋',
+        columnas: [
+          { cabecera: 'Tipo de tarea', campo: 'tipo_nombre' },
+          { cabecera: 'Parcela',       campo: 'parcela_nombre' },
+          { cabecera: 'Estado',        campo: 'estado' },
+          { cabecera: 'Inicio',        campo: 'fecha_inicio' },
+          { cabecera: 'Fin',           campo: 'fecha_fin' },
+          { cabecera: 'Días',          campo: 'periodo_dias', alinear: 'centro' },
+          { cabecera: 'Costo total',   campo: 'costo_total', alinear: 'derecha',
+            formato: v => `S/ ${Number(v || 0).toFixed(2)}` },
+        ],
+        datos: this.filteredTareas,
+      });
+    } finally {
+      await loading.dismiss();
+    }
   }
   async eliminarTarea(tareaId: string) {
     //si la tarea tiene como tipo de taras "Cosecha" no se puede eliminar

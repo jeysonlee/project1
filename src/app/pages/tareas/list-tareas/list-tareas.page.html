@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-hu<ion-content class="list-tareas-content">
+<ion-content class="list-tareas-content">
 
   <ion-grid class="search-grid">
     <ion-row class="ion-align-items-center">
@@ -12,7 +12,10 @@ hu<ion-content class="list-tareas-content">
           animated="true">
         </ion-searchbar>
       </ion-col>
-      <ion-col size="auto">
+      <ion-col size="auto" style="display:flex; gap:8px;">
+        <ion-button shape="round" fill="outline" (click)="exportarReporte()" [disabled]="filteredTareas.length === 0">
+          <ion-icon slot="icon-only" name="image-outline"></ion-icon>
+        </ion-button>
         <ion-button shape="round" (click)="nuevaTarea()">
           <ion-icon slot="start" name="add-outline"></ion-icon>
           Nueva

@@ -2,6 +2,20 @@
   --background: var(--ion-color-light);
 }
 
+// ─── Tipo de venta ───────────────────────────────────────────────────────────
+.tipo-venta-selector {
+  padding: 8px 0 4px;
+}
+
+.tipo-venta-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ion-color-medium);
+  margin: 0 0 10px;
+}
+
 // ─── Cosecha selector ────────────────────────────────────────────────────────
 .cosecha-item {
   border-radius: 8px;
@@ -58,7 +72,7 @@
   --background: transparent;
   --padding-start: 0;
   --inner-padding-end: 0;
-  margin-top: 4px;
+  margin-top: 12px;
 }
 
 .todo-confirmado {

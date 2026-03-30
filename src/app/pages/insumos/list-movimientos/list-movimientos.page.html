@@ -4,6 +4,9 @@
   <ion-toolbar color="light">
     <ion-title>Movimientos de Insumos</ion-title>
     <ion-buttons slot="end">
+      <ion-button (click)="exportarReporte()" [disabled]="movimientos.length === 0">
+        <ion-icon slot="icon-only" name="image-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="verMiStock()">
         <ion-icon slot="icon-only" name="pie-chart-outline"></ion-icon>
       </ion-button>
